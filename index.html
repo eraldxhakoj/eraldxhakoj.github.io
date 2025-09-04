@@ -79,6 +79,15 @@
     .btn:hover{ border-color:#2b2e3a; transform: translateY(-1px); }
     .btn.primary{ background: linear-gradient(135deg, var(--nintendo), var(--google-blue)); border: none; }
 
+    .flag-btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:40px; height:40px; padding:0; border-radius:10px;
+  background:#151720; border:1px solid var(--line); cursor:pointer;
+}
+.flag-btn[aria-pressed="true"]{ border-color:#2f3240; background:#1a1d27; }
+.flag-btn svg{ display:block; }
+
+    
     .lang button{ background: #151720; border:1px solid var(--line); color: var(--muted); font-weight:700; padding:6px 10px; border-radius: 10px; cursor:pointer; }
     .lang button[aria-pressed="true"]{ color: var(--text); border-color: #2f3240; background:#1a1d27; }
 
@@ -172,13 +181,36 @@
         </ul>
       </nav>
       <div class="lang">
-        <button id="itBtn" aria-pressed="true" aria-label="Italiano">IT</button>
-        <button id="enBtn" aria-pressed="false" aria-label="English">EN</button>
-        <a class="btn" href="./CV.pdf" data-i18n="nav.cv" download>Scarica CV</a>
-        <div class="hamb">
-          <button id="hambBtn" aria-label="Menu" aria-expanded="false" aria-controls="menu">☰</button>
-        </div>
-      </div>
+  <button id="itBtn" aria-pressed="false" aria-label="Italiano" class="flag-btn" title="Italiano">
+    <!-- Flag IT -->
+    <svg viewBox="0 0 3 2" width="24" height="16" aria-hidden="true">
+      <rect width="1" height="2" x="0" y="0" fill="#009246"/>
+      <rect width="1" height="2" x="1" y="0" fill="#ffffff"/>
+      <rect width="1" height="2" x="2" y="0" fill="#ce2b37"/>
+    </svg>
+  </button>
+
+  <button id="enBtn" aria-pressed="true" aria-label="English" class="flag-btn" title="English">
+    <!-- Flag EN (UK-style) -->
+    <svg viewBox="0 0 60 30" width="24" height="16" aria-hidden="true">
+      <clipPath id="t"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
+      <clipPath id="s"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
+      <g clip-path="url(#t)">
+        <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4" clip-path="url(#s)"/>
+        <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
+        <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+      </g>
+    </svg>
+  </button>
+
+  <a class="btn" href="./CV.pdf" data-i18n="nav.cv" download>Resume</a>
+  <div class="hamb">
+    <button id="hambBtn" aria-label="Menu" aria-expanded="false" aria-controls="menu">☰</button>
+  </div>
+</div>
+
     </div>
   </header>
 
@@ -350,10 +382,11 @@
   <script>
     // TRANSLATIONS
     const T = {
-      it: {
-        'meta.title': 'Erald Xhakoj — Sviluppatore & SEO Specialist',
-        'meta.desc': 'Sviluppatore software e SEO specialist. Creo prodotti veloci, scalabili e posizionati per brand globali.',
-        nav: { about:'Chi sono', work:'Portfolio', skills:'Competenze', seo:'SEO', contact:'Contatti', cv:'Scarica CV' },
+    it: {
+      'meta.title': 'Erald Xhakoj — Sviluppatore & SEO Specialist',
+      'meta.desc': 'Sviluppatore software e SEO specialist. Creo prodotti veloci, scalabili e posizionati per brand globali.',
+      nav: { about:'Chi sono', work:'Portfolio', skills:'Competenze', seo:'SEO', contact:'Contatti', cv:'CV' }, // <- CV
+      
         hero: {
           tag: 'Disponibile per assunzioni full‑time o consulenze',
           h1: 'Sviluppatore Software & SEO Specialist per brand globali.',
@@ -385,9 +418,10 @@
         footer: 'Disponibile su richiesta: portfolio completo, referenze e audit demo.'
       },
       en: {
-        'meta.title': 'Erald Xhakoj — Software Engineer & SEO Specialist',
-        'meta.desc': 'Software engineer and SEO specialist. I ship fast, scalable and searchable products for global brands.',
-        nav: { about:'About', work:'Work', skills:'Skills', seo:'SEO', contact:'Contact', cv:'Download CV' },
+      'meta.title': 'Erald Xhakoj — Software Engineer & SEO Specialist',
+      'meta.desc': 'Software engineer and SEO specialist. I ship fast, scalable and searchable products for global brands.',
+      nav: { about:'About', work:'Work', skills:'Skills', seo:'SEO', contact:'Contact', cv:'Resume' }, // <- Resume
+      
         hero: {
           tag: 'Open to full‑time roles or consulting',
           h1: 'Software Engineer & SEO Specialist for global brands.',
@@ -421,46 +455,46 @@
     };
 
     // i18n wiring
-    const i18nNodes = document.querySelectorAll('[data-i18n]');
-    const metaDesc = document.querySelector('[data-i18n-meta-desc]');
-    const itBtn = document.getElementById('itBtn');
-    const enBtn = document.getElementById('enBtn');
+  const i18nNodes = document.querySelectorAll('[data-i18n]');
+  const metaDesc = document.querySelector('[data-i18n-meta-desc]');
+  const itBtn = document.getElementById('itBtn');
+  const enBtn = document.getElementById('enBtn');
 
     function applyLang(lang){
-      const dict = T[lang];
-      document.documentElement.lang = lang;
-      document.title = dict['meta.title'];
-      metaDesc.setAttribute('content', dict['meta.desc']);
+    const dict = T[lang] || T.en;
+    document.documentElement.lang = lang;
+    document.title = dict['meta.title'];
+    metaDesc.setAttribute('content', dict['meta.desc']);
 
-      for(const el of i18nNodes){
-        const key = el.getAttribute('data-i18n');
-        const parts = key.split('.');
-        let val = dict;
-        for(const p of parts){ val = val?.[p]; }
-        if(typeof val === 'string'){ el.textContent = val; }
-      }
-
-      // nav items may appear multiple times (desktop/mobile)
-      document.querySelectorAll('[data-i18n="nav.about"]').forEach(n=>n.textContent=dict.nav.about);
-      document.querySelectorAll('[data-i18n="nav.work"]').forEach(n=>n.textContent=dict.nav.work);
-      document.querySelectorAll('[data-i18n="nav.skills"]').forEach(n=>n.textContent=dict.nav.skills);
-      document.querySelectorAll('[data-i18n="nav.seo"]').forEach(n=>n.textContent=dict.nav.seo);
-      document.querySelectorAll('[data-i18n="nav.contact"]').forEach(n=>n.textContent=dict.nav.contact);
-      document.querySelectorAll('[data-i18n="nav.cv"]').forEach(n=>n.textContent=dict.nav.cv);
-
-      // buttons state
-      itBtn.setAttribute('aria-pressed', String(lang==='it'));
-      enBtn.setAttribute('aria-pressed', String(lang==='en'));
-
-      localStorage.setItem('lang', lang);
+    for(const el of i18nNodes){
+      const key = el.getAttribute('data-i18n');
+      const parts = key.split('.');
+      let val = dict;
+      for(const p of parts){ val = val?.[p]; }
+      if(typeof val === 'string'){ el.textContent = val; }
     }
 
-    const saved = localStorage.getItem('lang');
-    const preferred = saved || (navigator.language||'it').slice(0,2);
-    applyLang(preferred==='en'?'en':'it');
+    // update nav labels (desktop/mobile)
+    ['about','work','skills','seo','contact','cv'].forEach(k=>{
+      document.querySelectorAll(`[data-i18n="nav.${k}"]`).forEach(n=> n.textContent = dict.nav[k]);
+    });
+
+    itBtn.setAttribute('aria-pressed', String(lang==='it'));
+    enBtn.setAttribute('aria-pressed', String(lang==='en'));
+    localStorage.setItem('lang', lang);
+  }
+
+    // Language selection: priority = saved > navigator > default(en)
+  const saved = localStorage.getItem('lang');
+  const navLang = (navigator.language || navigator.userLanguage || 'en').slice(0,2).toLowerCase();
+  const initial = (saved === 'it' || saved === 'en')
+    ? saved
+    : (navLang === 'it' ? 'it' : 'en'); // default EN unless browser is IT
+
+  applyLang(initial);
 
     itBtn.addEventListener('click', ()=> applyLang('it'));
-    enBtn.addEventListener('click', ()=> applyLang('en'));
+  enBtn.addEventListener('click', ()=> applyLang('en'));
 
     // Sticky header style on scroll
     const head = document.getElementById('site-header');
