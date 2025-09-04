@@ -147,12 +147,34 @@
     .hamb button{ background:none; border:none; color: var(--text); width:40px; height:40px; border-radius:10px; cursor:pointer; }
 
     /* MOBILE MENU */
-    @media (max-width: 900px){
-      nav ul{ position: fixed; inset: var(--nav-h) 0 auto 0; background: rgba(14,15,20,.98); backdrop-filter: blur(8px); padding: 24px; flex-direction: column; align-items: flex-start; gap:18px; border-bottom:1px solid var(--line); transform: translateY(-120%); transition: transform .25s ease; }
-      nav ul.open{ transform: translateY(0%); }
-      .hamb{ display:flex; }
-      nav .desktop{ display:none; }
-    }
+@media (max-width: 900px){
+  nav ul{
+    position: fixed;
+    inset: var(--nav-h) 0 auto 0;
+    background: rgba(14,15,20,.98);
+    backdrop-filter: blur(8px);
+    padding: 24px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap:18px;
+    border-bottom:1px solid var(--line);
+    transform: translateY(-120%);
+    transition: transform .25s ease;
+    display: none;              /* nascosto di default */
+    z-index: 60;
+  }
+  nav ul.open{
+    display: flex;              /* mostra quando è .open */
+    transform: translateY(0%);
+  }
+
+  /* rimuovi il “nascondi sempre” della classe desktop;
+     se vuoi tenerla, assicurati che .open vinca */
+  /* nav .desktop{ display:none; }  <-- elimina questa riga dal CSS */
+
+  .hamb{ display:flex; }
+}
+
 
     /* HERO */
     .hero{ padding: clamp(40px, 6vw, 90px) 0 40px; }
@@ -533,6 +555,14 @@
   // Year
   const y = document.getElementById('year');
   if (y) y.textContent = new Date().getFullYear();
+
+    //close menu when clicking voice
+  menu?.addEventListener('click', (e)=>{
+    if(e.target.closest('a')){
+      menu.classList.remove('open');
+      hambBtn.setAttribute('aria-expanded','false');
+    }
+  });
 
 </script>
 
