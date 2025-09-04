@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -59,16 +59,14 @@
     header.scrolled{ background: rgba(10,10,12,.9); }
     .nav{ display:flex; align-items:center; justify-content: space-between; gap:16px; height: var(--nav-h); }
     .brand{
-  display:flex; align-items:center; gap:12px;
-  font-weight:700; letter-spacing:.3px;
-  color: var(--text); text-decoration: none;
-}
-.brand:visited{ color: var(--text); }
-.brand:hover{ opacity:.9; text-decoration: none; }
+      font-weight:700;
+      letter-spacing:.3px;
+      color: var(--text);
+      text-decoration:none;
+    }
+    .brand:hover{ color: var(--text); text-decoration:none; }
     .logo{ display:none; }
-    .logo span{ display:block; width:18px; height:18px; border-radius:6px; }
-    .logo .b{ background: var(--google-blue);} .logo .r{ background: var(--nintendo);} .logo .y{ background: var(--google-yellow);} .logo .g{ background: var(--google-green);} .logo .a{ background: var(--apple);} .logo .n{ background: #fff; opacity:.25; }
-
+    
     nav ul{ display:flex; align-items:center; gap: 22px; list-style:none; padding:0; margin:0; }
     nav a{ color: var(--muted); text-decoration:none; font-weight:600; font-size: 15px; }
     nav a.active, nav a:hover{ color: var(--text); }
@@ -88,8 +86,21 @@
 .flag-btn svg{ display:block; }
 
     
-    .lang button{ background: #151720; border:1px solid var(--line); color: var(--muted); font-weight:700; padding:6px 10px; border-radius: 10px; cursor:pointer; }
-    .lang button[aria-pressed="true"]{ color: var(--text); border-color: #2f3240; background:#1a1d27; }
+    .lang button{
+        background:#151720; border:1px solid var(--line);
+        padding:4px 6px; border-radius:8px; cursor:pointer;
+        font-size:18px; line-height:1;
+      }
+      .lang button[aria-pressed="true"]{ background:#1a1d27; }
+    /* Language switcher (dual flags, current highlighted) */
+    .lang-switch{ position:relative; display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:8px;
+    width:96px; height:40px; padding:4px; border-radius:10px; background:#151720; border:1px solid var(--line); cursor:pointer; }
+    .lang-switch .opt{ display:flex; align-items:center; justify-content:center; opacity:.55; z-index:1; }
+    .lang-switch .knob{ position:absolute; top:4px; left:4px; width:44px; height:32px; border-radius:8px; background:#1a1d27; border:1px solid #2f3240; transition: transform .2s ease; }
+    .lang-switch[data-lang="en"] .knob{ transform: translateX(0); }
+    .lang-switch[data-lang="it"] .knob{ transform: translateX(48px); }
+    .lang-switch[data-lang="en"] .opt.en{ opacity:1; }
+    .lang-switch[data-lang="it"] .opt.it{ opacity:1; }
 
     .hamb{ display:none; }
     .hamb button{ background:none; border:none; color: var(--text); width:40px; height:40px; border-radius:10px; cursor:pointer; }
@@ -170,40 +181,41 @@
   <header id="site-header">
 <div class="wrap nav">
 <a href="#top" class="brand">Erald Xhakoj</a>
-      </a>
+      
       <nav>
-        <ul id="menu" class="desktop" role="menubar">
-          <li role="none"><a role="menuitem" href="#about" data-i18n="nav.about">Chi sono</a></li>
-          <li role="none"><a role="menuitem" href="#work" data-i18n="nav.work">Portfolio</a></li>
-          <li role="none"><a role="menuitem" href="#skills" data-i18n="nav.skills">Competenze</a></li>
-          <li role="none"><a role="menuitem" href="#seo" data-i18n="nav.seo">SEO</a></li>
-          <li role="none"><a role="menuitem" href="#contact" data-i18n="nav.contact">Contatti</a></li>
-        </ul>
+      <ul id="menu" class="desktop" role="menubar">
+      <li role="none"><a role="menuitem" href="#about" data-i18n="nav.about">Chi sono</a></li>
+      <li role="none"><a role="menuitem" href="#work" data-i18n="nav.work">Portfolio</a></li>
+      <li role="none"><a role="menuitem" href="#skills" data-i18n="nav.skills">Competenze</a></li>
+      <li role="none"><a role="menuitem" href="#seo" data-i18n="nav.seo">SEO</a></li>
+      <li role="none"><a role="menuitem" href="#contact" data-i18n="nav.contact">Contatti</a></li>
+      </ul>
       </nav>
+  
       <div class="lang">
-  <button id="itBtn" aria-pressed="false" aria-label="Italiano" class="flag-btn" title="Italiano">
-    <!-- Flag IT -->
-    <svg viewBox="0 0 3 2" width="24" height="16" aria-hidden="true">
-      <rect width="1" height="2" x="0" y="0" fill="#009246"/>
-      <rect width="1" height="2" x="1" y="0" fill="#ffffff"/>
-      <rect width="1" height="2" x="2" y="0" fill="#ce2b37"/>
-    </svg>
-  </button>
-
-  <button id="enBtn" aria-pressed="true" aria-label="English" class="flag-btn" title="English">
-    <!-- Flag EN (UK-style) -->
-    <svg viewBox="0 0 60 30" width="24" height="16" aria-hidden="true">
-      <clipPath id="t"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
-      <clipPath id="s"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
-      <g clip-path="url(#t)">
-        <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
-        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
-        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4" clip-path="url(#s)"/>
-        <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
-        <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
-      </g>
-    </svg>
-  </button>
+  <button id="langSwitcher" class="lang-switch" aria-label="Language: English" data-lang="en">
+<span class="opt en" aria-hidden="true">
+<svg viewBox="0 0 60 30" width="24" height="16">
+<clipPath id="t"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
+<clipPath id="s"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
+<g clip-path="url(#t)">
+<path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+<path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+<path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4" clip-path="url(#s)"/>
+<path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
+<path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+</g>
+</svg>
+</span>
+<span class="opt it" aria-hidden="true">
+<svg viewBox="0 0 3 2" width="24" height="16">
+<rect width="1" height="2" x="0" y="0" fill="#009246"/>
+<rect width="1" height="2" x="1" y="0" fill="#ffffff"/>
+<rect width="1" height="2" x="2" y="0" fill="#ce2b37"/>
+</svg>
+</span>
+<span class="knob" aria-hidden="true"></span>
+</button>
 
   <a class="btn" href="./CV.pdf" data-i18n="nav.cv" download>Resume</a>
   <div class="hamb">
@@ -379,6 +391,52 @@
     </div>
   </footer>
 
+  <script>
+// Minimal translations for the header CV/Resume label
+const T = { it:{ nav:{cv:'CV'} }, en:{ nav:{cv:'Resume'} } };
+
+
+const menu = document.getElementById('menu');
+const hambBtn = document.getElementById('hambBtn');
+const langSwitcher = document.getElementById('langSwitcher');
+const metaDesc = document.querySelector('[data-i18n-meta-desc]');
+
+
+function applyLang(lang){
+const dict = T[lang] || T.en;
+document.documentElement.lang = lang;
+document.querySelectorAll('[data-i18n="nav.cv"]').forEach(n=> n.textContent = dict.nav.cv);
+langSwitcher.setAttribute('data-lang', lang);
+langSwitcher.setAttribute('aria-label', lang==='en' ? 'Language: English. Switch to Italian' : 'Lingua: Italiano. Passa a Inglese');
+localStorage.setItem('lang', lang);
+}
+
+
+// Init: saved > navigator > EN
+const saved = localStorage.getItem('lang');
+const navLang = (navigator.language||'en').slice(0,2).toLowerCase();
+let currentLang = saved ? saved : (navLang==='it' ? 'it' : 'en');
+applyLang(currentLang);
+
+
+// Toggle on click
+langSwitcher?.addEventListener('click', ()=>{
+currentLang = currentLang==='en' ? 'it' : 'en';
+applyLang(currentLang);
+});
+
+
+// Hamburger
+hambBtn?.addEventListener('click', ()=>{
+const open = menu.classList.toggle('open');
+hambBtn.setAttribute('aria-expanded', String(open));
+});
+
+
+// Year
+document.getElementById('year')?.textContent = new Date().getFullYear();
+</script>
+  
   <script>
     // TRANSLATIONS
     const T = {
