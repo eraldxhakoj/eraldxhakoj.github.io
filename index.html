@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-i18n="meta.title">Luca Rossi — Sviluppatore & SEO Specialist</title>
+  <meta name="description" content="Sviluppatore software e SEO specialist. Creo prodotti veloci, scalabili e posizionati per brand globali." data-i18n-meta-desc>
+  <meta name="theme-color" content="#0f0f10" />
+  <link rel="canonical" href="https://example.com/" />
+  <link rel="alternate" href="https://example.com/" hreflang="it" />
+  <link rel="alternate" href="https://example.com/en" hreflang="en" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Luca Rossi — Dev & SEO Specialist" />
+  <meta property="og:description" content="Creo prodotti veloci, scalabili e posizionati per brand globali." />
+  <meta property="og:url" content="https://example.com/" />
+  <meta property="og:image" content="https://example.com/preview.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <style>
+    :root{
+      --bg:#0b0c10; /* deep neutral */
+      --surface: #0f1117; /* apple-like clean */
+      --text:#e6e7eb;
+      --muted:#a9acb6;
+      --line:#23252e;
+      --accent:#4c8df6; /* base accent */
+      --google-blue:#4285F4; --google-red:#EA4335; --google-yellow:#FBBC05; --google-green:#34A853;
+      --nintendo:#E60012; /* spirited red */
+      --apple:#cfd2d6; /* frost */
+      --success:#36d399;
+      --warning:#f6c14c;
+      --radius: 18px;
+      --shadow: 0 10px 30px rgba(0,0,0,.25);
+      --glass: rgba(18,18,20,.5);
+      --nav-h: 72px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body{ margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji"; background: var(--bg); color: var(--text); line-height: 1.45; }
+
+    /* BACKDROP ANIMATION */
+    .backdrop{
+      position: fixed; inset: -10vmax; z-index: -1; filter: blur(50px) saturate(120%); opacity:.55; pointer-events:none;
+      background:
+        radial-gradient(30vmax 30vmax at 20% 20%, rgba(230,0,18,.35), transparent 60%),
+        radial-gradient(40vmax 40vmax at 80% 10%, rgba(66,133,244,.35), transparent 60%),
+        radial-gradient(30vmax 30vmax at 85% 80%, rgba(52,168,83,.30), transparent 60%),
+        radial-gradient(30vmax 30vmax at 10% 85%, rgba(251,188,5,.28), transparent 60%);
+      animation: float 24s linear infinite alternate;
+    }
+    @keyframes float { from { transform: translateY(-2%); } to { transform: translateY(2%);} }
+    @media (prefers-reduced-motion: reduce){ .backdrop{ animation: none; } }
+
+    /* CONTAINERS */
+    .wrap{ width:min(1200px, 92%); margin-inline:auto; }
+
+    /* NAV */
+    header{ position: sticky; top:0; z-index: 50; backdrop-filter: blur(8px) saturate(120%); background: linear-gradient(to bottom, rgba(10,10,12,.8), rgba(10,10,12,.5)); border-bottom:1px solid var(--line); height: var(--nav-h); }
+    header.scrolled{ background: rgba(10,10,12,.9); }
+    .nav{ display:flex; align-items:center; justify-content: space-between; gap:16px; height: var(--nav-h); }
+    .brand{ display:flex; align-items:center; gap:12px; font-weight:700; letter-spacing:.3px; }
+    .logo{ display:grid; grid-template-columns: 18px 18px 18px; gap:6px; }
+    .logo span{ display:block; width:18px; height:18px; border-radius:6px; }
+    .logo .b{ background: var(--google-blue);} .logo .r{ background: var(--nintendo);} .logo .y{ background: var(--google-yellow);} .logo .g{ background: var(--google-green);} .logo .a{ background: var(--apple);} .logo .n{ background: #fff; opacity:.25; }
+
+    nav ul{ display:flex; align-items:center; gap: 22px; list-style:none; padding:0; margin:0; }
+    nav a{ color: var(--muted); text-decoration:none; font-weight:600; font-size: 15px; }
+    nav a.active, nav a:hover{ color: var(--text); }
+
+    .lang, .cta, .hamb{ display:flex; align-items:center; gap:10px; }
+
+    .btn{ border:1px solid var(--line); background: #121319; padding:10px 14px; border-radius: 999px; color: var(--text); font-weight:700; text-decoration:none; box-shadow: var(--shadow); }
+    .btn:hover{ border-color:#2b2e3a; transform: translateY(-1px); }
+    .btn.primary{ background: linear-gradient(135deg, var(--nintendo), var(--google-blue)); border: none; }
+
+    .lang button{ background: #151720; border:1px solid var(--line); color: var(--muted); font-weight:700; padding:6px 10px; border-radius: 10px; cursor:pointer; }
+    .lang button[aria-pressed="true"]{ color: var(--text); border-color: #2f3240; background:#1a1d27; }
+
+    .hamb{ display:none; }
+    .hamb button{ background:none; border:none; color: var(--text); width:40px; height:40px; border-radius:10px; cursor:pointer; }
+
+    /* MOBILE MENU */
+    @media (max-width: 900px){
+      nav ul{ position: fixed; inset: var(--nav-h) 0 auto 0; background: rgba(14,15,20,.98); backdrop-filter: blur(8px); padding: 24px; flex-direction: column; align-items: flex-start; gap:18px; border-bottom:1px solid var(--line); transform: translateY(-120%); transition: transform .25s ease; }
+      nav ul.open{ transform: translateY(0%); }
+      .hamb{ display:flex; }
+      nav .desktop{ display:none; }
+    }
+
+    /* HERO */
+    .hero{ padding: clamp(40px, 6vw, 90px) 0 40px; }
+    .tag{ display:inline-flex; align-items:center; gap:10px; padding:6px 10px; border:1px solid var(--line); border-radius: 999px; color: var(--muted); font-weight:700; }
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .chip{ padding:6px 10px; border-radius:999px; border:1px solid var(--line); font-size:13px; font-weight:700; opacity:.9; }
+    .chip.n{ border-color: rgba(230,0,18,.35);} .chip.g{ border-color: rgba(66,133,244,.35);} .chip.a{ border-color: rgba(207,210,214,.5);} .chip.r{ border-color: rgba(255,255,255,.2);} 
+
+    .hero-grid{ display:grid; grid-template-columns: 1.3fr .9fr; gap: clamp(20px, 3vw, 40px); align-items: center; }
+    .h1{ font-size: clamp(28px, 4.4vw, 56px); line-height: 1.05; margin: 20px 0 12px; letter-spacing: -.5px; }
+    .lead{ color: var(--muted); font-size: clamp(16px, 1.6vw, 20px); max-width: 60ch; }
+    .hero-cta{ display:flex; gap:12px; margin-top:22px; flex-wrap: wrap; }
+
+    .card{ background: linear-gradient(180deg, #121319, #0f1117); border:1px solid #20222c; border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); }
+    .hero-stats{ display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:12px; }
+    .stat{ padding:16px; border-radius: 16px; border:1px solid #252734; background: #0f121a; }
+    .stat b{ font-size: 28px; display:block; }
+    .stat small{ color: var(--muted); }
+
+    .badge-row{ display:flex; gap:10px; flex-wrap: wrap; margin-top:12px; }
+    .badge{ font-size:12px; padding:6px 8px; border-radius: 8px; border:1px dashed #2b2e3a; color:var(--muted); }
+
+    /* SECTIONS */
+    section{ padding: 64px 0; scroll-margin-top: calc(var(--nav-h) + 16px); }
+    h2{ font-size: clamp(22px, 3vw, 34px); margin: 0 0 12px; }
+    p.section-lead{ color: var(--muted); max-width: 70ch; }
+
+    /* PORTFOLIO */
+    .grid{ display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap:16px; }
+    @media (max-width: 900px){ .hero-grid{ grid-template-columns: 1fr; } .grid{ grid-template-columns: 1fr; } }
+
+    .proj{ position:relative; overflow:hidden; }
+    .proj header{ position:relative; padding:14px; height:auto; border:none; background:none; }
+    .proj .thumb{ height: 180px; border-radius: 12px; background:
+      linear-gradient(135deg, rgba(230,0,18,.18), rgba(66,133,244,.18)),
+      linear-gradient(0deg, #0f1117, #0f1117);
+      border:1px solid #232634; box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+    }
+    .proj .meta{ display:flex; justify-content: space-between; align-items:center; margin-top:10px; }
+    .pill{ font-size:12px; padding:6px 8px; border-radius: 999px; border:1px solid #2a2d3a; color:var(--muted); }
+
+    /* SKILLS */
+    .cols{ display:grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap:16px; }
+    .cols ul{ margin:0; padding-left: 18px; }
+    .cols li{ margin:6px 0; }
+    @media (max-width: 1100px){ .cols{ grid-template-columns: repeat(2,minmax(0,1fr)); } }
+    @media (max-width: 700px){ .cols{ grid-template-columns: 1fr; } }
+
+    /* TIMELINE */
+    .timeline{ display:grid; gap:14px; }
+    .row{ display:grid; grid-template-columns: 140px 1fr; gap:14px; }
+    .row time{ color: var(--muted);} .row .item{ border-left:2px solid #242736; padding-left:12px; }
+    @media (max-width: 600px){ .row{ grid-template-columns: 1fr; } }
+
+    /* CTA */
+    .cta-section .card{ display:flex; align-items:center; justify-content: space-between; gap:16px; flex-wrap:wrap; border:1px solid #2a2d3a; background: linear-gradient(0deg, #0e1016, #10121a); }
+
+    footer{ padding: 50px 0; color: var(--muted); border-top:1px solid var(--line); }
+
+    /* ACCESSIBILITY */
+    :focus-visible{ outline: 2px solid var(--accent); outline-offset: 2px; border-radius:8px; }
+  </style>
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true"></div>
+
+  <header id="site-header">
+    <div class="wrap nav" role="navigation" aria-label="Main">
+      <a href="#top" class="brand" aria-label="Home">
+        <span class="logo" aria-hidden="true">
+          <span class="b"></span><span class="r"></span><span class="y"></span>
+          <span class="g"></span><span class="a"></span><span class="n"></span>
+        </span>
+        <span>Luca Rossi</span>
+      </a>
+      <nav>
+        <ul id="menu" class="desktop" role="menubar">
+          <li role="none"><a role="menuitem" href="#about" data-i18n="nav.about">Chi sono</a></li>
+          <li role="none"><a role="menuitem" href="#work" data-i18n="nav.work">Portfolio</a></li>
+          <li role="none"><a role="menuitem" href="#skills" data-i18n="nav.skills">Competenze</a></li>
+          <li role="none"><a role="menuitem" href="#seo" data-i18n="nav.seo">SEO</a></li>
+          <li role="none"><a role="menuitem" href="#contact" data-i18n="nav.contact">Contatti</a></li>
+        </ul>
+      </nav>
+      <div class="lang">
+        <button id="itBtn" aria-pressed="true" aria-label="Italiano">IT</button>
+        <button id="enBtn" aria-pressed="false" aria-label="English">EN</button>
+        <a class="btn" href="#cv" data-i18n="nav.cv">Scarica CV</a>
+        <div class="hamb">
+          <button id="hambBtn" aria-label="Menu" aria-expanded="false" aria-controls="menu">☰</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero wrap" id="about">
+      <div class="tag" data-i18n="hero.tag">Disponibile per assunzioni full‑time o consulenze</div>
+      <div class="chips" aria-label="target-brands">
+        <span class="chip n">Nintendo</span>
+        <span class="chip g">Google</span>
+        <span class="chip a">Apple</span>
+        <span class="chip r">Rockstar</span>
+      </div>
+      <div class="hero-grid">
+        <div>
+          <h1 class="h1" data-i18n="hero.h1">Sviluppatore Software & SEO Specialist per brand globali.</h1>
+          <p class="lead" data-i18n="hero.lead">Progetto, sviluppo e posiziono prodotti digitali che scalano. UX pulita da Apple, performance misurate come piace a Google, e dettaglio creativo che conquista un publisher di videogiochi.</p>
+          <div class="hero-cta">
+            <a class="btn primary" href="#contact" data-i18n="cta.hire">Assumimi</a>
+            <a class="btn" href="#work" data-i18n="cta.seeWork">Vedi lavori</a>
+          </div>
+          <div class="badge-row">
+            <span class="badge" data-i18n="hero.badge1">Core Web Vitals 95+ su siti reali</span>
+            <span class="badge" data-i18n="hero.badge2">+230% traffico organico in 12 mesi</span>
+            <span class="badge" data-i18n="hero.badge3">Ship veloce, qualità maniacale</span>
+          </div>
+        </div>
+        <aside class="card">
+          <div class="hero-stats">
+            <div class="stat"><b>95/100</b><small data-i18n="stats.cwv">Core Web Vitals</small></div>
+            <div class="stat"><b>+230%</b><small data-i18n="stats.org">Traffico organico</small></div>
+            <div class="stat"><b>+38%</b><small data-i18n="stats.conv">Conversion rate</small></div>
+            <div class="stat"><b><100ms</b><small data-i18n="stats.lat">Latency glob.</small></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="wrap" id="work">
+      <h2 data-i18n="work.h2">Case study</h2>
+      <p class="section-lead" data-i18n="work.lead">Esempi concreti di progetti dove codice, SEO tecnica e design business‑driven hanno generato impatto misurabile.</p>
+      <div class="grid">
+        <article class="proj card">
+          <div class="thumb" aria-hidden="true"></div>
+          <header>
+            <h3 data-i18n="work.p1.title">Lancio globale videogame: 42 lingue, 0 downtime</h3>
+            <div class="meta">
+              <span class="pill" data-i18n="work.p1.stack">Next.js, Edge, i18n, CDN</span>
+              <span class="pill" data-i18n="work.p1.result">+180% pre‑order organici</span>
+            </div>
+          </header>
+        </article>
+        <article class="proj card">
+          <div class="thumb" aria-hidden="true"></div>
+          <header>
+            <h3 data-i18n="work.p2.title">E‑commerce enterprise con CWV 95+ e ricerca semantica</h3>
+            <div class="meta">
+              <span class="pill" data-i18n="work.p2.stack">SvelteKit, Edge SSR, Algolia</span>
+              <span class="pill" data-i18n="work.p2.result">+32% revenue SEO</span>
+            </div>
+          </header>
+        </article>
+        <article class="proj card">
+          <div class="thumb" aria-hidden="true"></div>
+          <header>
+            <h3 data-i18n="work.p3.title">Refactor app iOS/Android: bundle -48%, crash -72%</h3>
+            <div class="meta">
+              <span class="pill" data-i18n="work.p3.stack">Swift, Kotlin, CI/CD</span>
+              <span class="pill" data-i18n="work.p3.result">Rating 4.8 → 4.9</span>
+            </div>
+          </header>
+        </article>
+      </div>
+    </section>
+
+    <section class="wrap" id="skills">
+      <h2 data-i18n="skills.h2">Competenze</h2>
+      <p class="section-lead" data-i18n="skills.lead">Stack moderno, attenzione maniacale a performance e DX. Architetture scalabili, localizzazione, analytics pulite.</p>
+      <div class="cols">
+        <div class="card">
+          <h3 data-i18n="skills.col1.h">Stack Tecnico</h3>
+          <ul>
+            <li>TypeScript, Node.js, Rust (basics)</li>
+            <li>React/Next.js, SvelteKit, Astro</li>
+            <li>Edge, CDN, Serverless, Web Workers</li>
+            <li>iOS (Swift), Android (Kotlin)</li>
+            <li>Postgres, Redis, ClickHouse</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-i18n="skills.col2.h">SEO Tecnica</h3>
+          <ul>
+            <li>Rendering, i18n, hreflang, canonicals</li>
+            <li>Log analysis, crawl budget, IA generativa</li>
+            <li>Schema.org, feed, sitemap automation</li>
+            <li>Content ops, editorial SEO</li>
+            <li>A/B test SEO‑safe</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-i18n="skills.col3.h">Performance</h3>
+          <ul>
+            <li>Core Web Vitals, RUM, Profiling</li>
+            <li>Image/Font pipeline, code‑split</li>
+            <li>Caching multilayer, prefetch</li>
+            <li>Security, privacy by design</li>
+            <li>Monitoring, SLO, on‑call</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 data-i18n="skills.col4.h">Dati & Tracking</h3>
+          <ul>
+            <li>GA4, BigQuery, Looker</li>
+            <li>Server‑side tracking</li>
+            <li>Attribution, MMM</li>
+            <li>Event modeling</li>
+            <li>Consent mode avanzato</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" id="seo">
+      <h2 data-i18n="seo.h2">Cosa porto sul tavolo</h2>
+      <div class="timeline">
+        <div class="row">
+          <time>2024–2025</time>
+          <div class="item">
+            <h3 data-i18n="seo.t1.h">Growth tecnico con foundation forte</h3>
+            <p data-i18n="seo.t1.p">Disegno sistemi che piacciono agli utenti prima che ai crawler. Poi misuro, itero e ottimizzo fino a superare gli obiettivi, senza trucchi.</p>
+          </div>
+        </div>
+        <div class="row">
+          <time>2022–2024</time>
+          <div class="item">
+            <h3 data-i18n="seo.t2.h">Internazionalizzazione e localizzazione</h3>
+            <p data-i18n="seo.t2.p">i18n nativa nel codice, contenuti generati e verificati, routing pulito, hreflang a prova di errore e supply di traduzioni scalabile.</p>
+          </div>
+        </div>
+        <div class="row">
+          <time>2018–2022</time>
+          <div class="item">
+            <h3 data-i18n="seo.t3.h">Performance e UX</h3>
+            <p data-i18n="seo.t3.p">Riduzione sistematica della complessità, pipeline asset rigorosa, RUM sempre acceso, regressioni intercettate in CI.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap cta-section" id="contact">
+      <div class="card">
+        <div>
+          <h2 data-i18n="cta.title">Pronto per parlare?</h2>
+          <p class="section-lead" data-i18n="cta.lead">Cerco ruoli ad alto impatto su prodotto e crescita organica. Sedi: EU/US. On‑site ibrido o full‑remote.</p>
+        </div>
+        <div class="hero-cta">
+          <a class="btn primary" href="mailto:hello@lucarossi.dev?subject=Hiring%20Luca%20Rossi" data-i18n="cta.email">Invia email</a>
+          <a class="btn" href="#top" data-i18n="cta.top">Torna su</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <small>© <span id="year"></span> Luca Rossi. <span data-i18n="footer">Disponibile su richiesta: portfolio completo, referenze e audit demo.</span></small>
+    </div>
+  </footer>
+
+  <script>
+    // TRANSLATIONS
+    const T = {
+      it: {
+        'meta.title': 'Luca Rossi — Sviluppatore & SEO Specialist',
+        'meta.desc': 'Sviluppatore software e SEO specialist. Creo prodotti veloci, scalabili e posizionati per brand globali.',
+        nav: { about:'Chi sono', work:'Portfolio', skills:'Competenze', seo:'SEO', contact:'Contatti', cv:'Scarica CV' },
+        hero: {
+          tag: 'Disponibile per assunzioni full‑time o consulenze',
+          h1: 'Sviluppatore Software & SEO Specialist per brand globali.',
+          lead: 'Progetto, sviluppo e posiziono prodotti digitali che scalano. UX pulita da Apple, performance misurate come piace a Google, e dettaglio creativo che conquista un publisher di videogiochi.',
+          badge1: 'Core Web Vitals 95+ su siti reali',
+          badge2: '+230% traffico organico in 12 mesi',
+          badge3: 'Ship veloce, qualità maniacale'
+        },
+        cta: { hire:'Assumimi', seeWork:'Vedi lavori', title:'Pronto per parlare?', lead:'Cerco ruoli ad alto impatto su prodotto e crescita organica. Sedi: EU/US. On‑site ibrido o full‑remote.', email:'Invia email', top:'Torna su' },
+        stats: { cwv:'Core Web Vitals', org:'Traffico organico', conv:'Conversion rate', lat:'Latency glob.' },
+        work: {
+          h2:'Case study',
+          lead:'Esempi concreti di progetti dove codice, SEO tecnica e design business‑driven hanno generato impatto misurabile.',
+          p1:{ title:'Lancio globale videogame: 42 lingue, 0 downtime', stack:'Next.js, Edge, i18n, CDN', result:'+180% pre‑order organici' },
+          p2:{ title:'E‑commerce enterprise con CWV 95+ e ricerca semantica', stack:'SvelteKit, Edge SSR, Algolia', result:'+32% revenue SEO' },
+          p3:{ title:'Refactor app iOS/Android: bundle -48%, crash -72%', stack:'Swift, Kotlin, CI/CD', result:'Rating 4.8 → 4.9' }
+        },
+        skills: {
+          h2:'Competenze',
+          lead:'Stack moderno, attenzione maniacale a performance e DX. Architetture scalabili, localizzazione, analytics pulite.',
+          col1:{h:'Stack Tecnico'}, col2:{h:'SEO Tecnica'}, col3:{h:'Performance'}, col4:{h:'Dati & Tracking'}
+        },
+        seo: {
+          h2:'Cosa porto sul tavolo',
+          t1:{h:'Growth tecnico con foundation forte', p:'Disegno sistemi che piacciono agli utenti prima che ai crawler. Poi misuro, itero e ottimizzo fino a superare gli obiettivi, senza trucchi.'},
+          t2:{h:'Internazionalizzazione e localizzazione', p:'i18n nativa nel codice, contenuti generati e verificati, routing pulito, hreflang a prova di errore e supply di traduzioni scalabile.'},
+          t3:{h:'Performance e UX', p:'Riduzione sistematica della complessità, pipeline asset rigorosa, RUM sempre acceso, regressioni intercettate in CI.'}
+        },
+        footer: 'Disponibile su richiesta: portfolio completo, referenze e audit demo.'
+      },
+      en: {
+        'meta.title': 'Luca Rossi — Software Engineer & SEO Specialist',
+        'meta.desc': 'Software engineer and SEO specialist. I ship fast, scalable and searchable products for global brands.',
+        nav: { about:'About', work:'Work', skills:'Skills', seo:'SEO', contact:'Contact', cv:'Download CV' },
+        hero: {
+          tag: 'Open to full‑time roles or consulting',
+          h1: 'Software Engineer & SEO Specialist for global brands.',
+          lead: 'I design, build and rank digital products that scale. Apple‑clean UX, Google‑grade performance, and creative polish that wins a game publisher.',
+          badge1: '95+ Core Web Vitals on real sites',
+          badge2: '+230% organic in 12 months',
+          badge3: 'Ship fast, obsess over quality'
+        },
+        cta: { hire:'Hire me', seeWork:'See work', title:'Ready to talk?', lead:'Looking for high‑impact roles across product and organic growth. EU/US timezones. Hybrid on‑site or fully remote.', email:'Send email', top:'Back to top' },
+        stats: { cwv:'Core Web Vitals', org:'Organic traffic', conv:'Conversion rate', lat:'Global latency' },
+        work: {
+          h2:'Case studies',
+          lead:'Concrete projects where code, technical SEO and product thinking delivered measurable results.',
+          p1:{ title:'Global game launch: 42 locales, zero downtime', stack:'Next.js, Edge, i18n, CDN', result:'+180% organic pre‑orders' },
+          p2:{ title:'Enterprise e‑commerce with 95+ CWV & semantic search', stack:'SvelteKit, Edge SSR, Algolia', result:'+32% SEO revenue' },
+          p3:{ title:'iOS/Android refactor: bundle -48%, crashes -72%', stack:'Swift, Kotlin, CI/CD', result:'Rating 4.8 → 4.9' }
+        },
+        skills: {
+          h2:'Skills',
+          lead:'Modern stack, ruthless on performance & DX. Scalable architectures, localization, clean analytics.',
+          col1:{h:'Tech Stack'}, col2:{h:'Technical SEO'}, col3:{h:'Performance'}, col4:{h:'Data & Tracking'}
+        },
+        seo: {
+          h2:'What I bring',
+          t1:{h:'Technical growth with strong foundations', p:'I build systems people love first, then crawlers. Measure, iterate, and optimize until goals are exceeded—no gimmicks.'},
+          t2:{h:'Internationalization & localization', p:'Native i18n in code, verified content, clean routing, bulletproof hreflang, and scalable translation supply.'},
+          t3:{h:'Performance & UX', p:'Systematic complexity reduction, strict asset pipeline, always‑on RUM, regressions caught in CI.'}
+        },
+        footer: 'Full portfolio, references and sample audits available upon request.'
+      }
+    };
+
+    // i18n wiring
+    const i18nNodes = document.querySelectorAll('[data-i18n]');
+    const metaDesc = document.querySelector('[data-i18n-meta-desc]');
+    const itBtn = document.getElementById('itBtn');
+    const enBtn = document.getElementById('enBtn');
+
+    function applyLang(lang){
+      const dict = T[lang];
+      document.documentElement.lang = lang;
+      document.title = dict['meta.title'];
+      metaDesc.setAttribute('content', dict['meta.desc']);
+
+      for(const el of i18nNodes){
+        const key = el.getAttribute('data-i18n');
+        const parts = key.split('.');
+        let val = dict;
+        for(const p of parts){ val = val?.[p]; }
+        if(typeof val === 'string'){ el.textContent = val; }
+      }
+
+      // nav items may appear multiple times (desktop/mobile)
+      document.querySelectorAll('[data-i18n="nav.about"]').forEach(n=>n.textContent=dict.nav.about);
+      document.querySelectorAll('[data-i18n="nav.work"]').forEach(n=>n.textContent=dict.nav.work);
+      document.querySelectorAll('[data-i18n="nav.skills"]').forEach(n=>n.textContent=dict.nav.skills);
+      document.querySelectorAll('[data-i18n="nav.seo"]').forEach(n=>n.textContent=dict.nav.seo);
+      document.querySelectorAll('[data-i18n="nav.contact"]').forEach(n=>n.textContent=dict.nav.contact);
+      document.querySelectorAll('[data-i18n="nav.cv"]').forEach(n=>n.textContent=dict.nav.cv);
+
+      // buttons state
+      itBtn.setAttribute('aria-pressed', String(lang==='it'));
+      enBtn.setAttribute('aria-pressed', String(lang==='en'));
+
+      localStorage.setItem('lang', lang);
+    }
+
+    const saved = localStorage.getItem('lang');
+    const preferred = saved || (navigator.language||'it').slice(0,2);
+    applyLang(preferred==='en'?'en':'it');
+
+    itBtn.addEventListener('click', ()=> applyLang('it'));
+    enBtn.addEventListener('click', ()=> applyLang('en'));
+
+    // Sticky header style on scroll
+    const head = document.getElementById('site-header');
+    const onScroll = () => head.classList.toggle('scrolled', window.scrollY>10);
+    document.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+
+    // Mobile menu
+    const hambBtn = document.getElementById('hambBtn');
+    const menu = document.getElementById('menu');
+    hambBtn?.addEventListener('click', ()=>{
+      const open = menu.classList.toggle('open');
+      hambBtn.setAttribute('aria-expanded', String(open));
+    });
+
+    // Active link highlight while scrolling
+    const links = Array.from(document.querySelectorAll('nav a[href^="#"]'));
+    const sections = links.map(a=> document.querySelector(a.getAttribute('href'))).filter(Boolean);
+    const spied = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          links.forEach(l=> l.classList.toggle('active', l.getAttribute('href') === '#'+e.target.id));
+        }
+      })
+    },{ rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+    sections.forEach(s=> spied.observe(s));
+
+    // year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Luca Rossi",
+    "jobTitle": "Software Engineer & SEO Specialist",
+    "url": "https://example.com/",
+    "sameAs": ["https://www.linkedin.com/in/example", "https://github.com/example"],
+    "knowsAbout": [
+      "Technical SEO", "Internationalization", "Core Web Vitals", "JavaScript", "Next.js", "Edge Computing", "iOS", "Android"
+    ],
+    "worksFor": { "@type":"Organization", "name": "Open to Nintendo, Google, Apple, Rockstar" }
+  }
+  </script>
+
+  <noscript>
+    <style> .backdrop{ display:none; } </style>
+    JavaScript è disabilitato. Il contenuto viene mostrato in italiano. Per cambiare lingua abilita JavaScript.
+  </noscript>
+</body>
+</html>
