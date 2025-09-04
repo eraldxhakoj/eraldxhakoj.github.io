@@ -261,8 +261,9 @@
     .proj header{ position:relative; padding:14px; height:auto; border:none; background:none; }
     .proj .thumb{
       height:180px; border-radius:12px;
+      /* immagine (se presente) + velina per contrasto + fallback */
       background:
-        linear-gradient(135deg, rgba(230,0,18,.18), rgba(66,133,244,.18)),
+        var(--thumb) center/cover no-repeat,
         linear-gradient(0deg, var(--surface), var(--surface));
       border:1px solid #232634; border-color:var(--line);
       box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
@@ -422,9 +423,9 @@
       <p class="section-lead" data-i18n="work.lead">Esempi concreti di progetti dove codice, SEO tecnica e design business‑driven hanno generato impatto misurabile.</p>
       <div class="grid">
         <article class="proj card">
-          <div class="thumb" aria-hidden="true"></div>
+          <div class="thumb" style="--thumb:url('res/proper.png')" aria-hidden="true"></div>
           <header>
-            <h3 data-i18n="work.p1.title">Lancio globale videogame: 42 lingue, 0 downtime</h3>
+            <h3 data-i18n="work.p1.title">Sviluppato il Project Manager aziendale di Black Soda</h3>
             <div class="meta">
               <span class="pill" data-i18n="work.p1.stack">Next.js, Edge, i18n, CDN</span>
               <span class="pill" data-i18n="work.p1.result">+180% pre‑order organici</span>
@@ -561,7 +562,7 @@
       cta:{hire:'Assumimi',seeWork:'Vedi lavori',title:'Pronto per parlare?',lead:'Cerco ruoli ad alto impatto su prodotto e crescita organica. Sedi: EU/US. On-site ibrido o full-remote.',email:'Invia email',top:'Torna su'},
       stats:{cwv:'PageSpeed Score',org:'Traffico organico',conv:'Conversion rate',lat:'Latency globale'},
       work:{h2:'Case study',lead:'Esempi concreti di progetti dove codice, SEO tecnica e design business-driven hanno generato impatto misurabile.',
-        p1:{title:'Lancio globale videogame: 42 lingue, 0 downtime',stack:'Next.js, Edge, i18n, CDN',result:'+180% pre-order organici'},
+        p1:{title:'Sviluppato il Project Manager aziendale di Black Soda',stack:'Codice proprietario, full custom',result:'10+ ore risparmiate ogni settimana'},
         p2:{title:'E-commerce enterprise con CWV 95+ e ricerca semantica',stack:'SvelteKit, Edge SSR, Algolia',result:'+32% revenue SEO'},
         p3:{title:'Refactor app iOS/Android: bundle -48%, crash -72%',stack:'Swift, Kotlin, CI/CD',result:'Rating 4.8 → 4.9'}},
       skills:{h2:'Competenze',lead:'Stack moderno, attenzione maniacale a performance e DX. Architetture scalabili, localizzazione, analytics pulite.',
@@ -582,7 +583,7 @@
       cta:{hire:'Hire me',seeWork:'See work',title:'Ready to talk?',lead:'Looking for high-impact roles across product and organic growth. EU/US timezones. Hybrid on-site or fully remote.',email:'Send email',top:'Back to top'},
       stats:{cwv:'PageSpeed Score',org:'Organic traffic',conv:'Conversion rate',lat:'Global latency'},
       work:{h2:'Case studies',lead:'Concrete projects where code, tech SEO and product thinking delivered measurable results.',
-        p1:{title:'Global game launch: 42 locales, zero downtime',stack:'Next.js, Edge, i18n, CDN',result:'+180% organic pre-orders'},
+        p1:{title:'Custom Project Manager for Black Soda',stack:'Fully proprietary code',result:'10+ hours saved every week'},
         p2:{title:'Enterprise e-commerce with 95+ CWV & semantic search',stack:'SvelteKit, Edge SSR, Algolia',result:'+32% SEO revenue'},
         p3:{title:'iOS/Android refactor: bundle -48%, crashes -72%',stack:'Swift, Kotlin, CI/CD',result:'Rating 4.8 → 4.9'}},
       skills:{h2:'Skills',lead:'Modern stack, ruthless on performance & DX. Scalable architectures, localization, clean analytics.',
