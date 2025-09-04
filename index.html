@@ -392,138 +392,70 @@
   </footer>
 
   <script>
-// Minimal translations for the header CV/Resume label
-const T = { it:{ nav:{cv:'CV'} }, en:{ nav:{cv:'Resume'} } };
-
-
-const menu = document.getElementById('menu');
-const hambBtn = document.getElementById('hambBtn');
-const langSwitcher = document.getElementById('langSwitcher');
-const metaDesc = document.querySelector('[data-i18n-meta-desc]');
-
-
-function applyLang(lang){
-const dict = T[lang] || T.en;
-document.documentElement.lang = lang;
-document.querySelectorAll('[data-i18n="nav.cv"]').forEach(n=> n.textContent = dict.nav.cv);
-langSwitcher.setAttribute('data-lang', lang);
-langSwitcher.setAttribute('aria-label', lang==='en' ? 'Language: English. Switch to Italian' : 'Lingua: Italiano. Passa a Inglese');
-localStorage.setItem('lang', lang);
-}
-
-
-// Init: saved > navigator > EN
-const saved = localStorage.getItem('lang');
-const navLang = (navigator.language||'en').slice(0,2).toLowerCase();
-let currentLang = saved ? saved : (navLang==='it' ? 'it' : 'en');
-applyLang(currentLang);
-
-
-// Toggle on click
-langSwitcher?.addEventListener('click', ()=>{
-currentLang = currentLang==='en' ? 'it' : 'en';
-applyLang(currentLang);
-});
-
-
-// Hamburger
-hambBtn?.addEventListener('click', ()=>{
-const open = menu.classList.toggle('open');
-hambBtn.setAttribute('aria-expanded', String(open));
-});
-
-
-// Year
-document.getElementById('year')?.textContent = new Date().getFullYear();
-</script>
-  
-  <script>
-    // TRANSLATIONS
-    const T = {
+  // Dizionario completo
+  const I18N = {
     it: {
       'meta.title': 'Erald Xhakoj — Sviluppatore & SEO Specialist',
       'meta.desc': 'Sviluppatore software e SEO specialist. Creo prodotti veloci, scalabili e posizionati per brand globali.',
-      nav: { about:'Chi sono', work:'Portfolio', skills:'Competenze', seo:'SEO', contact:'Contatti', cv:'CV' }, // <- CV
-      
-        hero: {
-          tag: 'Disponibile per assunzioni full‑time o consulenze',
-          h1: 'Sviluppatore Software & SEO Specialist per brand globali.',
-          lead: 'Progetto, sviluppo e posiziono prodotti digitali che scalano. UX pulita da Apple, performance misurate come piace a Google, e dettaglio creativo che conquista un publisher di videogiochi.',
-          badge1: 'Core Web Vitals 95+ su siti reali',
-          badge2: '+230% traffico organico in 12 mesi',
-          badge3: 'Ship veloce, qualità maniacale'
-        },
-        cta: { hire:'Assumimi', seeWork:'Vedi lavori', title:'Pronto per parlare?', lead:'Cerco ruoli ad alto impatto su prodotto e crescita organica. Sedi: EU/US. On‑site ibrido o full‑remote.', email:'Invia email', top:'Torna su' },
-        stats: { cwv:'Core Web Vitals', org:'Traffico organico', conv:'Conversion rate', lat:'Latency glob.' },
-        work: {
-          h2:'Case study',
-          lead:'Esempi concreti di progetti dove codice, SEO tecnica e design business‑driven hanno generato impatto misurabile.',
-          p1:{ title:'Lancio globale videogame: 42 lingue, 0 downtime', stack:'Next.js, Edge, i18n, CDN', result:'+180% pre‑order organici' },
-          p2:{ title:'E‑commerce enterprise con CWV 95+ e ricerca semantica', stack:'SvelteKit, Edge SSR, Algolia', result:'+32% revenue SEO' },
-          p3:{ title:'Refactor app iOS/Android: bundle -48%, crash -72%', stack:'Swift, Kotlin, CI/CD', result:'Rating 4.8 → 4.9' }
-        },
-        skills: {
-          h2:'Competenze',
-          lead:'Stack moderno, attenzione maniacale a performance e DX. Architetture scalabili, localizzazione, analytics pulite.',
-          col1:{h:'Stack Tecnico'}, col2:{h:'SEO Tecnica'}, col3:{h:'Performance'}, col4:{h:'Dati & Tracking'}
-        },
-        seo: {
-          h2:'Cosa porto sul tavolo',
-          t1:{h:'Growth tecnico con foundation forte', p:'Disegno sistemi che piacciono agli utenti prima che ai crawler. Poi misuro, itero e ottimizzo fino a superare gli obiettivi, senza trucchi.'},
-          t2:{h:'Internazionalizzazione e localizzazione', p:'i18n nativa nel codice, contenuti generati e verificati, routing pulito, hreflang a prova di errore e supply di traduzioni scalabile.'},
-          t3:{h:'Performance e UX', p:'Riduzione sistematica della complessità, pipeline asset rigorosa, RUM sempre acceso, regressioni intercettate in CI.'}
-        },
-        footer: 'Disponibile su richiesta: portfolio completo, referenze e audit demo.'
-      },
-      en: {
+      nav: { about:'Chi sono', work:'Portfolio', skills:'Competenze', seo:'SEO', contact:'Contatti', cv:'CV' },
+      hero: { tag:'Disponibile per assunzioni full-time o consulenze',
+              h1:'Sviluppatore Software & SEO Specialist per brand globali.',
+              lead:'Progetto, sviluppo e posiziono prodotti digitali che scalano. UX pulita da Apple, performance misurate come piace a Google, e dettaglio creativo che conquista un publisher di videogiochi.',
+              badge1:'Core Web Vitals 95+ su siti reali', badge2:'+230% traffico organico in 12 mesi', badge3:'Ship veloce, qualità maniacale' },
+      cta: { hire:'Assumimi', seeWork:'Vedi lavori', title:'Pronto per parlare?', lead:'Cerco ruoli ad alto impatto su prodotto e crescita organica. Sedi: EU/US. On-site ibrido o full-remote.', email:'Invia email', top:'Torna su' },
+      stats: { cwv:'Core Web Vitals', org:'Traffico organico', conv:'Conversion rate', lat:'Latency glob.' },
+      work: { h2:'Case study', lead:'Esempi concreti di progetti dove codice, SEO tecnica e design business-driven hanno generato impatto misurabile.',
+              p1:{title:'Lancio globale videogame: 42 lingue, 0 downtime', stack:'Next.js, Edge, i18n, CDN', result:'+180% pre-order organici'},
+              p2:{title:'E-commerce enterprise con CWV 95+ e ricerca semantica', stack:'SvelteKit, Edge SSR, Algolia', result:'+32% revenue SEO'},
+              p3:{title:'Refactor app iOS/Android: bundle -48%, crash -72%', stack:'Swift, Kotlin, CI/CD', result:'Rating 4.8 → 4.9'} },
+      skills: { h2:'Competenze', lead:'Stack moderno, attenzione maniacale a performance e DX. Architetture scalabili, localizzazione, analytics pulite.',
+                col1:{h:'Stack Tecnico'}, col2:{h:'SEO Tecnica'}, col3:{h:'Performance'}, col4:{h:'Dati & Tracking'} },
+      seo: { h2:'Cosa porto sul tavolo',
+             t1:{h:'Growth tecnico con foundation forte', p:'Disegno sistemi che piacciono agli utenti prima che ai crawler. Poi misuro, itero e ottimizzo fino a superare gli obiettivi, senza trucchi.'},
+             t2:{h:'Internazionalizzazione e localizzazione', p:'i18n nativa nel codice, contenuti generati e verificati, routing pulito, hreflang a prova di errore e supply di traduzioni scalabile.'},
+             t3:{h:'Performance e UX', p:'Riduzione sistematica della complessità, pipeline asset rigorosa, RUM sempre acceso, regressioni intercettate in CI.'} },
+      footer:'Disponibile su richiesta: portfolio completo, referenze e audit demo.'
+    },
+    en: {
       'meta.title': 'Erald Xhakoj — Software Engineer & SEO Specialist',
       'meta.desc': 'Software engineer and SEO specialist. I ship fast, scalable and searchable products for global brands.',
-      nav: { about:'About', work:'Work', skills:'Skills', seo:'SEO', contact:'Contact', cv:'Resume' }, // <- Resume
-      
-        hero: {
-          tag: 'Open to full‑time roles or consulting',
-          h1: 'Software Engineer & SEO Specialist for global brands.',
-          lead: 'I design, build and rank digital products that scale. Apple‑clean UX, Google‑grade performance, and creative polish that wins a game publisher.',
-          badge1: '95+ Core Web Vitals on real sites',
-          badge2: '+230% organic in 12 months',
-          badge3: 'Ship fast, obsess over quality'
-        },
-        cta: { hire:'Hire me', seeWork:'See work', title:'Ready to talk?', lead:'Looking for high‑impact roles across product and organic growth. EU/US timezones. Hybrid on‑site or fully remote.', email:'Send email', top:'Back to top' },
-        stats: { cwv:'Core Web Vitals', org:'Organic traffic', conv:'Conversion rate', lat:'Global latency' },
-        work: {
-          h2:'Case studies',
-          lead:'Concrete projects where code, technical SEO and product thinking delivered measurable results.',
-          p1:{ title:'Global game launch: 42 locales, zero downtime', stack:'Next.js, Edge, i18n, CDN', result:'+180% organic pre‑orders' },
-          p2:{ title:'Enterprise e‑commerce with 95+ CWV & semantic search', stack:'SvelteKit, Edge SSR, Algolia', result:'+32% SEO revenue' },
-          p3:{ title:'iOS/Android refactor: bundle -48%, crashes -72%', stack:'Swift, Kotlin, CI/CD', result:'Rating 4.8 → 4.9' }
-        },
-        skills: {
-          h2:'Skills',
-          lead:'Modern stack, ruthless on performance & DX. Scalable architectures, localization, clean analytics.',
-          col1:{h:'Tech Stack'}, col2:{h:'Technical SEO'}, col3:{h:'Performance'}, col4:{h:'Data & Tracking'}
-        },
-        seo: {
-          h2:'What I bring',
-          t1:{h:'Technical growth with strong foundations', p:'I build systems people love first, then crawlers. Measure, iterate, and optimize until goals are exceeded—no gimmicks.'},
-          t2:{h:'Internationalization & localization', p:'Native i18n in code, verified content, clean routing, bulletproof hreflang, and scalable translation supply.'},
-          t3:{h:'Performance & UX', p:'Systematic complexity reduction, strict asset pipeline, always‑on RUM, regressions caught in CI.'}
-        },
-        footer: 'Full portfolio, references and sample audits available upon request.'
-      }
-    };
+      nav: { about:'About', work:'Work', skills:'Skills', seo:'SEO', contact:'Contact', cv:'Resume' },
+      hero: { tag:'Open to full-time roles or consulting',
+              h1:'Software Engineer & SEO Specialist for global brands.',
+              lead:'I design, build and rank digital products that scale. Apple-clean UX, Google-grade performance, and creative polish that wins a game publisher.',
+              badge1:'95+ Core Web Vitals on real sites', badge2:'+230% organic in 12 months', badge3:'Ship fast, obsess over quality' },
+      cta: { hire:'Hire me', seeWork:'See work', title:'Ready to talk?', lead:'Looking for high-impact roles across product and organic growth. EU/US timezones. Hybrid on-site or fully remote.', email:'Send email', top:'Back to top' },
+      stats: { cwv:'Core Web Vitals', org:'Organic traffic', conv:'Conversion rate', lat:'Global latency' },
+      work: { h2:'Case studies', lead:'Concrete projects where code, technical SEO and product thinking delivered measurable results.',
+              p1:{title:'Global game launch: 42 locales, zero downtime', stack:'Next.js, Edge, i18n, CDN', result:'+180% organic pre-orders'},
+              p2:{title:'Enterprise e-commerce with 95+ CWV & semantic search', stack:'SvelteKit, Edge SSR, Algolia', result:'+32% SEO revenue'},
+              p3:{title:'iOS/Android refactor: bundle -48%, crashes -72%', stack:'Swift, Kotlin, CI/CD', result:'Rating 4.8 → 4.9'} },
+      skills: { h2:'Skills', lead:'Modern stack, ruthless on performance & DX. Scalable architectures, localization, clean analytics.',
+                col1:{h:'Tech Stack'}, col2:{h:'Technical SEO'}, col3:{h:'Performance'}, col4:{h:'Data & Tracking'} },
+      seo: { h2:'What I bring',
+             t1:{h:'Technical growth with strong foundations', p:'I build systems people love first, then crawlers. Measure, iterate, and optimize until goals are exceeded—no gimmicks.'},
+             t2:{h:'Internationalization & localization', p:'Native i18n in code, verified content, clean routing, bulletproof hreflang, and scalable translation supply.'},
+             t3:{h:'Performance & UX', p:'Systematic complexity reduction, strict asset pipeline, always-on RUM, regressions caught in CI.'} },
+      footer:'Full portfolio, references and sample audits available upon request.'
+    }
+  };
 
-    // i18n wiring
+  // Riferimenti
   const i18nNodes = document.querySelectorAll('[data-i18n]');
-  const metaDesc = document.querySelector('[data-i18n-meta-desc]');
-  const itBtn = document.getElementById('itBtn');
-  const enBtn = document.getElementById('enBtn');
+  const metaDesc  = document.querySelector('[data-i18n-meta-desc]');
+  const langSwitcher = document.getElementById('langSwitcher');
+  const hambBtn = document.getElementById('hambBtn');
+  const menu    = document.getElementById('menu');
 
-    function applyLang(lang){
-    const dict = T[lang] || T.en;
+  function applyLang(lang){
+    const dict = I18N[lang] || I18N.en;
+
+    // <html lang>, <title>, <meta description>
     document.documentElement.lang = lang;
     document.title = dict['meta.title'];
-    metaDesc.setAttribute('content', dict['meta.desc']);
+    if(metaDesc) metaDesc.setAttribute('content', dict['meta.desc']);
 
+    // Tutti i nodi data-i18n
     for(const el of i18nNodes){
       const key = el.getAttribute('data-i18n');
       const parts = key.split('.');
@@ -532,57 +464,44 @@ document.getElementById('year')?.textContent = new Date().getFullYear();
       if(typeof val === 'string'){ el.textContent = val; }
     }
 
-    // update nav labels (desktop/mobile)
+    // Voci nav (desktop/mobile)
     ['about','work','skills','seo','contact','cv'].forEach(k=>{
       document.querySelectorAll(`[data-i18n="nav.${k}"]`).forEach(n=> n.textContent = dict.nav[k]);
     });
 
-    itBtn.setAttribute('aria-pressed', String(lang==='it'));
-    enBtn.setAttribute('aria-pressed', String(lang==='en'));
+    // Switcher UI
+    if(langSwitcher){
+      langSwitcher.setAttribute('data-lang', lang);
+      langSwitcher.setAttribute('aria-label', lang==='en'
+        ? 'Language: English. Switch to Italian'
+        : 'Lingua: Italiano. Passa a Inglese');
+    }
+
     localStorage.setItem('lang', lang);
   }
 
-    // Language selection: priority = saved > navigator > default(en)
+  // Lingua iniziale: saved > navigator > EN
   const saved = localStorage.getItem('lang');
-  const navLang = (navigator.language || navigator.userLanguage || 'en').slice(0,2).toLowerCase();
-  const initial = (saved === 'it' || saved === 'en')
-    ? saved
-    : (navLang === 'it' ? 'it' : 'en'); // default EN unless browser is IT
+  const navLang = (navigator.language || 'en').slice(0,2).toLowerCase();
+  let currentLang = saved ? saved : (navLang==='it' ? 'it' : 'en');
+  applyLang(currentLang);
 
-  applyLang(initial);
+  // Toggle
+  langSwitcher?.addEventListener('click', ()=>{
+    currentLang = currentLang === 'en' ? 'it' : 'en';
+    applyLang(currentLang);
+  });
 
-    itBtn.addEventListener('click', ()=> applyLang('it'));
-  enBtn.addEventListener('click', ()=> applyLang('en'));
+  // Hamburger
+  hambBtn?.addEventListener('click', ()=>{
+    const open = menu.classList.toggle('open');
+    hambBtn.setAttribute('aria-expanded', String(open));
+  });
 
-    // Sticky header style on scroll
-    const head = document.getElementById('site-header');
-    const onScroll = () => head.classList.toggle('scrolled', window.scrollY>10);
-    document.addEventListener('scroll', onScroll, {passive:true});
-    onScroll();
+  // Year
+  document.getElementById('year')?.textContent = new Date().getFullYear();
+</script>
 
-    // Mobile menu
-    const hambBtn = document.getElementById('hambBtn');
-    const menu = document.getElementById('menu');
-    hambBtn?.addEventListener('click', ()=>{
-      const open = menu.classList.toggle('open');
-      hambBtn.setAttribute('aria-expanded', String(open));
-    });
-
-    // Active link highlight while scrolling
-    const links = Array.from(document.querySelectorAll('nav a[href^="#"]'));
-    const sections = links.map(a=> document.querySelector(a.getAttribute('href'))).filter(Boolean);
-    const spied = new IntersectionObserver(entries=>{
-      entries.forEach(e=>{
-        if(e.isIntersecting){
-          links.forEach(l=> l.classList.toggle('active', l.getAttribute('href') === '#'+e.target.id));
-        }
-      })
-    },{ rootMargin: '-40% 0px -50% 0px', threshold: 0 });
-    sections.forEach(s=> spied.observe(s));
-
-    // year
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
 
   <!-- Structured Data -->
   <script type="application/ld+json">
