@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title data-i18n="meta.title">Erald Xhakoj — Software Developer & SEO Specialist</title>
 <meta name="description" content="Software Developer, SEO Expert & Teacher con 5+ anni di esperienza nello sviluppo full‑stack, SEO avanzata e digital marketing." data-i18n-meta-desc>
-  <meta name="theme-color" content="#0f0f10" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="" />
   <link rel="canonical" href="https://example.com/" />
   <link rel="alternate" href="https://example.com/" hreflang="it" />
   <link rel="alternate" href="https://example.com/en" hreflang="en" />
@@ -17,27 +18,33 @@
   <meta name="twitter:card" content="summary_large_image" />
   <style>
     :root{
-      --bg:#0b0c10; /* deep neutral */
-      --surface: #0f1117; /* apple-like clean */
+      /* DARK (default) */
+      --bg:#0b0c10;
+      --surface:#0f1117;
+      --surface-1:#121319;
+      --surface-2:#0f1117;
       --text:#e6e7eb;
       --muted:#a9acb6;
       --line:#23252e;
-      --accent:#4c8df6; /* base accent */
+      --accent:#4c8df6;
       --google-blue:#4285F4; --google-red:#EA4335; --google-yellow:#FBBC05; --google-green:#34A853;
-      --nintendo:#E60012; /* spirited red */
-      --apple:#cfd2d6; /* frost */
+      --nintendo:#E60012;
+      --apple:#cfd2d6;
       --success:#36d399;
       --warning:#f6c14c;
-      --radius: 18px;
-      --shadow: 0 10px 30px rgba(0,0,0,.25);
-      --glass: rgba(18,18,20,.5);
-      --nav-h: 72px;
+      --radius:18px;
+      --shadow:0 10px 30px rgba(0,0,0,.25);
+      --glass:rgba(18,18,20,.5);
+      --nav-h:72px;
+      --header-from:rgba(10,10,12,.8);
+      --header-to:rgba(10,10,12,.5);
     }
+
 
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body{ margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji"; background: var(--bg); color: var(--text); line-height: 1.45; }
-
+    body{ margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Ubuntu,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";  background:var(--bg); color:var(--text); line-height:1.45; }
+    
     /* BACKDROP ANIMATION */
     .backdrop{
       position: fixed; inset: -10vmax; z-index: -1; filter: blur(50px) saturate(120%); opacity:.55; pointer-events:none;
@@ -55,7 +62,8 @@
     .wrap{ width:min(1200px, 92%); margin-inline:auto; }
 
     /* NAV */
-    header{ position: sticky; top:0; z-index: 50; backdrop-filter: blur(8px) saturate(120%); background: linear-gradient(to bottom, rgba(10,10,12,.8), rgba(10,10,12,.5)); border-bottom:1px solid var(--line); height: var(--nav-h); }
+    header{ position:sticky; top:0; z-index:50; backdrop-filter:blur(8px) saturate(120%); background: linear-gradient(to bottom, var(--header-from), var(--header-to)); border-bottom:1px solid var(--line); height:var(--nav-h); }
+    
     header.scrolled{ background: rgba(10,10,12,.9); }
     .nav{ display:flex; align-items:center; justify-content: space-between; gap:16px; height: var(--nav-h); }
     .brand{
@@ -188,7 +196,8 @@
     .lead{ color: var(--muted); font-size: clamp(16px, 1.6vw, 20px); max-width: 60ch; }
     .hero-cta{ display:flex; gap:12px; margin-top:22px; flex-wrap: wrap; }
 
-    .card{ background: linear-gradient(180deg, #121319, #0f1117); border:1px solid #20222c; border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); }
+    .card{ background:linear-gradient(180deg, var(--surface-1), var(--surface-2)); border:1px solid #20222c; border-color:var(--line); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow); }
+    
     .hero-stats{ display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:12px; }
     .stat{ padding:16px; border-radius: 16px; border:1px solid #252734; background: #0f121a; }
     .stat b{ font-size: 28px; display:block; }
@@ -208,10 +217,13 @@
 
     .proj{ position:relative; overflow:hidden; }
     .proj header{ position:relative; padding:14px; height:auto; border:none; background:none; }
-    .proj .thumb{ height: 180px; border-radius: 12px; background:
-      linear-gradient(135deg, rgba(230,0,18,.18), rgba(66,133,244,.18)),
-      linear-gradient(0deg, #0f1117, #0f1117);
-      border:1px solid #232634; box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
+    .proj .thumb{
+      height:180px; border-radius:12px;
+      background:
+        linear-gradient(135deg, rgba(230,0,18,.18), rgba(66,133,244,.18)),
+        linear-gradient(0deg, var(--surface), var(--surface));
+      border:1px solid #232634; border-color:var(--line);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.02);
     }
     .proj .meta{ display:flex; justify-content: space-between; align-items:center; margin-top:10px; }
     .pill{ font-size:12px; padding:6px 8px; border-radius: 999px; border:1px solid #2a2d3a; color:var(--muted); }
@@ -230,12 +242,38 @@
     @media (max-width: 600px){ .row{ grid-template-columns: 1fr; } }
 
     /* CTA */
-    .cta-section .card{ display:flex; align-items:center; justify-content: space-between; gap:16px; flex-wrap:wrap; border:1px solid #2a2d3a; background: linear-gradient(0deg, #0e1016, #10121a); }
+    .cta-section .card{
+      border:1px solid #2a2d3a; border-color:var(--line);
+      background:linear-gradient(0deg, var(--surface-2), var(--surface-1));
+    }
 
     footer{ padding: 50px 0; color: var(--muted); border-top:1px solid var(--line); }
 
     /* ACCESSIBILITY */
     :focus-visible{ outline: 2px solid var(--accent); outline-offset: 2px; border-radius:8px; }
+
+    @media (prefers-color-scheme: light){
+  :root{
+      --bg:#f7f8fa;
+      --surface:#ffffff;
+      --surface-1:#ffffff;
+      --surface-2:#f7f8fa;
+      --text:#0b0c10;
+      --muted:#505563;
+      --line:#dfe3eb;
+      --glass:rgba(255,255,255,.65);
+      --shadow:0 10px 30px rgba(0,0,0,.08);
+      --header-from:rgba(255,255,255,.9);
+      --header-to:rgba(255,255,255,.7);
+    }
+  
+    /* piccoli ritocchi di contrasto */
+    .btn{ background:#fff; border-color:var(--line); }
+    .lang-switch{ background:#f3f5f8; border-color:var(--line); }
+    .flag-btn{ background:#fff; border-color:var(--line); }
+    .stat{ background:#fff; border-color:var(--line); }
+  }
+
   </style>
 </head>
 <body>
@@ -588,5 +626,32 @@
     <style> .backdrop{ display:none; } </style>
     JavaScript è disabilitato. Il contenuto viene mostrato in italiano. Per cambiare lingua abilita JavaScript.
   </noscript>
+
+  <script>
+(function syncThemeColor(){
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(!meta) return;
+
+  function setThemeColor(){
+    // true se il sistema è in dark
+    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    // colore della barra: scuro o chiaro
+    meta.setAttribute('content', dark ? '#0f0f10' : '#ffffff');
+  }
+
+  // set iniziale
+  setThemeColor();
+
+  // ascolta cambi di tema di sistema
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  if (mq.addEventListener) {
+    mq.addEventListener('change', setThemeColor);
+  } else {
+    // Safari vecchi
+    mq.addListener(setThemeColor);
+  }
+})();
+</script>
+
 </body>
 </html>
