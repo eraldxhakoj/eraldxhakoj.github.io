@@ -106,12 +106,15 @@
 .flag-btn svg{ display:block; }
 
     
-    .lang button{
-        background:#151720; border:1px solid var(--line);
-        padding:4px 6px; border-radius:8px; cursor:pointer;
-        font-size:18px; line-height:1;
-      }
-      .lang button[aria-pressed="true"]{ background:#1a1d27; }
+    /* NON toccare lo switch di lingua */
+.lang button:not(.lang-switch){
+  background:#151720; border:1px solid var(--line);
+  padding:4px 6px; border-radius:8px; cursor:pointer;
+  font-size:18px; line-height:1;
+}
+.lang button:not(.lang-switch)[aria-pressed="true"]{ background:#1a1d27; }
+
+
     /* Language switcher (dual flags, current highlighted) */
 .lang-switch{
   position:relative;
