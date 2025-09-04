@@ -38,6 +38,11 @@
       --nav-h:72px;
       --header-from:rgba(10,10,12,.8);
       --header-to:rgba(10,10,12,.5);
+      --ctrl-bg:#151720;
+      --ctrl-knob:#1a1d27;
+      --ctrl-ring:#2f3240;
+      --ctrl-shadow:0 4px 12px rgba(0,0,0,.35);
+
     }
 
 
@@ -83,7 +88,14 @@
 
     .btn{ border:1px solid var(--line); background: #121319; padding:10px 14px; border-radius: 999px; color: var(--text); font-weight:700; text-decoration:none; box-shadow: var(--shadow); }
     .btn:hover{ border-color:#2b2e3a; transform: translateY(-1px); }
-    .btn.primary{ background: linear-gradient(135deg, var(--nintendo), var(--google-blue)); border: none; }
+    .btn.primary{
+      background: linear-gradient(135deg, var(--nintendo), var(--google-blue));
+      border: none;
+      color:#fff;                 /* <— forza testo bianco */
+    }
+    .btn.primary:hover{
+      filter: brightness(1.03);
+    }
 
     .flag-btn{
   display:inline-flex; align-items:center; justify-content:center;
@@ -111,7 +123,7 @@
   height:40px;
   padding:4px;
   border-radius:10px;
-  background:#151720;
+  background: var(--ctrl-bg);
   border:1px solid var(--line);
   overflow:hidden;
   cursor:pointer;
@@ -136,9 +148,8 @@
   width:calc(50% - 4px);   /* 40px */
   height:calc(100% - 8px); /* 32px */
   border-radius:8px;
-  background:#1a1d27;
-  /* ring interno + ombra morbida: non sborda mai dal container */
-  box-shadow: inset 0 0 0 1px #2f3240, 0 4px 12px rgba(0,0,0,.35);
+  background: var(--ctrl-knob);
+  box-shadow: inset 0 0 0 1px var(--ctrl-ring), var(--ctrl-shadow);
   transition: left .2s ease, right .2s ease;
   will-change: left, right;
 }
@@ -159,7 +170,7 @@
   nav ul{
     position: fixed;
     inset: var(--nav-h) 0 auto 0;
-    background: rgba(14,15,20,.98);
+    background: var(--menu-bg, rgba(14,15,20,.98));
     backdrop-filter: blur(8px);
     padding: 24px;
     flex-direction: column;
@@ -253,26 +264,36 @@
     :focus-visible{ outline: 2px solid var(--accent); outline-offset: 2px; border-radius:8px; }
 
     @media (prefers-color-scheme: light){
-  :root{
-      --bg:#f7f8fa;
-      --surface:#ffffff;
-      --surface-1:#ffffff;
-      --surface-2:#f7f8fa;
-      --text:#0b0c10;
-      --muted:#505563;
-      --line:#dfe3eb;
-      --glass:rgba(255,255,255,.65);
-      --shadow:0 10px 30px rgba(0,0,0,.08);
-      --header-from:rgba(255,255,255,.9);
-      --header-to:rgba(255,255,255,.7);
-    }
-  
-    /* piccoli ritocchi di contrasto */
-    .btn{ background:#fff; border-color:var(--line); }
-    .lang-switch{ background:#f3f5f8; border-color:var(--line); }
-    .flag-btn{ background:#fff; border-color:var(--line); }
-    .stat{ background:#fff; border-color:var(--line); }
-  }
+      :root{
+          --bg:#f7f8fa;
+          --surface:#ffffff;
+          --surface-1:#ffffff;
+          --surface-2:#f7f8fa;
+          --text:#0b0c10;
+          --muted:#505563;
+          --line:#dfe3eb;
+          --glass:rgba(255,255,255,.65);
+          --shadow:0 10px 30px rgba(0,0,0,.08);
+          --header-from:rgba(255,255,255,.9);
+          --header-to:rgba(255,255,255,.7);
+          --ctrl-bg:#f3f5f8;
+          --ctrl-knob:#ffffff;
+          --ctrl-ring:#e2e6ef;
+          --ctrl-shadow:0 4px 12px rgba(0,0,0,.12);
+        }
+      
+        /* piccoli ritocchi di contrasto */
+        .btn{ background:#fff; border-color:var(--line); }
+        .lang-switch{ background:#f3f5f8; border-color:var(--line); }
+        .lang-switch .opt svg{ filter: none; }
+        .flag-btn{ background:#fff; border-color:var(--line); }
+        .stat{ background:#fff; border-color:var(--line); }
+
+        @media (max-width: 900px){
+          nav ul{ background: rgba(255,255,255,.98); }
+        }
+
+      }
 
   </style>
 </head>
