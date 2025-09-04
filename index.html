@@ -120,23 +120,24 @@
 }
 .lang-switch .opt svg{ width:24px; height:16px; display:block; border-radius:6px; }
 
-/* Knob: dimensioni ancorate alla griglia interna */
+/* knob */
 .lang-switch .knob{
   position:absolute;
   top:4px;
-  left:4px; /* default EN */
-  width:calc(50% - 4px);     /* 44 - 4 = 40px: uguale alla colonna interna */
-  height:calc(100% - 8px);   /* 32px: uguale all’area interna verticale */
+  left:4px;                /* default EN */
+  width:calc(50% - 4px);   /* 40px */
+  height:calc(100% - 8px); /* 32px */
   border-radius:8px;
   background:#1a1d27;
-  box-shadow:0 0 0 1px #2f3240, 0 4px 12px rgba(0,0,0,.35);
-  transition:left .2s ease;
-  will-change:left;
+  /* ring interno + ombra morbida: non sborda mai dal container */
+  box-shadow: inset 0 0 0 1px #2f3240, 0 4px 12px rgba(0,0,0,.35);
+  transition: left .2s ease, right .2s ease;
+  will-change: left, right;
 }
 
 /* Posizioni esatte: in IT la knob parte dopo la prima colonna + gap */
-.lang-switch[data-lang="en"] .knob{ left:4px; }
-.lang-switch[data-lang="it"] .knob{ left:calc(50% + 4px); }
+.lang-switch[data-lang="en"] .knob{ left:4px;  right:auto; }
+.lang-switch[data-lang="it"] .knob{ left:auto; right:4px; }
 
 .lang-switch[data-lang="en"] .opt.en{ opacity:1; }
 .lang-switch[data-lang="it"] .opt.it{ opacity:1; }
