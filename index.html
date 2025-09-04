@@ -168,13 +168,33 @@
 
 
     .hamb{ display:none; }
-    /* stile hamburger coerente col tema */
-.hamb button{
-  background: var(--ctrl-bg);
-  border: 1px solid var(--line);
-  color: var(--text);
-  width:40px; height:40px; border-radius:10px; cursor:pointer;
-}
+    /* container del bottone */
+    .hamb button{
+      background: var(--ctrl-bg);
+      border: 1px solid var(--line);
+      color: var(--text);
+      width:40px; height:40px; border-radius:10px; cursor:pointer;
+      display:grid; place-items:center;   /* centra il contenuto */
+      padding:0;                          /* no padding che sposta l’icona */
+    }
+
+    /* icona hamburger: 3 barre perfettamente centrate */
+    .menu-ico{
+      position:relative;
+      width:18px; height:2px;
+      background: var(--text);
+      border-radius:2px;
+    }
+    .menu-ico::before,
+    .menu-ico::after{
+      content:"";
+      position:absolute; left:0;
+      width:18px; height:2px;
+      background: var(--text);
+      border-radius:2px;
+    }
+    .menu-ico::before{ top:-6px; }
+    .menu-ico::after { top: 6px; }
 
     /* MOBILE MENU */
 @media (max-width: 900px){
@@ -299,6 +319,7 @@
         .lang-switch .opt svg{ filter: none; }
         .flag-btn{ background:#fff; border-color:var(--line); }
         .stat{ background:#fff; border-color:var(--line); }
+        .hamb button{ box-shadow: 0 1px 0 rgba(0,0,0,.02), 0 0 0 1px rgba(0,0,0,.02) inset; }
 
         @media (max-width: 900px){
           nav ul{ background: rgba(255,255,255,.98); }
@@ -352,8 +373,11 @@
 
         <a class="btn" href="./CV.pdf" data-i18n="nav.cv" download>CV</a>
         <div class="hamb">
-          <button id="hambBtn" aria-label="Menu" aria-expanded="false" aria-controls="menu">☰</button>
+          <button id="hambBtn" aria-label="Menu" aria-expanded="false" aria-controls="menu">
+            <span class="menu-ico" aria-hidden="true"></span>
+          </button>
         </div>
+
       </div>
 
     </div>
