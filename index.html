@@ -106,13 +106,13 @@
 .flag-btn svg{ display:block; }
 
     
-    /* NON toccare lo switch di lingua */
-.lang button:not(.lang-switch){
+/* SOLO i button diretti dentro .lang (esclude l’hamburger annidato) */
+.lang > button:not(.lang-switch){
   background:#151720; border:1px solid var(--line);
   padding:4px 6px; border-radius:8px; cursor:pointer;
   font-size:18px; line-height:1;
 }
-.lang button:not(.lang-switch)[aria-pressed="true"]{ background:#1a1d27; }
+.lang > button:not(.lang-switch)[aria-pressed="true"]{ background:#1a1d27; }
 
 
     /* Language switcher (dual flags, current highlighted) */
@@ -132,13 +132,14 @@
   cursor:pointer;
 }
 .lang-switch .opt{
+  position: relative;
   display:flex;
   align-items:center;
   justify-content:center;
   width:100%;
   height:100%;
   opacity:.55;
-  z-index:1;
+  z-index:2;
   pointer-events:none;
 }
 .lang-switch .opt svg{ width:24px; height:16px; display:block; border-radius:6px; }
@@ -148,8 +149,9 @@
   position:absolute;
   top:4px;
   left:4px;                /* default EN */
-  width:calc(50% - 4px);   /* 40px */
+  width: calc(50% - 8px);   /* 40px */
   height:calc(100% - 8px); /* 32px */
+   z-index: 1; 
   border-radius:8px;
   background: var(--ctrl-knob);
   box-shadow: inset 0 0 0 1px var(--ctrl-ring), var(--ctrl-shadow);
@@ -159,14 +161,20 @@
 
 /* Posizioni esatte: in IT la knob parte dopo la prima colonna + gap */
 .lang-switch[data-lang="en"] .knob{ left:4px;  right:auto; }
-.lang-switch[data-lang="it"] .knob{ left:auto; right:4px; }
+.lang-switch[data-lang="it"] .knob{ left: calc(50% + 4px); right:4px; }
 
 .lang-switch[data-lang="en"] .opt.en{ opacity:1; }
 .lang-switch[data-lang="it"] .opt.it{ opacity:1; }
 
 
     .hamb{ display:none; }
-    .hamb button{ background:none; border:none; color: var(--text); width:40px; height:40px; border-radius:10px; cursor:pointer; }
+    /* stile hamburger coerente col tema */
+.hamb button{
+  background: var(--ctrl-bg);
+  border: 1px solid var(--line);
+  color: var(--text);
+  width:40px; height:40px; border-radius:10px; cursor:pointer;
+}
 
     /* MOBILE MENU */
 @media (max-width: 900px){
