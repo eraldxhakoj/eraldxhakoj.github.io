@@ -95,37 +95,51 @@
     /* Language switcher (dual flags, current highlighted) */
 .lang-switch{
   position:relative;
-  display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:8px;
-  width:96px; height:40px; padding:4px; border-radius:10px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  gap:8px;
+  width:96px;
+  height:40px;
+  padding:4px;
+  border-radius:10px;
   background:#151720;
-  /* usa solo un bordo, e nascondi overflow per evitare doppi bordi */
   border:1px solid var(--line);
   overflow:hidden;
   cursor:pointer;
 }
 .lang-switch .opt{
-  display:flex; align-items:center; justify-content:center;
-  opacity:.55; z-index:1; pointer-events:none; /* click solo sul bottone */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:100%;
+  opacity:.55;
+  z-index:1;
+  pointer-events:none;
 }
-.lang-switch .opt svg{ display:block; border-radius:6px; } /* flag con angoli puliti */
+.lang-switch .opt svg{ width:24px; height:16px; display:block; border-radius:6px; }
 
-/* knob senza border (usa shadow come “contorno” per non sommare i bordi) */
+/* Knob: dimensioni ancorate alla griglia interna */
 .lang-switch .knob{
-  position:absolute; top:4px;
-  width:44px; height:32px; border-radius:8px;
+  position:absolute;
+  top:4px;
+  left:4px; /* default EN */
+  width:calc(50% - 4px);     /* 44 - 4 = 40px: uguale alla colonna interna */
+  height:calc(100% - 8px);   /* 32px: uguale all’area interna verticale */
+  border-radius:8px;
   background:#1a1d27;
-  /* contorno + profondità, non somma il bordo del container */
-  box-shadow: 0 0 0 1px #2f3240, 0 4px 12px rgba(0,0,0,.35);
-  transition: left .2s ease, right .2s ease;
+  box-shadow:0 0 0 1px #2f3240, 0 4px 12px rgba(0,0,0,.35);
+  transition:left .2s ease;
+  will-change:left;
 }
 
-/* usa left/right al posto di transform per bordi più nitidi */
-.lang-switch[data-lang="en"]  .knob{ left:4px;  right:auto; }
-.lang-switch[data-lang="it"]  .knob{ left:auto; right:4px;  }
+/* Posizioni esatte: in IT la knob parte dopo la prima colonna + gap */
+.lang-switch[data-lang="en"] .knob{ left:4px; }
+.lang-switch[data-lang="it"] .knob{ left:calc(50% + 4px); }
 
-/* evidenzia l’opzione attiva */
-.lang-switch[data-lang="en"]  .opt.en{ opacity:1; }
-.lang-switch[data-lang="it"]  .opt.it{ opacity:1; }
+.lang-switch[data-lang="en"] .opt.en{ opacity:1; }
+.lang-switch[data-lang="it"] .opt.it{ opacity:1; }
 
 
     .hamb{ display:none; }
