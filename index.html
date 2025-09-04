@@ -91,34 +91,16 @@
     .lang button{ background: #151720; border:1px solid var(--line); color: var(--muted); font-weight:700; padding:6px 10px; border-radius: 10px; cursor:pointer; }
     .lang button[aria-pressed="true"]{ color: var(--text); border-color: #2f3240; background:#1a1d27; }
 
-    .lang-switch{
-      display:inline-flex; align-items:center; justify-content:center;
-      width:48px; height:40px; padding:0; border-radius:10px;
-      background:#151720; border:1px solid var(--line); cursor:pointer;
-    }
-    .lang-switch:hover{ background:#1a1d27; }
-    .lang-switch svg{ display:block; }
-
-    
     .hamb{ display:none; }
     .hamb button{ background:none; border:none; color: var(--text); width:40px; height:40px; border-radius:10px; cursor:pointer; }
 
     /* MOBILE MENU */
     @media (max-width: 900px){
-      nav ul{
-        position: fixed; inset: var(--nav-h) 0 auto 0;
-        background: rgba(14,15,20,.98);
-        backdrop-filter: blur(8px);
-        padding: 24px; flex-direction: column; align-items: flex-start; gap:18px;
-        border-bottom:1px solid var(--line);
-        transform: translateY(-120%); transition: transform .25s ease;
-        display:flex; /* visibile quando aperto */
-      }
+      nav ul{ position: fixed; inset: var(--nav-h) 0 auto 0; background: rgba(14,15,20,.98); backdrop-filter: blur(8px); padding: 24px; flex-direction: column; align-items: flex-start; gap:18px; border-bottom:1px solid var(--line); transform: translateY(-120%); transition: transform .25s ease; }
       nav ul.open{ transform: translateY(0%); }
       .hamb{ display:flex; }
+      nav .desktop{ display:none; }
     }
-
-
 
     /* HERO */
     .hero{ padding: clamp(40px, 6vw, 90px) 0 40px; }
@@ -188,6 +170,7 @@
   <header id="site-header">
 <div class="wrap nav">
 <a href="#top" class="brand">Erald Xhakoj</a>
+      </a>
       <nav>
         <ul id="menu" class="desktop" role="menubar">
           <li role="none"><a role="menuitem" href="#about" data-i18n="nav.about">Chi sono</a></li>
@@ -198,13 +181,35 @@
         </ul>
       </nav>
       <div class="lang">
-        <button id="langToggle" class="lang-switch" aria-label="Switch language" title="Switch language"></button>
-        <a class="btn" href="./CV.pdf" data-i18n="nav.cv" download>Resume</a>
-        <div class="hamb">
-          <button id="hambBtn" aria-label="Menu" aria-expanded="false" aria-controls="menu">☰</button>
-        </div>
-      </div>
+  <button id="itBtn" aria-pressed="false" aria-label="Italiano" class="flag-btn" title="Italiano">
+    <!-- Flag IT -->
+    <svg viewBox="0 0 3 2" width="24" height="16" aria-hidden="true">
+      <rect width="1" height="2" x="0" y="0" fill="#009246"/>
+      <rect width="1" height="2" x="1" y="0" fill="#ffffff"/>
+      <rect width="1" height="2" x="2" y="0" fill="#ce2b37"/>
+    </svg>
+  </button>
 
+  <button id="enBtn" aria-pressed="true" aria-label="English" class="flag-btn" title="English">
+    <!-- Flag EN (UK-style) -->
+    <svg viewBox="0 0 60 30" width="24" height="16" aria-hidden="true">
+      <clipPath id="t"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
+      <clipPath id="s"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
+      <g clip-path="url(#t)">
+        <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4" clip-path="url(#s)"/>
+        <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
+        <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+      </g>
+    </svg>
+  </button>
+
+  <a class="btn" href="./CV.pdf" data-i18n="nav.cv" download>Resume</a>
+  <div class="hamb">
+    <button id="hambBtn" aria-label="Menu" aria-expanded="false" aria-controls="menu">☰</button>
+  </div>
+</div>
 
     </div>
   </header>
@@ -375,92 +380,92 @@
   </footer>
 
   <script>
-  // Dizionario completo (riusa il tuo T esistente)
-  const T = {
+    // TRANSLATIONS
+    const T = {
     it: {
       'meta.title': 'Erald Xhakoj — Sviluppatore & SEO Specialist',
       'meta.desc': 'Sviluppatore software e SEO specialist. Creo prodotti veloci, scalabili e posizionati per brand globali.',
-      nav: { about:'Chi sono', work:'Portfolio', skills:'Competenze', seo:'SEO', contact:'Contatti', cv:'CV' },
-      hero: { tag:'Disponibile per assunzioni full-time o consulenze',
-              h1:'Sviluppatore Software & SEO Specialist per brand globali.',
-              lead:'Progetto, sviluppo e posiziono prodotti digitali che scalano. UX pulita da Apple, performance misurate come piace a Google, e dettaglio creativo che conquista un publisher di videogiochi.',
-              badge1:'Core Web Vitals 95+ su siti reali', badge2:'+230% traffico organico in 12 mesi', badge3:'Ship veloce, qualità maniacale' },
-      cta: { hire:'Assumimi', seeWork:'Vedi lavori', title:'Pronto per parlare?', lead:'Cerco ruoli ad alto impatto su prodotto e crescita organica. Sedi: EU/US. On-site ibrido o full-remote.', email:'Invia email', top:'Torna su' },
-      stats: { cwv:'Core Web Vitals', org:'Traffico organico', conv:'Conversion rate', lat:'Latency glob.' },
-      work: { h2:'Case study', lead:'Esempi concreti di progetti dove codice, SEO tecnica e design business-driven hanno generato impatto misurabile.',
-              p1:{title:'Lancio globale videogame: 42 lingue, 0 downtime', stack:'Next.js, Edge, i18n, CDN', result:'+180% pre-order organici'},
-              p2:{title:'E-commerce enterprise con CWV 95+ e ricerca semantica', stack:'SvelteKit, Edge SSR, Algolia', result:'+32% revenue SEO'},
-              p3:{title:'Refactor app iOS/Android: bundle -48%, crash -72%', stack:'Swift, Kotlin, CI/CD', result:'Rating 4.8 → 4.9'} },
-      skills: { h2:'Competenze', lead:'Stack moderno, attenzione maniacale a performance e DX. Architetture scalabili, localizzazione, analytics pulite.',
-                col1:{h:'Stack Tecnico'}, col2:{h:'SEO Tecnica'}, col3:{h:'Performance'}, col4:{h:'Dati & Tracking'} },
-      seo: { h2:'Cosa porto sul tavolo',
-             t1:{h:'Growth tecnico con foundation forte', p:'Disegno sistemi che piacciono agli utenti prima che ai crawler. Poi misuro, itero e ottimizzo fino a superare gli obiettivi, senza trucchi.'},
-             t2:{h:'Internazionalizzazione e localizzazione', p:'i18n nativa nel codice, contenuti generati e verificati, routing pulito, hreflang a prova di errore e supply di traduzioni scalabile.'},
-             t3:{h:'Performance e UX', p:'Riduzione sistematica della complessità, pipeline asset rigorosa, RUM sempre acceso, regressioni intercettate in CI.'} },
-      footer:'Disponibile su richiesta: portfolio completo, referenze e audit demo.'
-    },
-    en: {
+      nav: { about:'Chi sono', work:'Portfolio', skills:'Competenze', seo:'SEO', contact:'Contatti', cv:'CV' }, // <- CV
+      
+        hero: {
+          tag: 'Disponibile per assunzioni full‑time o consulenze',
+          h1: 'Sviluppatore Software & SEO Specialist per brand globali.',
+          lead: 'Progetto, sviluppo e posiziono prodotti digitali che scalano. UX pulita da Apple, performance misurate come piace a Google, e dettaglio creativo che conquista un publisher di videogiochi.',
+          badge1: 'Core Web Vitals 95+ su siti reali',
+          badge2: '+230% traffico organico in 12 mesi',
+          badge3: 'Ship veloce, qualità maniacale'
+        },
+        cta: { hire:'Assumimi', seeWork:'Vedi lavori', title:'Pronto per parlare?', lead:'Cerco ruoli ad alto impatto su prodotto e crescita organica. Sedi: EU/US. On‑site ibrido o full‑remote.', email:'Invia email', top:'Torna su' },
+        stats: { cwv:'Core Web Vitals', org:'Traffico organico', conv:'Conversion rate', lat:'Latency glob.' },
+        work: {
+          h2:'Case study',
+          lead:'Esempi concreti di progetti dove codice, SEO tecnica e design business‑driven hanno generato impatto misurabile.',
+          p1:{ title:'Lancio globale videogame: 42 lingue, 0 downtime', stack:'Next.js, Edge, i18n, CDN', result:'+180% pre‑order organici' },
+          p2:{ title:'E‑commerce enterprise con CWV 95+ e ricerca semantica', stack:'SvelteKit, Edge SSR, Algolia', result:'+32% revenue SEO' },
+          p3:{ title:'Refactor app iOS/Android: bundle -48%, crash -72%', stack:'Swift, Kotlin, CI/CD', result:'Rating 4.8 → 4.9' }
+        },
+        skills: {
+          h2:'Competenze',
+          lead:'Stack moderno, attenzione maniacale a performance e DX. Architetture scalabili, localizzazione, analytics pulite.',
+          col1:{h:'Stack Tecnico'}, col2:{h:'SEO Tecnica'}, col3:{h:'Performance'}, col4:{h:'Dati & Tracking'}
+        },
+        seo: {
+          h2:'Cosa porto sul tavolo',
+          t1:{h:'Growth tecnico con foundation forte', p:'Disegno sistemi che piacciono agli utenti prima che ai crawler. Poi misuro, itero e ottimizzo fino a superare gli obiettivi, senza trucchi.'},
+          t2:{h:'Internazionalizzazione e localizzazione', p:'i18n nativa nel codice, contenuti generati e verificati, routing pulito, hreflang a prova di errore e supply di traduzioni scalabile.'},
+          t3:{h:'Performance e UX', p:'Riduzione sistematica della complessità, pipeline asset rigorosa, RUM sempre acceso, regressioni intercettate in CI.'}
+        },
+        footer: 'Disponibile su richiesta: portfolio completo, referenze e audit demo.'
+      },
+      en: {
       'meta.title': 'Erald Xhakoj — Software Engineer & SEO Specialist',
       'meta.desc': 'Software engineer and SEO specialist. I ship fast, scalable and searchable products for global brands.',
-      nav: { about:'About', work:'Work', skills:'Skills', seo:'SEO', contact:'Contact', cv:'Resume' },
-      hero: { tag:'Open to full-time roles or consulting',
-              h1:'Software Engineer & SEO Specialist for global brands.',
-              lead:'I design, build and rank digital products that scale. Apple-clean UX, Google-grade performance, and creative polish that wins a game publisher.',
-              badge1:'95+ Core Web Vitals on real sites', badge2:'+230% organic in 12 months', badge3:'Ship fast, obsess over quality' },
-      cta: { hire:'Hire me', seeWork:'See work', title:'Ready to talk?', lead:'Looking for high-impact roles across product and organic growth. EU/US timezones. Hybrid on-site or fully remote.', email:'Send email', top:'Back to top' },
-      stats: { cwv:'Core Web Vitals', org:'Organic traffic', conv:'Conversion rate', lat:'Global latency' },
-      work: { h2:'Case studies', lead:'Concrete projects where code, technical SEO and product thinking delivered measurable results.',
-              p1:{title:'Global game launch: 42 locales, zero downtime', stack:'Next.js, Edge, i18n, CDN', result:'+180% organic pre-orders'},
-              p2:{title:'Enterprise e-commerce with 95+ CWV & semantic search', stack:'SvelteKit, Edge SSR, Algolia', result:'+32% SEO revenue'},
-              p3:{title:'iOS/Android refactor: bundle -48%, crashes -72%', stack:'Swift, Kotlin, CI/CD', result:'Rating 4.8 → 4.9'} },
-      skills: { h2:'Skills', lead:'Modern stack, ruthless on performance & DX. Scalable architectures, localization, clean analytics.',
-                col1:{h:'Tech Stack'}, col2:{h:'Technical SEO'}, col3:{h:'Performance'}, col4:{h:'Data & Tracking'} },
-      seo: { h2:'What I bring',
-             t1:{h:'Technical growth with strong foundations', p:'I build systems people love first, then crawlers. Measure, iterate, and optimize until goals are exceeded—no gimmicks.'},
-             t2:{h:'Internationalization & localization', p:'Native i18n in code, verified content, clean routing, bulletproof hreflang, and scalable translation supply.'},
-             t3:{h:'Performance & UX', p:'Systematic complexity reduction, strict asset pipeline, always-on RUM, regressions caught in CI.'} },
-      footer:'Full portfolio, references and sample audits available upon request.'
-    }
-  };
+      nav: { about:'About', work:'Work', skills:'Skills', seo:'SEO', contact:'Contact', cv:'Resume' }, // <- Resume
+      
+        hero: {
+          tag: 'Open to full‑time roles or consulting',
+          h1: 'Software Engineer & SEO Specialist for global brands.',
+          lead: 'I design, build and rank digital products that scale. Apple‑clean UX, Google‑grade performance, and creative polish that wins a game publisher.',
+          badge1: '95+ Core Web Vitals on real sites',
+          badge2: '+230% organic in 12 months',
+          badge3: 'Ship fast, obsess over quality'
+        },
+        cta: { hire:'Hire me', seeWork:'See work', title:'Ready to talk?', lead:'Looking for high‑impact roles across product and organic growth. EU/US timezones. Hybrid on‑site or fully remote.', email:'Send email', top:'Back to top' },
+        stats: { cwv:'Core Web Vitals', org:'Organic traffic', conv:'Conversion rate', lat:'Global latency' },
+        work: {
+          h2:'Case studies',
+          lead:'Concrete projects where code, technical SEO and product thinking delivered measurable results.',
+          p1:{ title:'Global game launch: 42 locales, zero downtime', stack:'Next.js, Edge, i18n, CDN', result:'+180% organic pre‑orders' },
+          p2:{ title:'Enterprise e‑commerce with 95+ CWV & semantic search', stack:'SvelteKit, Edge SSR, Algolia', result:'+32% SEO revenue' },
+          p3:{ title:'iOS/Android refactor: bundle -48%, crashes -72%', stack:'Swift, Kotlin, CI/CD', result:'Rating 4.8 → 4.9' }
+        },
+        skills: {
+          h2:'Skills',
+          lead:'Modern stack, ruthless on performance & DX. Scalable architectures, localization, clean analytics.',
+          col1:{h:'Tech Stack'}, col2:{h:'Technical SEO'}, col3:{h:'Performance'}, col4:{h:'Data & Tracking'}
+        },
+        seo: {
+          h2:'What I bring',
+          t1:{h:'Technical growth with strong foundations', p:'I build systems people love first, then crawlers. Measure, iterate, and optimize until goals are exceeded—no gimmicks.'},
+          t2:{h:'Internationalization & localization', p:'Native i18n in code, verified content, clean routing, bulletproof hreflang, and scalable translation supply.'},
+          t3:{h:'Performance & UX', p:'Systematic complexity reduction, strict asset pipeline, always‑on RUM, regressions caught in CI.'}
+        },
+        footer: 'Full portfolio, references and sample audits available upon request.'
+      }
+    };
 
-  // Utility: bandiera SVG
-  function flagSVG(lang){
-    if(lang==='it'){
-      return `<svg viewBox="0 0 3 2" width="24" height="16" aria-hidden="true">
-        <rect width="1" height="2" x="0" y="0" fill="#009246"/>
-        <rect width="1" height="2" x="1" y="0" fill="#ffffff"/>
-        <rect width="1" height="2" x="2" y="0" fill="#ce2b37"/>
-      </svg>`;
-    }
-    return `<svg viewBox="0 0 60 30" width="24" height="16" aria-hidden="true">
-      <clipPath id="t"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
-      <clipPath id="s"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
-      <g clip-path="url(#t)">
-        <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
-        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
-        <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4" clip-path="url(#s)"/>
-        <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
-        <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
-      </g>
-    </svg>`;
-  }
-
-  // Raccogli riferimenti DOM comuni
+    // i18n wiring
   const i18nNodes = document.querySelectorAll('[data-i18n]');
-  const metaDesc  = document.querySelector('[data-i18n-meta-desc]');
-  const langToggle = document.getElementById('langToggle');
-  const hambBtn = document.getElementById('hambBtn');
-  const menu    = document.getElementById('menu');
+  const metaDesc = document.querySelector('[data-i18n-meta-desc]');
+  const itBtn = document.getElementById('itBtn');
+  const enBtn = document.getElementById('enBtn');
 
-  function applyLang(lang){
+    function applyLang(lang){
     const dict = T[lang] || T.en;
-
-    // HTML lang + meta
     document.documentElement.lang = lang;
     document.title = dict['meta.title'];
-    if(metaDesc) metaDesc.setAttribute('content', dict['meta.desc']);
+    metaDesc.setAttribute('content', dict['meta.desc']);
 
-    // Sostituzione di tutti i nodi con data-i18n
     for(const el of i18nNodes){
       const key = el.getAttribute('data-i18n');
       const parts = key.split('.');
@@ -469,42 +474,57 @@
       if(typeof val === 'string'){ el.textContent = val; }
     }
 
-    // Aggiorna anche le voci nav (desktop/mobile)
+    // update nav labels (desktop/mobile)
     ['about','work','skills','seo','contact','cv'].forEach(k=>{
       document.querySelectorAll(`[data-i18n="nav.${k}"]`).forEach(n=> n.textContent = dict.nav[k]);
     });
 
-    // Aggiorna bottone switcher (bandiera + aria-label)
-    if(langToggle){
-      langToggle.innerHTML = flagSVG(lang);
-      langToggle.setAttribute('aria-label', lang==='it' ? 'Switch to English' : 'Passa a Italiano');
-    }
-
-    // Persistenza
+    itBtn.setAttribute('aria-pressed', String(lang==='it'));
+    enBtn.setAttribute('aria-pressed', String(lang==='en'));
     localStorage.setItem('lang', lang);
   }
 
-  // Selezione iniziale: saved > navigator > default EN
+    // Language selection: priority = saved > navigator > default(en)
   const saved = localStorage.getItem('lang');
   const navLang = (navigator.language || navigator.userLanguage || 'en').slice(0,2).toLowerCase();
-  let currentLang = saved ? saved : (navLang==='it' ? 'it' : 'en');
-  applyLang(currentLang);
+  const initial = (saved === 'it' || saved === 'en')
+    ? saved
+    : (navLang === 'it' ? 'it' : 'en'); // default EN unless browser is IT
 
-  // Toggle IT/EN
-  langToggle?.addEventListener('click', ()=>{
-    currentLang = currentLang === 'it' ? 'en' : 'it';
-    applyLang(currentLang);
-  });
+  applyLang(initial);
 
-  // Hamburger
-  hambBtn?.addEventListener('click', ()=>{
-    const open = menu.classList.toggle('open');
-    hambBtn.setAttribute('aria-expanded', String(open));
-  });
+    itBtn.addEventListener('click', ()=> applyLang('it'));
+  enBtn.addEventListener('click', ()=> applyLang('en'));
 
-  // Footer year
-  document.getElementById('year')?.textContent = new Date().getFullYear();
-</script>
+    // Sticky header style on scroll
+    const head = document.getElementById('site-header');
+    const onScroll = () => head.classList.toggle('scrolled', window.scrollY>10);
+    document.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+
+    // Mobile menu
+    const hambBtn = document.getElementById('hambBtn');
+    const menu = document.getElementById('menu');
+    hambBtn?.addEventListener('click', ()=>{
+      const open = menu.classList.toggle('open');
+      hambBtn.setAttribute('aria-expanded', String(open));
+    });
+
+    // Active link highlight while scrolling
+    const links = Array.from(document.querySelectorAll('nav a[href^="#"]'));
+    const sections = links.map(a=> document.querySelector(a.getAttribute('href'))).filter(Boolean);
+    const spied = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{
+        if(e.isIntersecting){
+          links.forEach(l=> l.classList.toggle('active', l.getAttribute('href') === '#'+e.target.id));
+        }
+      })
+    },{ rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+    sections.forEach(s=> spied.observe(s));
+
+    // year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 
   <!-- Structured Data -->
   <script type="application/ld+json">
