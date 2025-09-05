@@ -196,8 +196,12 @@
     .menu-ico::before{ top:-6px; }
     .menu-ico::after { top: 6px; }
 
+    #menu { z-index: 3000; }
+
     /* MOBILE MENU */
 @media (max-width: 900px){
+  header{ z-index: 2000; }               /* sopra al resto della pagina */
+  
   nav ul{
     position: fixed;
     inset: var(--nav-h) 0 auto 0;
@@ -211,7 +215,7 @@
     transform: translateY(-120%);
     transition: transform .25s ease;
     display: none;              /* nascosto di default */
-    z-index: 60;
+    z-index: 3000;
   }
   nav ul.open{
     display: flex;              /* mostra quando è .open */
@@ -445,7 +449,7 @@
         <article class="proj card">
           <div class="thumb" style="--thumb:url('res/wordpress.png')" aria-hidden="true"></div>
           <header>
-            <h3 data-i18n="work.p3.title">Sviluppo di agenti AI in forma di plugin WordPress%</h3>
+            <h3 data-i18n="work.p3.title">Sviluppo di agenti AI in forma di plugin WordPress</h3>
             <div class="meta">
               <span class="pill" data-i18n="work.p3.stack">Swift, Kotlin, CI/CD</span>
               <span class="pill" data-i18n="work.p3.result">Rating 4.8 → 4.9</span>
