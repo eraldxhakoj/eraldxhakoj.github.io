@@ -67,7 +67,7 @@
     .wrap{ width:min(1200px, 92%); margin-inline:auto; }
 
     /* NAV */
-    header{ position:sticky; top:0; z-index:50; backdrop-filter:blur(8px) saturate(120%); background: linear-gradient(to bottom, var(--header-from), var(--header-to)); border-bottom:1px solid var(--line); height:var(--nav-h); }
+    header{ position:sticky; top:0; z-index:99999; backdrop-filter:blur(8px) saturate(120%); background: linear-gradient(to bottom, var(--header-from), var(--header-to)); border-bottom:1px solid var(--line); height:var(--nav-h); }
     
     header.scrolled{ background: rgba(10,10,12,.9); }
     .nav{ display:flex; align-items:center; justify-content: space-between; gap:16px; height: var(--nav-h); }
@@ -227,6 +227,18 @@
   /* nav .desktop{ display:none; }  <-- elimina questa riga dal CSS */
 
   .hamb{ display:flex; }
+
+  #menu{
+    position: fixed;
+    inset: var(--nav-h) 0 auto 0;
+    z-index: 100000;         /* sopra al header stesso */
+    display: none;
+    transform: translateY(-120%);
+  }
+  #menu.open{
+    display: flex;
+    transform: translateY(0);
+  }
 }
 
 
