@@ -67,7 +67,7 @@
     .wrap{ width:min(1200px, 92%); margin-inline:auto; }
 
     /* NAV */
-    header{ position:sticky; top:0; z-index:9000; backdrop-filter:blur(8px) saturate(120%); background: linear-gradient(to bottom, var(--header-from), var(--header-to)); border-bottom:1px solid var(--line); height:var(--nav-h); }
+    header{ position:sticky; top:0; z-index:99999; backdrop-filter:blur(8px) saturate(120%); background: linear-gradient(to bottom, var(--header-from), var(--header-to)); border-bottom:1px solid var(--line); height:var(--nav-h); }
     
     header.scrolled{ background: rgba(10,10,12,.9); }
     .nav{ display:flex; align-items:center; justify-content: space-between; gap:16px; height: var(--nav-h); }
@@ -196,17 +196,7 @@
     .menu-ico::before{ top:-6px; }
     .menu-ico::after { top: 6px; }
 
-    /* Menu DESKTOP (quando lo schermo è largo) */
-#menu{
-  position: relative;                 /* layer radice, fuori dal header */
-  z-index: 9500;                      /* sopra a tutto il contenuto */
-  display:flex; align-items:center; gap:22px;
-  list-style:none; padding:0; margin:0;
-}
-
-/* Link */
-#menu a{ color: var(--muted); text-decoration:none; font-weight:600; font-size:15px; }
-#menu a.active, #menu a:hover{ color: var(--text); }
+    #menu { z-index: 3000; }
 
     /* MOBILE MENU */
 @media (max-width: 900px){
@@ -238,24 +228,15 @@
 
   .hamb{ display:flex; }
 
-  /* quando è mobile, il menu diventa un pannello fixed */
   #menu{
     position: fixed;
     inset: var(--nav-h) 0 auto 0;
-    background: var(--menu-bg, rgba(14,15,20,.98));
-    backdrop-filter: blur(8px);
-    padding: 24px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 18px;
-    border-bottom: 1px solid var(--line);
-    transform: translateY(-120%);
-    transition: transform .25s ease;
+    z-index: 100000;         /* sopra al header stesso */
     display: none;
-    z-index: 100000;                  /* sopra al resto */
+    transform: translateY(-120%);
   }
   #menu.open{
-    display:flex;
+    display: flex;
     transform: translateY(0);
   }
 }
@@ -371,6 +352,16 @@
   <header id="site-header">
     <div class="wrap nav">
       <a href="#top" class="brand">Erald Xhakoj</a>
+      
+      <nav>
+        <ul id="menu" class="desktop" role="menubar">
+          <li role="none"><a role="menuitem" href="#about" data-i18n="nav.about">Chi sono</a></li>
+          <li role="none"><a role="menuitem" href="#work" data-i18n="nav.work">Portfolio</a></li>
+          <li role="none"><a role="menuitem" href="#skills" data-i18n="nav.skills">Competenze</a></li>
+          <li role="none"><a role="menuitem" href="#seo" data-i18n="nav.seo">SEO</a></li>
+          <li role="none"><a role="menuitem" href="#contact" data-i18n="nav.contact">Contatti</a></li>
+        </ul>
+      </nav>
   
       <div class="lang">
         <button id="langSwitcher" class="lang-switch" aria-label="Language: English" data-lang="en">
@@ -408,17 +399,6 @@
 
     </div>
 </header>
-
-  <!-- NAV vera, ora SIBLING del header -->
-<nav aria-label="Primary">
-  <ul id="menu" class="desktop" role="menubar">
-    <li role="none"><a role="menuitem" href="#about"   data-i18n="nav.about">Chi sono</a></li>
-    <li role="none"><a role="menuitem" href="#work"    data-i18n="nav.work">Portfolio</a></li>
-    <li role="none"><a role="menuitem" href="#skills"  data-i18n="nav.skills">Competenze</a></li>
-    <li role="none"><a role="menuitem" href="#seo"     data-i18n="nav.seo">SEO</a></li>
-    <li role="none"><a role="menuitem" href="#contact" data-i18n="nav.contact">Contatti</a></li>
-  </ul>
-</nav>
 
   <main id="top">
     <section class="hero wrap" id="about">
