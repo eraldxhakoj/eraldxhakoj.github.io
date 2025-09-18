@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Browser DAW</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="app-header">
+      <h1>Digital Audio Workstation</h1>
+      <p>
+        Disegna melodie nel piano roll, programma un groove di batteria e premi
+        play per ascoltare il tuo loop.
+      </p>
+    </header>
+
+    <main class="workspace">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Piano Roll</h2>
+          <div class="controls">
+            <label for="tempo">Tempo</label>
+            <input id="tempo" type="range" min="60" max="180" value="110" />
+            <output id="tempoDisplay">110 BPM</output>
+          </div>
+        </div>
+        <div id="pianoGrid" class="grid"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Batteria</h2>
+          <p class="panel-subtitle">Kick, Snare, Hi-Hat su sedicesimi</p>
+        </div>
+        <div id="drumGrid" class="grid drum-grid"></div>
+      </section>
+    </main>
+
+    <footer class="transport">
+      <button id="playButton" class="primary">Play</button>
+      <button id="stopButton">Stop</button>
+      <label class="swing-control">
+        Swing
+        <input id="swing" type="range" min="0" max="0.2" step="0.01" value="0" />
+        <output id="swingDisplay">0%</output>
+      </label>
+    </footer>
+
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
