@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aurora Studio</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="daw-app">
+      <div class="glass-window">
+        <header class="window-top">
+          <div class="window-controls" aria-hidden="true">
+            <span class="dot dot-close"></span>
+            <span class="dot dot-min"></span>
+            <span class="dot dot-max"></span>
+          </div>
+          <div class="title-cluster">
+            <span class="brand">Aurora Studio</span>
+            <span class="session-label" id="sceneDisplay">Live Pattern</span>
+          </div>
+          <div class="transport-cluster">
+            <button id="playButton" class="btn btn-transport primary" type="button">
+              <span aria-hidden="true">&#9658;</span>
+              Play
+            </button>
+            <button id="stopButton" class="btn btn-transport" type="button">
+              <span aria-hidden="true">&#9632;</span>
+              Stop
+            </button>
+          </div>
+        </header>
+
+        <main class="main-grid">
+          <aside class="side-panel controls">
+            <section class="card session-card">
+              <h2>Sessione</h2>
+              <label class="slider-field">
+                <span>Tempo</span>
+                <input id="tempo" type="range" min="60" max="180" value="110" />
+                <output id="tempoDisplay">110 BPM</output>
+              </label>
+              <label class="slider-field">
+                <span>Swing</span>
+                <input id="swing" type="range" min="0" max="0.22" step="0.01" value="0" />
+                <output id="swingDisplay">0%</output>
+              </label>
+              <div class="button-row">
+                <button id="clearPattern" class="btn ghost" type="button">Azzera loop</button>
+                <button id="seedPattern" class="btn ghost" type="button">Carica demo</button>
+              </div>
+            </section>
+
+            <section class="card synth-card">
+              <h2>Synth Designer</h2>
+              <label class="select-field">
+                <span>Preset</span>
+                <select id="synthPreset">
+                  <option value="aurora-lead">Aurora Lead</option>
+                  <option value="midnight-pad">Midnight Pad</option>
+                  <option value="glacier-pluck">Glacier Pluck</option>
+                  <option value="velvet-keys">Velvet Keys</option>
+                </select>
+              </label>
+              <label class="slider-field">
+                <span>Cutoff</span>
+                <input id="filterCutoff" type="range" min="400" max="8000" step="50" />
+                <output id="filterCutoffDisplay">0 Hz</output>
+              </label>
+              <label class="slider-field">
+                <span>Risonanza</span>
+                <input id="filterResonance" type="range" min="0.1" max="18" step="0.1" />
+                <output id="filterResonanceDisplay">0</output>
+              </label>
+              <div class="dual-slider">
+                <label class="slider-field">
+                  <span>Attack</span>
+                  <input id="attack" type="range" min="0" max="1.5" step="0.01" />
+                  <output id="attackDisplay">0s</output>
+                </label>
+                <label class="slider-field">
+                  <span>Release</span>
+                  <input id="release" type="range" min="0.1" max="3" step="0.01" />
+                  <output id="releaseDisplay">0s</output>
+                </label>
+              </div>
+            </section>
+          </aside>
+
+          <section class="center-panel">
+            <article class="panel piano-panel">
+              <header class="panel-header">
+                <div>
+                  <h2>Piano Roll</h2>
+                  <p>Programma melodie a 16 step</p>
+                </div>
+              </header>
+              <div id="pianoGrid" class="grid"></div>
+            </article>
+
+            <article class="panel drum-panel">
+              <header class="panel-header">
+                <div>
+                  <h2>Sezione Ritmica</h2>
+                  <p>Kick, Snare, Hi-Hat</p>
+                </div>
+              </header>
+              <div id="drumGrid" class="grid drum-grid"></div>
+            </article>
+          </section>
+
+          <aside class="side-panel arrangement">
+            <section class="card">
+              <h2>Struttura</h2>
+              <p class="card-subtitle">
+                Crea scene e ordina la tua composizione.
+              </p>
+              <div class="arrangement-form">
+                <label>
+                  Nome sezione
+                  <input id="sceneName" type="text" placeholder="Bridge, Chorus..." />
+                </label>
+                <label>
+                  Ripetizioni
+                  <input id="sceneRepeats" type="number" min="1" max="8" value="2" />
+                </label>
+                <button id="addScene" class="btn" type="button">Aggiungi</button>
+              </div>
+              <ul id="arrangementList" class="arrangement-list" aria-live="polite"></ul>
+              <div class="arrangement-actions">
+                <button id="clearArrangement" class="btn ghost" type="button">
+                  Svuota struttura
+                </button>
+              </div>
+            </section>
+          </aside>
+        </main>
+      </div>
+    </div>
+
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
