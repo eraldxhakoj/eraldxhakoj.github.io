@@ -1,0 +1,1382 @@
+<!doctype html>
+<html lang="it">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1"
+        />
+        <title>Procosme – SEO Audit (Executive Preview)</title>
+        <meta
+            name="description"
+            content="Audit SEO preliminare per Procosme: executive summary, priorità operative e passi successivi per trasformare il sito in un canale di lead B2B."
+        />
+        <meta
+            property="og:title"
+            content="Procosme – SEO Audit (Executive Preview)"
+        />
+        <meta
+            property="og:description"
+            content="Audit SEO preliminare: cosa sistemare, cosa costruire e come misurare l'impatto nei prossimi 90 giorni."
+        />
+        <meta property="og:type" content="website" />
+        <meta name="theme-color" content="#0b0b0c" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --bg: #03050a;
+                --bg-soft: #060913;
+                --panel: rgba(255, 255, 255, 0.02);
+                --panel-strong: rgba(255, 255, 255, 0.06);
+                --line: rgba(255, 255, 255, 0.08);
+                --text: #f5f7fc;
+                --muted: #9ea6bb;
+                --accent: #8df5d7;
+                --accent-2: #7fb9ff;
+                --danger: #ff8f8f;
+                --ok: #8ef7b5;
+                --warn: #ffd08b;
+                --radius: 20px;
+                --shadow: 0 25px 80px rgba(0, 0, 0, 0.55);
+                --grid: minmax(0, 1180px);
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+            *::selection {
+                background: rgba(141, 245, 215, 0.24);
+                color: var(--text);
+            }
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6 {
+                text-wrap: balance;
+            }
+            p,
+            li {
+                text-wrap: pretty;
+                hyphens: auto;
+            }
+            html {
+                scroll-behavior: smooth;
+                width: 100%;
+                overflow-x: hidden;
+            }
+            html,
+            body {
+                min-height: 100%;
+            }
+            body {
+                margin: 0;
+                font-family:
+                    "Inter",
+                    "SF Pro Display",
+                    "SF Pro Text",
+                    system-ui,
+                    -apple-system,
+                    Segoe UI,
+                    Roboto,
+                    Helvetica,
+                    Arial,
+                    sans-serif;
+                color: var(--text);
+                background:
+                    radial-gradient(
+                        circle at 8% 12%,
+                        rgba(141, 245, 215, 0.18),
+                        transparent 35%
+                    )
+                        fixed,
+                    radial-gradient(
+                        circle at 92% 0%,
+                        rgba(127, 185, 255, 0.18),
+                        transparent 45%
+                    )
+                        fixed,
+                    linear-gradient(135deg, #01030a, #050d19 45%, #02030a 90%);
+                background-size:
+                    180% 180%,
+                    160% 160%,
+                    100% 100%;
+                animation: bgShift 30s ease-in-out infinite alternate;
+                letter-spacing: 0.01em;
+                line-height: 1.6;
+                -webkit-font-smoothing: antialiased;
+                position: relative;
+                overflow-x: hidden;
+            }
+            body::before,
+            body::after {
+                content: "";
+                position: fixed;
+                width: min(680px, 90vw);
+                height: min(680px, 90vw);
+                background: radial-gradient(
+                    circle,
+                    rgba(141, 245, 215, 0.32),
+                    rgba(127, 185, 255, 0.1) 60%,
+                    transparent 75%
+                );
+                filter: blur(120px);
+                opacity: 0.5;
+                pointer-events: none;
+                z-index: 0;
+                mix-blend-mode: screen;
+                animation: auroraDrift 26s ease-in-out infinite alternate;
+            }
+            body::before {
+                top: 8%;
+                left: 50%;
+                transform: translate(-35%, -5%);
+            }
+            body::after {
+                bottom: -10%;
+                right: -8%;
+                transform: translate(12%, 6%);
+                animation-duration: 34s;
+                animation-delay: 6s;
+            }
+            @media (max-width: 640px) {
+                body::before,
+                body::after {
+                    opacity: 0.32;
+                    filter: blur(90px);
+                }
+            }
+            main,
+            header,
+            footer,
+            section {
+                position: relative;
+                z-index: 1;
+            }
+            a {
+                color: var(--accent);
+                text-decoration: none;
+                transition:
+                    color 0.25s ease,
+                    opacity 0.25s ease;
+            }
+            a:hover {
+                color: #fff;
+            }
+            .container {
+                width: 100%;
+                max-width: var(--grid);
+                margin: 0 auto;
+                padding: 0 clamp(20px, 5vw, 72px);
+            }
+
+            section {
+                padding: clamp(64px, 10vw, 120px) 0;
+            }
+            section + section {
+                border-top: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            /* Nav */
+            header {
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                backdrop-filter: blur(24px) saturate(140%);
+                background: rgba(3, 5, 10, 0.78);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+                box-shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
+                padding: 0 clamp(20px, 5vw, 72px);
+            }
+            .nav {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 22px 0;
+                gap: 24px;
+            }
+            .brand {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
+            }
+            .brand h1 {
+                font-size: 14px;
+                margin: 0;
+                font-weight: 700;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: #f5f7fc;
+            }
+            .site-nav {
+                display: flex;
+                align-items: center;
+                gap: 18px;
+                flex-wrap: wrap;
+                transition:
+                    max-height 0.3s ease,
+                    opacity 0.3s ease,
+                    transform 0.3s ease;
+            }
+            .site-nav a {
+                font-size: 13px;
+                color: rgba(255, 255, 255, 0.75);
+                letter-spacing: 0.02em;
+                position: relative;
+                padding-bottom: 4px;
+            }
+            .site-nav a::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                height: 2px;
+                background: linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--accent-2)
+                );
+                opacity: 0;
+                transform: translateY(6px);
+                transition:
+                    transform 0.25s ease,
+                    opacity 0.25s ease;
+            }
+            .site-nav a:hover::after,
+            .site-nav a:focus-visible::after {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            .nav-toggle-btn {
+                display: none;
+                width: 44px;
+                height: 44px;
+                border-radius: 12px;
+                border: 1px solid rgba(255, 255, 255, 0.14);
+                background: rgba(255, 255, 255, 0.05);
+                color: #fff;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                margin-left: auto;
+                transition:
+                    border 0.25s ease,
+                    background 0.25s ease,
+                    transform 0.25s ease;
+                position: relative;
+            }
+            .nav-toggle-btn::before,
+            .nav-toggle-btn::after,
+            .nav-toggle-btn span {
+                content: "";
+                position: absolute;
+                left: 50%;
+                width: 18px;
+                height: 2px;
+                background: currentColor;
+                border-radius: 999px;
+                transition:
+                    transform 0.25s ease,
+                    opacity 0.25s ease;
+                transform: translateX(-50%);
+            }
+            .nav-toggle-btn::before {
+                top: 14px;
+            }
+            .nav-toggle-btn::after {
+                bottom: 14px;
+            }
+            .nav-toggle-btn span {
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+            .nav-toggle-btn.is-open {
+                background: rgba(255, 255, 255, 0.12);
+                border-color: rgba(255, 255, 255, 0.3);
+            }
+            .nav-toggle-btn.is-open::before {
+                transform: translate(-50%, 0) rotate(45deg);
+                top: 50%;
+            }
+            .nav-toggle-btn.is-open::after {
+                transform: translate(-50%, 0) rotate(-45deg);
+                bottom: auto;
+                top: 50%;
+            }
+            .nav-toggle-btn.is-open span {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.3);
+            }
+
+            /* Hero */
+            .hero {
+                padding-top: clamp(110px, 14vw, 170px);
+                padding-bottom: clamp(48px, 8vw, 100px);
+            }
+            .headline {
+                font-size: clamp(36px, 6vw, 66px);
+                line-height: 1.05;
+                font-weight: 800;
+                letter-spacing: -0.02em;
+                margin: 18px 0;
+                max-width: min(80rem, 100%);
+                text-wrap: balance;
+            }
+            .sub {
+                color: var(--muted);
+                font-size: 18px;
+                max-width: min(80rem, 100%);
+                text-wrap: pretty;
+            }
+            .pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 18px;
+                border-radius: 999px;
+                background: rgba(255, 255, 255, 0.08);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+                font-size: 13px;
+                color: rgba(255, 255, 255, 0.85);
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+            }
+
+            /* KPI strip */
+            .kpis {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 18px;
+                margin: 40px 0 12px;
+            }
+            .card {
+                background: var(--panel);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: var(--radius);
+                padding: 24px;
+                box-shadow: var(--shadow);
+                backdrop-filter: blur(24px);
+            }
+            .card h3 {
+                margin-top: 0;
+                font-size: 24px;
+                letter-spacing: 0.01em;
+            }
+            .k-title {
+                font-size: 12px;
+                color: rgba(255, 255, 255, 0.65);
+                text-transform: uppercase;
+                letter-spacing: 0.12em;
+                margin-bottom: 6px;
+            }
+            .k-value {
+                font-size: 32px;
+                font-weight: 700;
+                margin: 12px 0 6px;
+            }
+            .k-note {
+                color: var(--muted);
+                font-size: 14px;
+            }
+
+            .grid-2 {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                gap: 32px;
+                margin-top: 32px;
+            }
+
+            .section-heading {
+                margin-top: 40px;
+                margin-bottom: 12px;
+            }
+            .section-heading h3 {
+                margin: 0 0 8px;
+                font-size: 24px;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+                color: rgba(255, 255, 255, 0.9);
+            }
+            .section-heading p {
+                margin: 0;
+                color: var(--muted);
+                max-width: min(80rem, 100%);
+            }
+            .muted {
+                color: var(--muted);
+            }
+
+            .list {
+                list-style: none;
+                padding: 0;
+                margin: 18px 0;
+                display: grid;
+                gap: 12px;
+            }
+            .list li {
+                background: rgba(255, 255, 255, 0.02);
+                border: 1px solid rgba(255, 255, 255, 0.07);
+                padding: 16px 18px;
+                border-radius: 14px;
+            }
+            .list strong {
+                color: #fff;
+            }
+
+            /* Numbered steps */
+            .steps {
+                counter-reset: step;
+                display: grid;
+                gap: 18px;
+            }
+            .step {
+                position: relative;
+                padding: 20px 20px 20px 68px;
+                background: rgba(255, 255, 255, 0.02);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: calc(var(--radius) - 4px);
+                box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+            }
+            .step::before {
+                counter-increment: step;
+                content: counter(step);
+                position: absolute;
+                left: 18px;
+                top: 18px;
+                width: 36px;
+                height: 36px;
+                display: grid;
+                place-items: center;
+                border-radius: 999px;
+                font: 700 16px/1 Inter;
+                color: #041014;
+                background: linear-gradient(
+                    135deg,
+                    var(--accent),
+                    var(--accent-2)
+                );
+                box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.2);
+            }
+
+            /* Table */
+            .table-wrap {
+                overflow-x: auto;
+                border-radius: 20px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .table {
+                width: 100%;
+                border-collapse: collapse;
+                overflow: hidden;
+                border-radius: 18px;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                background: rgba(3, 6, 12, 0.5);
+                backdrop-filter: blur(24px);
+            }
+            .table th,
+            .table td {
+                padding: 16px 18px;
+                text-align: left;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                vertical-align: top;
+            }
+            .table th {
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: rgba(255, 255, 255, 0.75);
+                background: rgba(255, 255, 255, 0.03);
+            }
+            .table tr:last-child td {
+                border-bottom: none;
+            }
+            .table tr:hover td {
+                background: rgba(255, 255, 255, 0.02);
+            }
+            .tag {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 6px 12px;
+                border-radius: 999px;
+                font-size: 12px;
+                border: 1px solid rgba(255, 255, 255, 0.15);
+                background: rgba(255, 255, 255, 0.04);
+            }
+            .tag.ok {
+                border-color: rgba(141, 255, 204, 0.4);
+                background: rgba(141, 255, 204, 0.12);
+                color: #caffec;
+            }
+            .tag.warn {
+                border-color: rgba(255, 234, 168, 0.4);
+                background: rgba(255, 234, 168, 0.12);
+                color: #ffeec1;
+            }
+
+            /* CTA */
+            .cta {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+                margin-top: 20px;
+            }
+            .btn {
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                background: rgba(255, 255, 255, 0.02);
+                padding: 14px 20px;
+                border-radius: 14px;
+                color: #fff;
+                font-weight: 600;
+                letter-spacing: 0.02em;
+                box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+                transition:
+                    transform 0.25s ease,
+                    box-shadow 0.25s ease,
+                    border 0.25s ease;
+            }
+            .btn.primary {
+                background: linear-gradient(
+                    120deg,
+                    var(--accent),
+                    var(--accent-2)
+                );
+                color: #041014;
+                border: none;
+            }
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 28px 60px rgba(0, 0, 0, 0.45);
+            }
+
+            @keyframes bgShift {
+                0% {
+                    background-position:
+                        0% 0%,
+                        70% 0%,
+                        0 0;
+                }
+                100% {
+                    background-position:
+                        80% 80%,
+                        0% 50%,
+                        0 0;
+                }
+            }
+            @keyframes auroraDrift {
+                0% {
+                    transform: translate(-30%, -10%) scale(1);
+                }
+                100% {
+                    transform: translate(-10%, 8%) scale(1.1);
+                }
+            }
+
+            /* Footer */
+            footer {
+                border-top: 1px solid rgba(255, 255, 255, 0.08);
+                padding: 40px 0 60px;
+                color: var(--muted);
+                font-size: 13px;
+                text-align: center;
+            }
+
+            /* Reveal Animations */
+            .reveal {
+                opacity: 0;
+                transform: translateY(20px);
+                transition:
+                    opacity 0.6s ease,
+                    transform 0.6s ease;
+            }
+            .reveal.in {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            @media (max-width: 960px) {
+                .nav {
+                    flex-wrap: wrap;
+                    gap: 12px;
+                    align-items: center;
+                    position: relative;
+                }
+                .brand {
+                    flex: 1 1 auto;
+                }
+                .nav-toggle-btn {
+                    display: inline-flex;
+                }
+                .site-nav {
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    top: calc(100% + 8px);
+                    width: 100%;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 14px;
+                    padding: 0;
+                    border: 1px solid rgba(255, 255, 255, 0.08);
+                    border-radius: 20px;
+                    background: rgba(3, 6, 12, 0.92);
+                    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+                    max-height: 0;
+                    opacity: 0;
+                    transform: translateY(-8px);
+                    pointer-events: none;
+                    overflow: hidden;
+                    backdrop-filter: blur(18px);
+                    z-index: 10;
+                }
+                body.nav-open .site-nav {
+                    padding: 18px clamp(16px, 4vw, 32px) 12px;
+                    max-height: 420px;
+                    opacity: 1;
+                    transform: translateY(0);
+                    pointer-events: auto;
+                }
+                .kpis {
+                    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                }
+                .grid-2 {
+                    gap: 24px;
+                }
+                .card {
+                    padding: 20px;
+                }
+                .step {
+                    padding: 18px 18px 18px 62px;
+                }
+                section {
+                    padding: 56px 0;
+                }
+            }
+            @media (max-width: 640px) {
+                .headline {
+                    font-size: clamp(32px, 9vw, 52px);
+                }
+                .site-nav {
+                    gap: 10px;
+                }
+                .pill {
+                    font-size: 11px;
+                }
+                .kpis {
+                    grid-template-columns: minmax(0, 1fr);
+                }
+                .grid-2 {
+                    grid-template-columns: minmax(0, 1fr);
+                }
+                .table {
+                    min-width: 520px;
+                }
+            }
+            @media (max-width: 480px) {
+                .hero {
+                    padding-top: 120px;
+                }
+                .btn {
+                    width: 100%;
+                    justify-content: center;
+                    text-align: center;
+                }
+                .step::before {
+                    left: 16px;
+                }
+                .step {
+                    padding: 18px 18px 18px 58px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="container nav">
+                <div class="brand">
+                    <h1>SEO Audit – Procosme</h1>
+                </div>
+                <button
+                    type="button"
+                    class="nav-toggle-btn"
+                    aria-expanded="false"
+                    aria-label="Apri menu"
+                >
+                    <span></span>
+                </button>
+                <nav
+                    id="site-nav"
+                    class="site-nav"
+                    aria-label="Sezioni del report"
+                >
+                    <a href="#executive">Executive</a>
+                    <a href="#tecnico">Tecnico</a>
+                    <a href="#contenuti">Contenuti</a>
+                    <a href="#competitor">Competitor</a>
+                    <a href="#priorita">Priorità</a>
+                    <a href="#steps">Step successivi</a>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <!-- Hero / Executive -->
+            <section class="hero" id="executive">
+                <div class="container">
+                    <span class="pill">Audit SEO preliminare · Focus B2B</span>
+                    <h2 class="headline">
+                        Procosme
+                        <span
+                            style="
+                                background: linear-gradient(
+                                    135deg,
+                                    var(--accent),
+                                    var(--accent-2)
+                                );
+                                -webkit-background-clip: text;
+                                background-clip: text;
+                                color: transparent;
+                            "
+                            >SEO</span
+                        >
+                        Audit
+                    </h2>
+                    <p class="sub">
+                        Oggi il traffico organico è &lt;400/mese, quasi tutto
+                        branded e concentrato in homepage. Qui sotto trovate le 8
+                        mosse che sbloccano valore subito: togliere i freni
+                        tecnici, attaccare le query che generano opportunità e
+                        mettere in chiaro prove e chiamate all’azione.
+                    </p>
+
+                    <div class="kpis">
+                        <div class="card reveal">
+                            <div class="k-title">Problema</div>
+                            <div class="k-value">&lt; 400/mese</div>
+                            <div class="k-note">
+                                Traffico organico attuale, 100% branded
+                            </div>
+                        </div>
+                        <div class="card reveal">
+                            <div class="k-title">Obiettivo #1</div>
+                            <div class="k-value">20–30%</div>
+                            <div class="k-note">Quota traffico non‑branded</div>
+                        </div>
+                        <div class="card reveal">
+                            <div class="k-title">Obiettivo #2</div>
+                            <div class="k-value">
+                                +100%
+                            </div>
+                            <div class="k-note">
+                                Quota traffico
+                            </div>
+                        </div>
+                        <div class="card reveal">
+                            <div class="k-title">Impatto immediato</div>
+                            <div class="k-value">HTTPS · CTA · Proof</div>
+                            <div class="k-note">Fiducia + conversione</div>
+                        </div>
+                    </div>
+
+                    <div class="section-heading">
+                        <h3>Le 8 mosse che sbloccano valore</h3>
+                        <p class="muted">
+                            Sequenza operativa pronta da eseguire subito: prima
+                            si tolgono i freni tecnici, poi si spingono le query che
+                            generano pipeline.
+                        </p>
+                    </div>
+                    <div class="grid-2" style="margin-top: 24px">
+                        <div class="steps reveal">
+                            <div class="step">
+                                <strong>HTTPS totale:</strong> 301, HSTS, CSP,
+                                canonical/sitemap solo https → via i warning,
+                                segnali consolidati.
+                            </div>
+                            <div class="step">
+                                <strong>Link interni seri:</strong> footer
+                                cliccabile, breadcrumb, link Home→Servizi → i
+                                crawler e le persone arrivano dove si compra.
+                            </div>
+                            <div class="step">
+                                <strong>Homepage che vende:</strong> Title/H1
+                                head‑terms, numeri + <b>ISO 22716</b> above the
+                                fold, doppia CTA.
+                            </div>
+                            <div class="step">
+                                <strong>/produzione.html:</strong> focus
+                                “produzione cosmetici conto terzi – Private
+                                Label”, <i>Cosa produciamo</i>, FAQ, CTA.
+                            </div>
+                            <div class="step">
+                                <strong>/ricerca.html:</strong> processo R&amp;D
+                                a step, download ISO, CTA qualificante.
+                            </div>
+                            <div class="step">
+                                <strong>/confezionamento.html:</strong> H1/Title
+                                chiari, griglia packaging (primario/secondario,
+                                formati), lead magnet.
+                            </div>
+                            <div class="step">
+                                <strong
+                                    >Nuova /private‑label‑cosmetici/:</strong
+                                >
+                                pagina money con posizionamento chiaro.
+                            </div>
+                            <div class="step">
+                                <strong>Nuova /qualita‑certificazioni/:</strong>
+                                ISO/GMP, procedure, PDF scaricabili.
+                            </div>
+                        </div>
+                        <div class="card reveal">
+                            <h3 style="margin-top: 0">Perché funziona</h3>
+                            <ul class="list" style="margin: 0">
+                                <li>
+                                    <strong>Tecnico prima:</strong> togliere i
+                                    freni e ripulire segnali.
+                                </li>
+                                <li>
+                                    <strong>Intent commerciale:</strong>
+                                    spingere le query che portano pipeline.
+                                </li>
+                                <li>
+                                    <strong>Proof &amp; CTA:</strong> ogni
+                                    pagina servizio chiede l’azione giusta, con
+                                    prove in vista.
+                                </li>
+                                <li>
+                                    <strong>Misurabile:</strong> CTR, lead B2B,
+                                    quota non‑branded, posizionamenti long‑tail.
+                                </li>
+                            </ul>
+                            <div class="cta">
+                                <a class="btn primary" href="#priorita"
+                                    >Vedi priorità operative</a
+                                >
+                                <a class="btn" href="#steps"
+                                    >Vedi step successivi</a
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tecnico -->
+            <section id="tecnico">
+                <div class="container">
+                    <h2 class="reveal">1) Tecnico – blocchi da rimuovere</h2>
+                    <div class="grid-2">
+                        <div class="card reveal">
+                            <h3 style="margin-top: 0">Stato attuale</h3>
+                            <div class="table-wrap">
+                                <table class="table" aria-label="Stato tecnico">
+                                    <thead>
+                                        <tr>
+                                            <th>Problema</th>
+                                            <th>Note</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Mixed content</td>
+                                            <td>
+                                                3 pagine con risorse HTTP su
+                                                HTTPS
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>URL in HTTP</td>
+                                            <td>25 URL da forzare su HTTPS</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Internal linking</td>
+                                            <td>
+                                                Footer non linkato; servizi poco
+                                                raggiungibili
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>On‑page</td>
+                                            <td>
+                                                Title lunghi, H1 multipli,
+                                                immagini pesanti
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card reveal">
+                            <h3 style="margin-top: 0">Fix immediati</h3>
+                            <ul class="list">
+                                <li>
+                                    <strong>301 http→https</strong>,
+                                    <strong>HSTS</strong>,
+                                    <strong
+                                        >CSP upgrade‑insecure‑requests</strong
+                                    >.
+                                </li>
+                                <li>
+                                    <strong>Canonical</strong> e
+                                    <strong>sitemap</strong> solo HTTPS +
+                                    reinvio GSC.
+                                </li>
+                                <li>
+                                    <strong>Footer link</strong> ai servizi +
+                                    breadcrumb.
+                                </li>
+                                <li>
+                                    <strong>Title &lt;60</strong>,
+                                    <strong>1 H1</strong> per pagina, immagini
+                                    WebP + lazyload.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contenuti / Keyword -->
+            <section id="contenuti">
+                <div class="container">
+                    <h2 class="reveal">
+                        2) Contenuti &amp; Keyword – dove intercettare domanda
+                    </h2>
+                    <div class="grid-2">
+                        <div class="card reveal">
+                            <h3 style="margin-top: 0">Pagine da potenziare</h3>
+                            <ul class="list">
+                                <li>
+                                    <strong>/produzione.html</strong> → cluster
+                                    “produzione cosmetici conto terzi / private
+                                    label”; sezione <em>Cosa produciamo</em>;
+                                    FAQ &amp; CTA.
+                                </li>
+                                <li>
+                                    <strong>/ricerca.html</strong> →
+                                    “laboratorio cosmetico”; processo
+                                    R&amp;D a step; download ISO.
+                                </li>
+                                <li>
+                                    <strong>/confezionamento.html</strong> →
+                                    “confezionamento cosmetici conto terzi”;
+                                    griglia packaging + lead magnet.
+                                </li>
+                                <li>
+                                    <strong>Home</strong> → “azienda cosmetica
+                                    conto terzi”; numeri + certificazioni;
+                                    doppia CTA.
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card reveal">
+                            <h3 style="margin-top: 0">Nuove pagine “money”</h3>
+                            <ul class="list">
+                                <li>
+                                    <strong>/private‑label‑cosmetici/</strong> –
+                                    focus offerte full‑service.
+                                </li>
+                                <li>
+                                    <strong>/qualita‑certificazioni/</strong> –
+                                    ISO 22716 / GMP, procedure, download PDF.
+                                </li>
+                                <li>
+                                    Landing verticali: <strong>creme</strong>,
+                                    <strong>shampoo</strong>,
+                                    <strong>makeup</strong>,
+                                    <strong>bio/naturale</strong>.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Competitor -->
+            <section id="competitor">
+                <div class="container">
+                    <h2 class="reveal">3) Competitor – cosa imparare</h2>
+                    <div class="grid-2">
+                        <div class="card reveal">
+                            <h3 style="margin-top: 0">
+                                Intercos · Art Cosmetics · Pettenon
+                            </h3>
+                            <ul class="list">
+                                <li>
+                                    <strong>Naming chiaro</strong>: “contract
+                                    manufacturing”, “private label”,
+                                    “full‑service”.
+                                </li>
+                                <li>
+                                    <strong>Struttura</strong>: metodo/processo,
+                                    servizi, packaging/logistica.
+                                </li>
+                                <li>
+                                    <strong>Proof</strong>: certificazioni,
+                                    numeri, stabilimenti.
+                                </li>
+                                <li>
+                                    <strong>Risorse</strong>: blog/insight e
+                                    casi di uso.
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card reveal">
+                            <h3 style="margin-top: 0">
+                                Gap Procosme (da colmare)
+                            </h3>
+                            <ul class="list">
+                                <li>Pagina Private Label dedicata</li>
+                                <li>
+                                    Pagina Processo chiara
+                                    (R&amp;D→Produzione→Confezionamento→Logistica)
+                                </li>
+                                <li>
+                                    Pagina Qualità/Certificazioni con
+                                    download
+                                </li>
+                                <li>Hub Settori/Linee + verticali</li>
+                                <li>
+                                    CTA deboli → servono form B2B
+                                    qualificanti
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Priorità operative -->
+            <section id="priorita">
+                <div class="container">
+                    <h2 class="reveal">4) Priorità operative</h2>
+                    <div class="card reveal">
+                        <div class="table-wrap">
+                            <table class="table" aria-label="Tabella priorità">
+                                <thead>
+                                    <tr>
+                                        <th>Priorità</th>
+                                        <th>Descrizione</th>
+                                        <th>Perché conta</th>
+                                        <th>Tipo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <span class="tag ok">Alta</span>
+                                        </td>
+                                        <td>
+                                            Migrazione HTTPS completa (301,
+                                            HSTS, CSP, canonical/sitemap solo
+                                            https)
+                                        </td>
+                                        <td>
+                                            Elimina warning, consolida segnali e
+                                            indicizzazione
+                                        </td>
+                                        <td>Tecnico</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="tag ok">Alta</span>
+                                        </td>
+                                        <td>
+                                            Internal linking serio (footer
+                                            cliccabile, breadcrumb, link
+                                            Home→Servizi)
+                                        </td>
+                                        <td>
+                                            Porta crawler e persone sulle pagine
+                                            “money”
+                                        </td>
+                                        <td>Tecnico</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="tag ok">Alta</span>
+                                        </td>
+                                        <td>
+                                            Homepage repositioning (Title/H1
+                                            head‑terms, numeri + ISO 22716,
+                                            doppia CTA)
+                                        </td>
+                                        <td>
+                                            Da fornitore a partner B2B, più CTR
+                                            e conversione
+                                        </td>
+                                        <td>Contenuti</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="tag ok">Alta</span>
+                                        </td>
+                                        <td>
+                                            /produzione.html: nuovo Title/H1,
+                                            sezione “Cosa produciamo”, FAQ + CTA
+                                        </td>
+                                        <td>
+                                            Clusterizza le query core, aumenta
+                                            lead
+                                        </td>
+                                        <td>Contenuti</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="tag warn">Media</span>
+                                        </td>
+                                        <td>
+                                            /ricerca.html: processo R&amp;D a
+                                            step, download ISO, CTA qualificante
+                                        </td>
+                                        <td>
+                                            Più fiducia (E‑E‑A‑T) su
+                                            “laboratorio cosmetico”
+                                        </td>
+                                        <td>Contenuti</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="tag warn">Media</span>
+                                        </td>
+                                        <td>
+                                            /confezionamento.html: H1/Title
+                                            chiari, griglia packaging, lead
+                                            magnet
+                                        </td>
+                                        <td>
+                                            Intercetta “confezionamento” e
+                                            migliora qualità lead
+                                        </td>
+                                        <td>Contenuti</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="tag ok">Alta</span>
+                                        </td>
+                                        <td>
+                                            Nuova pagina
+                                            “/private‑label‑cosmetici/”
+                                        </td>
+                                        <td>
+                                            Keyword money, posizionamento chiaro
+                                        </td>
+                                        <td>Contenuti</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="tag warn">Media</span>
+                                        </td>
+                                        <td>
+                                            Nuova pagina
+                                            “/qualita‑certificazioni/” (ISO
+                                            22716, GMP, procedure, PDF)
+                                        </td>
+                                        <td>
+                                            Trust e differenziazione commerciale
+                                        </td>
+                                        <td>Autorità</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="cta" style="margin-top: 16px">
+                        <a class="btn primary" href="#steps"
+                            >Vai agli Step successivi</a
+                        >
+                        <a
+                            class="btn"
+                            href="https://docs.google.com/spreadsheets/d/18w73RNzXZIWYCEOpeAah3-I8FUaC58cmEAqnRQ3Q57Y/edit?usp=sharing"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Dettagli completi (Google Sheets)</a
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step Successivi -->
+            <section id="steps">
+                <div class="container">
+                    <h2 class="reveal">
+                        Step successivi (non inclusi nell’audit)
+                    </h2>
+                    <div class="grid-2">
+                        <div class="card reveal">
+                            <h3 style="margin-top: 0">Fase 2–3 (scalata)</h3>
+                            <ul class="list">
+                                <li>
+                                    <strong
+                                        >Backlink profile &amp; Digital
+                                        PR</strong
+                                    >
+                                    → autorità di dominio, sostegno ai ranking.
+                                </li>
+                                <li>
+                                    <strong
+                                        >Architettura completa &amp;
+                                        navigazione</strong
+                                    >
+                                    → hub <em>/settori/</em> con verticali
+                                    (viso, capelli, corpo, solare, pet-care,
+                                    makeup).
+                                </li>
+                                <li>
+                                    <strong>Content plan 6 mesi</strong> → 2
+                                    articoli/mese + 1 caso d’uso (R&amp;D,
+                                    normative, packaging).
+                                </li>
+                                <li>
+                                    <strong>Core Web Vitals</strong> →
+                                    LCP/INP/CLS (immagini, font, script).
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card reveal">
+                            <h3 style="margin-top: 0">
+                                Go‑To‑Lead (opzionale)
+                            </h3>
+                            <ul class="list">
+                                <li>
+                                    <strong>International SEO</strong>
+                                    (hreflang, localizzazioni, keyword per
+                                    Paese).
+                                </li>
+                                <li>
+                                    <strong>E‑E‑A‑T assets</strong> (team
+                                    laboratorio, impianti, certificazioni
+                                    scaricabili, case studies).
+                                </li>
+                                <li>
+                                    <strong>Funnel &amp; CRM</strong> (form B2B
+                                    qualificanti, integrazione CRM, lead
+                                    scoring, thank‑you tracciate).
+                                </li>
+                                <li>
+                                    <strong>Misurazione</strong> (dashboard KPI,
+                                    micro‑conversioni: scroll, CTA, download
+                                    ISO).
+                                </li>
+                            </ul>
+                            <div class="cta">
+                                <a
+                                    class="btn primary"
+                                    href="mailto:info@blacksoda.it?subject=Parliamone%20-%20Audit%20SEO%20Procosme"
+                                    >Parliamone quando volete</a
+                                >
+                                <span class="tag" title="Nota"
+                                    >Questa pagina è un audit SEO
+                                    preliminare</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="container">
+                <div>
+                    © <span id="y"></span> – Audit SEO preliminare per
+                    Procosme. Documento a sola finalità informativa.
+                </div>
+            </div>
+        </footer>
+
+        <script>
+            // Year
+            document.getElementById("y").textContent = new Date().getFullYear();
+            // Reveal on scroll
+            const io = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((e) => {
+                        if (e.isIntersecting) {
+                            e.target.classList.add("in");
+                            io.unobserve(e.target);
+                        }
+                    });
+                },
+                { threshold: 0.12 },
+            );
+            document
+                .querySelectorAll(".reveal")
+                .forEach((el) => io.observe(el));
+
+            // Mobile nav interactions
+            const navButton = document.querySelector(".nav-toggle-btn");
+            const siteNav = document.getElementById("site-nav");
+            const mqDesktop = window.matchMedia("(min-width: 961px)");
+            let navOpen = false;
+
+            const setNavState = (open) => {
+                navOpen = open;
+                document.body.classList.toggle("nav-open", open);
+                if (navButton) {
+                    navButton.classList.toggle("is-open", open);
+                    navButton.setAttribute(
+                        "aria-expanded",
+                        open ? "true" : "false",
+                    );
+                    navButton.setAttribute(
+                        "aria-label",
+                        open ? "Chiudi menu" : "Apri menu",
+                    );
+                }
+            };
+
+            const closeNav = () => {
+                if (navOpen) {
+                    setNavState(false);
+                }
+            };
+
+            if (navButton && siteNav) {
+                navButton.addEventListener("click", () =>
+                    setNavState(!navOpen),
+                );
+                siteNav
+                    .querySelectorAll("a")
+                    .forEach((link) =>
+                        link.addEventListener("click", closeNav),
+                    );
+
+                const handleGestureClose = () => {
+                    if (navOpen) closeNav();
+                };
+                window.addEventListener("wheel", handleGestureClose, {
+                    passive: true,
+                });
+                window.addEventListener("touchmove", handleGestureClose, {
+                    passive: true,
+                });
+
+                const handleBreakpoint = () => {
+                    if (mqDesktop.matches) {
+                        closeNav();
+                    }
+                };
+                if (mqDesktop.addEventListener) {
+                    mqDesktop.addEventListener("change", handleBreakpoint);
+                } else if (mqDesktop.addListener) {
+                    mqDesktop.addListener(handleBreakpoint);
+                }
+
+                setNavState(false);
+                handleBreakpoint();
+            }
+        </script>
+    </body>
+</html>
