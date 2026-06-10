@@ -1,0 +1,22 @@
+{
+  "pittura-laguna": {
+    "price": 11.13,
+    "last_updated": "2026-06-10T19:37:07.758940Z",
+    "status": "success"
+  },
+  "cemento-buzzi": {
+    "price": 6.5,
+    "last_updated": "2026-06-10T21:30:00Z",
+    "status": "cached"
+  },
+  "lisciatura-zl25": {
+    "price": 9.8,
+    "last_updated": "2026-06-10T21:30:00Z",
+    "status": "cached"
+  },
+  "malta-keracolor": {
+    "price": 134.42,
+    "last_updated": "2026-06-10T19:37:07.758940Z",
+    "status": "success"
+  }
+}

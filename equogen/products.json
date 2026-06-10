@@ -1,0 +1,46 @@
+[
+  {
+    "id": "pittura-laguna",
+    "name": "Idropittura Lavabile Laguna 3.0 San Marco (Bianca)",
+    "category": "Pitture e Finiture",
+    "url": "https://www.fvledilizia.it/pitture-per-interni/42-43-idropittura-lavabile-laguna-30-san-marco-bianca-per-interni-secchio-da-1lt-4lt-o-14lt.html",
+    "unit": "mq",
+    "item_unit_name": "Secchio (14 Litri)",
+    "coverage_per_item": 70,
+    "fallback_price": 45.90,
+    "description": "Idropittura lavabile e inodore ad elevata copertura, ideale per muri interni. Un secchio da 14Lt copre circa 70mq (con due mani)."
+  },
+  {
+    "id": "cemento-buzzi",
+    "name": "Cemento Grigio Portland 32.5R (Sacco 25kg)",
+    "category": "Leganti e Sabbia",
+    "url": "https://www.fvledilizia.it/leganti/15692-cemento-grigio-portland-buzzi-325r-sacco-da-25kg.html",
+    "unit": "cad",
+    "item_unit_name": "Sacco (25 kg)",
+    "coverage_per_item": 1,
+    "fallback_price": 6.50,
+    "description": "Cemento Portland grigio tipo 32.5R in sacchi da 25 kg per malte, intonaci e massetti strutturali."
+  },
+  {
+    "id": "lisciatura-zl25",
+    "name": "Lisciatura Fassa ZL 25 (Sacco 25kg)",
+    "category": "Rasanti e Intonaci",
+    "url": "https://www.fvledilizia.it/lisciature/15703-lisciatura-fassa-zl-25-base-calce-gesso-sacco-da-25kg.html",
+    "unit": "mq",
+    "item_unit_name": "Sacco (25 kg)",
+    "coverage_per_item": 25,
+    "fallback_price": 9.80,
+    "description": "Finitura a base di calce e gesso per interni. Un sacco copre circa 25mq con spessore di 1mm."
+  },
+  {
+    "id": "malta-keracolor",
+    "name": "Malta Mapei Keracolor FF (Sacco 5kg)",
+    "category": "Malte e Sigillanti",
+    "url": "https://www.fvledilizia.it/malte/3890-malta-cementizia-mapei-keracolor-ff-sacco-da-5kg.html",
+    "unit": "cad",
+    "item_unit_name": "Sacco (5 kg)",
+    "coverage_per_item": 1,
+    "fallback_price": 12.90,
+    "description": "Malta cementizia idrorepellente per la stuccatura di fughe da 1 a 6 mm."
+  }
+]
