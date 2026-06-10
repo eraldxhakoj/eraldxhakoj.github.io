@@ -1,26 +1,32 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>EQUOGEN | Calcolatore Budget e Prezzi Materiali Edili</title>
-  <meta name="description" content="Calcola in tempo reale il budget per il tuo progetto edile con prezzi aggiornati automaticamente tramite GitHub Actions. Esporta preventivi in PDF ed effettua override manuali." />
-  
+  <meta name="description"
+    content="Calcola in tempo reale il budget per il tuo progetto edile con prezzi aggiornati automaticamente tramite GitHub Actions. Esporta preventivi in PDF ed effettua override manuali." />
+
   <!-- SEO & Social Media Metatags -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="EQUOGEN - Calcolatore Budget Materiali Edili" />
-  <meta property="og:description" content="Calcola in tempo reale il budget per il tuo progetto edile con prezzi aggiornati." />
+  <meta property="og:description"
+    content="Calcola in tempo reale il budget per il tuo progetto edile con prezzi aggiornati." />
   <meta property="og:url" content="https://eraldxhakoj.github.io/equogen/" />
-  
+
   <!-- Font & Icone -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <!-- Stylesheet -->
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <!-- Sfondo animato in background -->
   <div class="backdrop" aria-hidden="true"></div>
@@ -40,7 +46,8 @@
         <span>EQUOGEN</span>
       </a>
       <div class="header-right">
-        <a href="https://github.com/eraldxhakoj/eraldxhakoj.github.io" class="btn-github" target="_blank" rel="noopener">
+        <a href="https://github.com/eraldxhakoj/eraldxhakoj.github.io" class="btn-github" target="_blank"
+          rel="noopener">
           <i class="fa-brands fa-github"></i> GitHub Repo
         </a>
       </div>
@@ -56,22 +63,20 @@
           Prezzi Estratti con GitHub Actions
         </span>
         <h1 class="h1">Calcolatore di Budget Edile Intelligente</h1>
-        <p class="lead">Seleziona i materiali, imposta i metri quadrati e calcola all'istante il costo del tuo cantiere con i prezzi e-commerce aggiornati.</p>
+        <p class="lead">Seleziona i materiali, imposta i metri quadrati e calcola all'istante il costo del tuo cantiere
+          con i prezzi e-commerce aggiornati.</p>
       </div>
-      
-      <!-- Stats Summary Banner -->
-      <div class="stats-banner card-glass">
-        <div class="stat-item" id="stat-last-update">
-          <span class="stat-label">Ultimo Aggiornamento</span>
-          <span class="stat-value">Caricamento...</span>
+
+      <!-- Barra di Ricerca e Filtri (Spostata al posto delle stats) -->
+      <div class="filter-bar card-glass">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" id="search-input" placeholder="Cerca materiali..." aria-label="Cerca prodotti" />
         </div>
-        <div class="stat-item" id="stat-scraped-count">
-          <span class="stat-label">Prodotti Tracciati</span>
-          <span class="stat-value">Caricamento...</span>
-        </div>
-        <div class="stat-item" id="stat-budget-total">
-          <span class="stat-label">Budget Totale Stimato</span>
-          <span class="stat-value text-accent">0.00 €</span>
+
+        <div class="category-filters" id="category-filters-container">
+          <button class="filter-btn active" data-category="all" id="filter-btn-all">Tutti</button>
+          <!-- Altri filtri generati dinamicamente -->
         </div>
       </div>
     </section>
@@ -80,18 +85,6 @@
     <section class="calculator-grid">
       <!-- Colonna Sinistra: Listino Prodotti & Calcolo -->
       <div class="products-column">
-        <!-- Barra di Ricerca e Filtri -->
-        <div class="filter-bar card-glass">
-          <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="text" id="search-input" placeholder="Cerca materiali..." aria-label="Cerca prodotti" />
-          </div>
-          
-          <div class="category-filters" id="category-filters-container">
-            <button class="filter-btn active" data-category="all" id="filter-btn-all">Tutti</button>
-            <!-- Altri filtri generati dinamicamente -->
-          </div>
-        </div>
 
         <!-- Lista dei Prodotti (Grid) -->
         <div class="products-list-grid" id="products-list-container">
@@ -101,29 +94,30 @@
             <p>Caricamento prodotti in corso...</p>
           </div>
         </div>
-        
+
         <!-- Form Prodotto Custom -->
         <div class="custom-product-section card-glass">
           <h3 class="section-title"><i class="fa-solid fa-plus"></i> Aggiungi Prodotto Custom</h3>
-          <p class="section-subtitle">Il materiale che cerchi non è in lista? Aggiungilo manualmente al tuo preventivo.</p>
-          
+          <p class="section-subtitle">Il materiale che cerchi non è in lista? Aggiungilo manualmente al tuo preventivo.
+          </p>
+
           <form class="custom-product-form" id="custom-product-form">
             <div class="form-group">
               <label for="custom-name">Nome Materiale</label>
               <input type="text" id="custom-name" placeholder="Es. Sabbia fine sacco" required />
             </div>
-            
+
             <div class="form-group">
               <label for="custom-price">Prezzo (€)</label>
               <input type="number" id="custom-price" step="0.01" min="0" placeholder="Es. 5.90" required />
             </div>
-            
+
             <div class="form-row">
               <div class="form-group">
                 <label for="custom-quantity">Quantità</label>
                 <input type="number" id="custom-quantity" min="1" value="1" required />
               </div>
-              
+
               <div class="form-group">
                 <label for="custom-unit">Unità Misura</label>
                 <select id="custom-unit" aria-label="Unità di misura">
@@ -134,7 +128,7 @@
                 </select>
               </div>
             </div>
-            
+
             <button type="submit" class="btn btn-secondary w-100" id="btn-add-custom">
               <i class="fa-solid fa-plus-circle"></i> Aggiungi al Preventivo
             </button>
@@ -151,7 +145,7 @@
               <i class="fa-solid fa-trash-can"></i> Pulisci
             </button>
           </div>
-          
+
           <!-- Lista Elementi Aggiunti -->
           <div class="budget-items-list" id="budget-items-container">
             <div class="empty-state-budget">
@@ -160,7 +154,7 @@
               <span class="empty-sub">Aggiungi materiali dalla lista per calcolare il budget.</span>
             </div>
           </div>
-          
+
           <!-- Totali e Opzioni IVA -->
           <div class="sidebar-totals">
             <div class="vat-toggle-container">
@@ -170,7 +164,7 @@
                 <span class="slider round"></span>
               </label>
             </div>
-            
+
             <div class="total-row">
               <span>Totale Imponibile:</span>
               <span id="subtotal-val">0.00 €</span>
@@ -184,7 +178,7 @@
               <span id="total-val">0.00 €</span>
             </div>
           </div>
-          
+
           <!-- Pulsanti Azione -->
           <div class="sidebar-actions">
             <button class="btn btn-primary" id="btn-export-pdf">
@@ -204,21 +198,23 @@
     <div class="modal card-glass">
       <div class="modal-header">
         <h3><i class="fa-solid fa-pen-to-square"></i> Modifica Prezzo Articolo</h3>
-        <button class="btn-close-modal" id="btn-close-modal" aria-label="Chiudi finestra"><i class="fa-solid fa-xmark"></i></button>
+        <button class="btn-close-modal" id="btn-close-modal" aria-label="Chiudi finestra"><i
+            class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
-        <p class="modal-description">Puoi modificare il prezzo corrente di questo materiale per adeguarlo al tuo negozio locale o preventivo specifico.</p>
-        
+        <p class="modal-description">Puoi modificare il prezzo corrente di questo materiale per adeguarlo al tuo negozio
+          locale o preventivo specifico.</p>
+
         <div class="form-group">
           <label for="override-product-name">Prodotto</label>
           <input type="text" id="override-product-name" readonly class="input-readonly" />
         </div>
-        
+
         <div class="form-group">
           <label for="override-price-input">Nuovo Prezzo Unitario (€)</label>
           <input type="number" id="override-price-input" step="0.01" min="0" required />
         </div>
-        
+
         <div class="modal-actions">
           <button class="btn btn-outline" id="btn-reset-price">Ripristina Originale</button>
           <button class="btn btn-primary" id="btn-save-override">Salva Prezzo</button>
@@ -229,12 +225,17 @@
 
   <footer>
     <div class="wrap footer-content">
-      <p>&copy; 2026 EQUOGEN - Calcolatore di Budget Edile. Interamente gestito via GitHub Pages e GitHub Actions.</p>
-      <small>I dati estratti sono a solo scopo informativo e riflettono i prezzi indicati sui rispettivi siti e-commerce.</small>
+      <p>&copy; 2026 EQUOGEN - Calcolatore di Budget Edile.</p>
+      <p class="footer-update-time" id="stat-last-update" style="font-size: 13px; color: var(--text-muted); margin: 8px 0;">
+        <i class="fa-solid fa-clock"></i> Ultimo aggiornamento prezzi: <span class="stat-value" style="color: var(--accent-cyan); font-weight: bold;">Caricamento...</span>
+      </p>
+      <small>I dati estratti sono a solo scopo informativo e riflettono i prezzi indicati sui rispettivi siti
+        e-commerce.</small>
     </div>
   </footer>
 
   <!-- File Javascript -->
   <script src="app.js"></script>
 </body>
+
 </html>

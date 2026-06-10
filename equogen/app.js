@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Aggiorna i dati nel banner delle statistiche
+  // Aggiorna i dati nel banner delle statistiche / footer
   function updateStatsBanner() {
     // Trova l'ultimo aggiornamento valido
     let latestUpdate = null;
@@ -103,12 +103,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (latestUpdate) {
       const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
-      statLastUpdate.querySelector(".stat-value").textContent = latestUpdate.toLocaleDateString("it-IT", options);
+      if (statLastUpdate) {
+        const valEl = statLastUpdate.querySelector(".stat-value");
+        if (valEl) valEl.textContent = latestUpdate.toLocaleDateString("it-IT", options);
+      }
     } else {
-      statLastUpdate.querySelector(".stat-value").textContent = "N/D";
+      if (statLastUpdate) {
+        const valEl = statLastUpdate.querySelector(".stat-value");
+        if (valEl) valEl.textContent = "N/D";
+      }
     }
 
-    statScrapedCount.querySelector(".stat-value").textContent = `${successCount} / ${products.length}`;
+    if (statScrapedCount) {
+      const valEl = statScrapedCount.querySelector(".stat-value");
+      if (valEl) valEl.textContent = `${successCount} / ${products.length}`;
+    }
   }
 
   // Ottieni il prezzo effettivo (considerando gli override dell'utente)
@@ -374,7 +383,7 @@ document.addEventListener("DOMContentLoaded", () => {
       subtotalVal.textContent = "0.00 €";
       vatVal.textContent = "0.00 €";
       totalVal.textContent = "0.00 €";
-      statBudgetTotal.textContent = "0.00 €";
+      if (statBudgetTotal) statBudgetTotal.textContent = "0.00 €";
       return;
     }
 
@@ -434,13 +443,13 @@ document.addEventListener("DOMContentLoaded", () => {
       subtotalVal.textContent = `${imponibile.toFixed(2)} €`;
       vatVal.textContent = `${vatAmount.toFixed(2)} €`;
       totalVal.textContent = `${total.toFixed(2)} €`;
-      statBudgetTotal.textContent = `${total.toFixed(2)} €`;
+      if (statBudgetTotal) statBudgetTotal.textContent = `${total.toFixed(2)} €`;
     } else {
       // Altrimenti mostriamo solo imponibile
       subtotalVal.textContent = `${subtotal.toFixed(2)} €`;
       vatVal.textContent = "0.00 €";
       totalVal.textContent = `${subtotal.toFixed(2)} €`;
-      statBudgetTotal.textContent = `${subtotal.toFixed(2)} €`;
+      if (statBudgetTotal) statBudgetTotal.textContent = `${subtotal.toFixed(2)} €`;
     }
 
     // Aggiungi gestori eventi per i bottoni nella lista budget
