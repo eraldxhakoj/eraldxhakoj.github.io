@@ -58,14 +58,8 @@
          VIEW 0: HOMEPAGE (DASHBOARD)
          ====================================================================== -->
     <section id="view-home" class="view-section active">
-      <div class="section-toolbar">
-        <div class="toolbar-title">
-          <h2>Panoramica</h2>
-        </div>
-      </div>
-
       <!-- Quick Action Pulsanti Giganti Mobile-First per Cantiere -->
-      <div class="home-quick-actions">
+      <div class="home-quick-actions" style="margin-top:6px;">
         <button class="btn btn-primary btn-hero" onclick="app.openTimesheetModal()">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
           <div class="btn-hero-text">
@@ -163,19 +157,36 @@
         </div>
       </div>
 
-      <!-- Filtri Ore -->
-      <div class="filter-bar">
-        <button class="filter-chip active" data-ts-period="today">Oggi</button>
-        <button class="filter-chip" data-ts-period="week">Ultimi 7 Giorni</button>
-        <button class="filter-chip" data-ts-period="all">Tutto</button>
-        <div style="flex-shrink:0; margin-left:auto;">
-          <select id="filter-ts-site" class="form-select" style="min-height:32px; padding:4px 8px; font-size:0.78rem;">
-            <option value="all">Tutti i Cantieri</option>
-          </select>
+      <!-- Navigatore Calendario Settimanale Professionale Minimal -->
+      <div class="calendar-nav-box">
+        <div class="calendar-nav-header">
+          <div class="cal-nav-controls">
+            <button class="btn-icon" title="Settimana precedente" onclick="app.changeCalendarWeek(-1)">
+              <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span id="cal-month-label" class="cal-month-label">Novembre 2026</span>
+            <button class="btn-icon" title="Settimana successiva" onclick="app.changeCalendarWeek(1)">
+              <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="app.goToCalendarToday()" style="margin-left:4px; min-height:30px; padding:0 8px; font-size:0.75rem;">
+              Oggi
+            </button>
+          </div>
+          <div style="flex-shrink:0;">
+            <select id="filter-ts-site" class="form-select" style="min-height:32px; padding:4px 8px; font-size:0.78rem;">
+              <option value="all">Tutti i Cantieri</option>
+            </select>
+          </div>
         </div>
+
+        <!-- Striscia giorni della settimana (Lun - Dom) -->
+        <div id="calendar-week-strip" class="calendar-week-strip"></div>
       </div>
 
-      <!-- Lista Ore -->
+      <!-- Riepilogo compatto del giorno selezionato -->
+      <div id="selected-day-summary" class="selected-day-summary"></div>
+
+      <!-- Lista Ore per il giorno selezionato -->
       <div id="timesheets-list"></div>
     </section>
 
