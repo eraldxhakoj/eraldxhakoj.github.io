@@ -653,11 +653,24 @@ body {
   margin-top: 10px;
 }
 
-.empty-state svg {
-  width: 42px;
-  height: 42px;
-  color: var(--text-dim);
-  margin-bottom: 10px;
+.empty-state > svg {
+  width: 44px;
+  height: 44px;
+  stroke: var(--primary);
+  stroke-width: 1.8;
+  fill: none;
+  margin-bottom: 12px;
+  opacity: 0.85;
+}
+
+.empty-state .btn svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 2.5;
+  fill: none;
+  margin-bottom: 0;
+  opacity: 1;
 }
 
 .empty-state h3 {
