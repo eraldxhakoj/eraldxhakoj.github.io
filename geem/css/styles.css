@@ -552,6 +552,39 @@ body {
   gap: 6px;
 }
 
+/* Modalità visuale calendario (Giorno, Settimana, Mese) */
+.cal-view-modes {
+  display: inline-flex;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  gap: 2px;
+}
+
+.cal-mode-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  font-family: inherit;
+}
+
+.cal-mode-btn:hover {
+  color: #fff;
+}
+
+.cal-mode-btn.active {
+  background: var(--bg-card);
+  color: var(--primary);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
 .cal-month-label {
   font-size: 0.95rem;
   font-weight: 800;
@@ -559,6 +592,208 @@ body {
   min-width: 130px;
   text-align: center;
   letter-spacing: -0.01em;
+}
+
+/* Visuale Compatta Settimanale */
+.cal-compact-week-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+@media (min-width: 640px) {
+  .cal-compact-week-grid {
+    grid-template-columns: repeat(7, 1fr);
+  }
+}
+
+.cal-compact-day-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  min-height: 80px;
+}
+
+.cal-compact-day-card:hover {
+  border-color: var(--text-dim);
+  background: var(--bg-card-hover);
+}
+
+.cal-compact-day-card.today {
+  border-color: var(--primary);
+}
+
+.cal-compact-day-card.has-data {
+  border-left: 3px solid var(--primary);
+}
+
+.cal-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.cal-card-dayname {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.cal-card-daynum {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.cal-card-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cal-card-hours {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.cal-card-cost {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--success);
+}
+
+.cal-card-empty {
+  font-size: 0.74rem;
+  color: var(--text-dim);
+}
+
+/* Visuale Compatta Mensile (Griglia Calendario 7 Colonne) */
+.cal-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal-month-head-cell {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 4px 0 6px 0;
+}
+
+.cal-month-day-cell {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 6px 4px;
+  min-height: 58px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  position: relative;
+}
+
+.cal-month-day-cell:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--text-dim);
+}
+
+.cal-month-day-cell.other-month {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.cal-month-day-cell.today {
+  border-color: var(--primary);
+}
+
+.cal-month-day-cell.has-data {
+  border-color: rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.03);
+}
+
+.cal-m-num {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.cal-month-day-cell.today .cal-m-num {
+  color: var(--primary);
+}
+
+.cal-m-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  text-align: right;
+  margin-top: 2px;
+}
+
+.cal-m-hours {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.cal-m-cost {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--success);
+}
+
+/* Totali riepilogativi per la visuale compatta */
+.compact-period-banner {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.compact-period-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.compact-period-metrics {
+  display: flex;
+  gap: 16px;
+}
+
+.compact-period-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.compact-period-stat .stat-lbl {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.compact-period-stat .stat-num {
+  font-size: 1.05rem;
+  font-weight: 800;
 }
 
 .calendar-week-strip {

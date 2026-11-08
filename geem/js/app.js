@@ -38,7 +38,9 @@ class GeemApp {
 
     // Calendario per il registro ore
     this.selectedCalendarDate = new Date().toISOString().split('T')[0];
+    this.calendarMode = 'day'; // 'day' | 'week' | 'month'
     this.calendarWeekOffset = 0; // 0 = settimana corrente, -1 = precedente, +1 = successiva
+    this.calendarMonthOffset = 0; // 0 = mese corrente, -1 = precedente, +1 = successivo
 
     this.filters = {
       timesheetSite: 'all',
@@ -261,6 +263,59 @@ class GeemApp {
   }
 
   // --- NAVIGAZIONE CALENDARIO REGISTRO ORE ---
+  setCalendarMode(mode) {
+    this.calendarMode = mode;
+    ['day', 'week', 'month'].forEach(m => {
+      const btn = document.getElementById(`cal-mode-${m}`);
+      if (btn) btn.classList.toggle('active', m === mode);
+    });
+
+    const daySection = document.getElementById('day-view-section');
+    const weekSection = document.getElementById('week-view-section');
+    const monthSection = document.getElementById('month-view-section');
+    const strip = document.getElementById('calendar-week-strip');
+
+    if (daySection) daySection.style.display = (mode === 'day') ? 'block' : 'none';
+    if (weekSection) weekSection.style.display = (mode === 'week') ? 'block' : 'none';
+    if (monthSection) monthSection.style.display = (mode === 'month') ? 'block' : 'none';
+    if (strip) strip.style.display = (mode === 'day') ? 'grid' : 'none';
+
+    this.renderTimesheets();
+  }
+
+  navigateCalendar(delta) {
+    if (this.calendarMode === 'month') {
+      this.calendarMonthOffset += delta;
+    } else {
+      this.calendarWeekOffset += delta;
+      const weekDates = this.getWeekDates(this.calendarWeekOffset);
+      if (!weekDates.some(w => w.isoString === this.selectedCalendarDate)) {
+        this.selectedCalendarDate = weekDates[0].isoString;
+      }
+    }
+    this.renderTimesheets();
+  }
+
+  changeCalendarWeek(delta) {
+    this.navigateCalendar(delta);
+  }
+
+  goToCalendarToday() {
+    this.calendarWeekOffset = 0;
+    this.calendarMonthOffset = 0;
+    this.selectedCalendarDate = new Date().toISOString().split('T')[0];
+    this.renderTimesheets();
+  }
+
+  selectCalendarDate(isoStr, switchModeToDay = false) {
+    this.selectedCalendarDate = isoStr;
+    if (switchModeToDay) {
+      this.setCalendarMode('day');
+      return;
+    }
+    this.renderTimesheets();
+  }
+
   getWeekDates(offsetWeeks = 0) {
     const now = new Date();
     // Inizio della settimana dal lunedì
@@ -270,7 +325,7 @@ class GeemApp {
     const dates = [];
     for (let i = 0; i < 7; i++) {
       const d = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i);
-      const iso = d.toISOString().split('T')[0];
+      const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       dates.push({
         date: d,
         isoString: iso,
@@ -281,25 +336,39 @@ class GeemApp {
     return dates;
   }
 
-  changeCalendarWeek(delta) {
-    this.calendarWeekOffset += delta;
-    // Se la data selezionata non ricade nella nuova settimana, selezioniamo il primo giorno
-    const weekDates = this.getWeekDates(this.calendarWeekOffset);
-    if (!weekDates.some(w => w.isoString === this.selectedCalendarDate)) {
-      this.selectedCalendarDate = weekDates[0].isoString;
+  getMonthGridData(offsetMonths = 0) {
+    const now = new Date();
+    const targetDate = new Date(now.getFullYear(), now.getMonth() + offsetMonths, 1);
+    const year = targetDate.getFullYear();
+    const month = targetDate.getMonth();
+
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+
+    // Primo giorno visibile: lunedì prima o coincidente col 1° del mese
+    const firstDayOfWeek = (firstDay.getDay() + 6) % 7; // 0 = Lun
+    const startDate = new Date(year, month, 1 - firstDayOfWeek);
+
+    const days = [];
+    for (let i = 0; i < 42; i++) { // 6 righe x 7 colonne
+      const current = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate() + i);
+      // Se abbiamo superato il mese e completato almeno una riga completa oltre la fine del mese, possiamo fermarci se siamo a 35
+      if (i >= 35 && current.getMonth() !== month) break;
+
+      const iso = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}-${String(current.getDate()).padStart(2, '0')}`;
+      days.push({
+        date: current,
+        isoString: iso,
+        dayNum: current.getDate(),
+        isCurrentMonth: current.getMonth() === month
+      });
     }
-    this.renderTimesheets();
-  }
 
-  goToCalendarToday() {
-    this.calendarWeekOffset = 0;
-    this.selectedCalendarDate = new Date().toISOString().split('T')[0];
-    this.renderTimesheets();
-  }
-
-  selectCalendarDate(isoStr) {
-    this.selectedCalendarDate = isoStr;
-    this.renderTimesheets();
+    return {
+      year,
+      month,
+      days
+    };
   }
 
   // --- RENDERING ORE (TIMESHEETS CON CALENDARIO) ---
@@ -308,27 +377,186 @@ class GeemApp {
     const strip = document.getElementById('calendar-week-strip');
     const monthLabel = document.getElementById('cal-month-label');
     const summary = document.getElementById('selected-day-summary');
+    const weekSection = document.getElementById('week-view-section');
+    const monthSection = document.getElementById('month-view-section');
     if (!list) return;
 
     const todayIso = new Date().toISOString().split('T')[0];
-    const weekDates = this.getWeekDates(this.calendarWeekOffset);
+    const months = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
 
-    // Aggiorna etichetta mese/anno in base alla settimana
-    if (monthLabel && weekDates.length > 0) {
-      const firstDay = weekDates[0].date;
-      const lastDay = weekDates[6].date;
-      const months = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
-      if (firstDay.getMonth() === lastDay.getMonth()) {
-        monthLabel.textContent = `${months[firstDay.getMonth()]} ${firstDay.getFullYear()}`;
-      } else {
-        monthLabel.textContent = `${months[firstDay.getMonth()].substr(0, 3)} - ${months[lastDay.getMonth()].substr(0, 3)} ${lastDay.getFullYear()}`;
+    // Filtra i timesheets complessivi in base all'eventuale cantiere selezionato
+    let filteredTimesheets = store.data.timesheets;
+    if (this.filters.timesheetSite !== 'all') {
+      filteredTimesheets = filteredTimesheets.filter(e => e.siteId === this.filters.timesheetSite);
+    }
+
+    // Gestione intestazione titolo in base alla modalità
+    if (this.calendarMode === 'month') {
+      const monthData = this.getMonthGridData(this.calendarMonthOffset);
+      if (monthLabel) {
+        monthLabel.textContent = `${months[monthData.month]} ${monthData.year}`;
+      }
+    } else {
+      const weekDates = this.getWeekDates(this.calendarWeekOffset);
+      if (monthLabel && weekDates.length > 0) {
+        const firstDay = weekDates[0].date;
+        const lastDay = weekDates[6].date;
+        if (firstDay.getMonth() === lastDay.getMonth()) {
+          monthLabel.textContent = `${months[firstDay.getMonth()]} ${firstDay.getFullYear()}`;
+        } else {
+          monthLabel.textContent = `${months[firstDay.getMonth()].substr(0, 3)} - ${months[lastDay.getMonth()].substr(0, 3)} ${lastDay.getFullYear()}`;
+        }
       }
     }
 
-    // Render della striscia dei giorni
+    // ==========================================
+    // VISTA COMPATTA SETTIMANALE
+    // ==========================================
+    if (this.calendarMode === 'week') {
+      const weekDates = this.getWeekDates(this.calendarWeekOffset);
+      let weekTotalHours = 0;
+      let weekTotalCost = 0;
+
+      const dayCardsHtml = weekDates.map(w => {
+        const dayEntries = filteredTimesheets.filter(t => t.date === w.isoString);
+        const dayHours = dayEntries.reduce((acc, t) => acc + (t.hours || 0), 0);
+        const dayCost = dayEntries.reduce((acc, t) => acc + (t.total || 0), 0);
+        weekTotalHours += dayHours;
+        weekTotalCost += dayCost;
+
+        const isToday = w.isoString === todayIso;
+        const hasData = dayHours > 0;
+
+        return `
+          <div class="cal-compact-day-card ${isToday ? 'today' : ''} ${hasData ? 'has-data' : ''}" 
+               onclick="app.selectCalendarDate('${w.isoString}', true)" 
+               title="Clicca per aprire il dettaglio della giornata">
+            <div class="cal-card-head">
+              <span class="cal-card-dayname">${w.dayName}</span>
+              <span class="cal-card-daynum">${w.dayNum}</span>
+            </div>
+            <div class="cal-card-stats">
+              ${hasData ? `
+                <div class="cal-card-hours">${dayHours} ore</div>
+                <div class="cal-card-cost">${fmtMoney(dayCost)}</div>
+              ` : `
+                <span class="cal-card-empty">Nessuna ora</span>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (weekSection) {
+        weekSection.innerHTML = `
+          <div class="compact-period-banner">
+            <div class="compact-period-title">
+              Riepilogo Settimana (${fmtDate(weekDates[0].isoString)} - ${fmtDate(weekDates[6].isoString)})
+            </div>
+            <div class="compact-period-metrics">
+              <div class="compact-period-stat">
+                <span class="stat-lbl">Totale Ore</span>
+                <span class="stat-num" style="color:var(--primary);">${weekTotalHours}h</span>
+              </div>
+              <div class="compact-period-stat">
+                <span class="stat-lbl">Costo Manodopera</span>
+                <span class="stat-num" style="color:var(--success);">${fmtMoney(weekTotalCost)}</span>
+              </div>
+            </div>
+          </div>
+          <div class="cal-compact-week-grid">
+            ${dayCardsHtml}
+          </div>
+          <div style="font-size:0.75rem; color:var(--text-muted); text-align:center; margin-top:12px;">
+            Suggerimento: tocca una giornata per visualizzare e registrare le ore dei singoli lavoratori.
+          </div>
+        `;
+      }
+      return;
+    }
+
+    // ==========================================
+    // VISTA COMPATTA MENSILE
+    // ==========================================
+    if (this.calendarMode === 'month') {
+      const monthData = this.getMonthGridData(this.calendarMonthOffset);
+      let monthTotalHours = 0;
+      let monthTotalCost = 0;
+
+      const dayHeaders = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
+      const headersHtml = dayHeaders.map(h => `<div class="cal-month-head-cell">${h}</div>`).join('');
+
+      const cellsHtml = monthData.days.map(d => {
+        if (!d.isCurrentMonth) {
+          return `
+            <div class="cal-month-day-cell other-month">
+              <div class="cal-m-num">${d.dayNum}</div>
+            </div>
+          `;
+        }
+
+        const dayEntries = filteredTimesheets.filter(t => t.date === d.isoString);
+        const dayHours = dayEntries.reduce((acc, t) => acc + (t.hours || 0), 0);
+        const dayCost = dayEntries.reduce((acc, t) => acc + (t.total || 0), 0);
+        monthTotalHours += dayHours;
+        monthTotalCost += dayCost;
+
+        const isToday = d.isoString === todayIso;
+        const hasData = dayHours > 0;
+
+        return `
+          <div class="cal-month-day-cell ${isToday ? 'today' : ''} ${hasData ? 'has-data' : ''}"
+               onclick="app.selectCalendarDate('${d.isoString}', true)"
+               title="${d.isoString}: ${dayHours}h (${fmtMoney(dayCost)})">
+            <div class="cal-m-num">${d.dayNum}</div>
+            ${hasData ? `
+              <div class="cal-m-info">
+                <span class="cal-m-hours">${dayHours}h</span>
+                <span class="cal-m-cost">${fmtMoney(dayCost)}</span>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+
+      if (monthSection) {
+        monthSection.innerHTML = `
+          <div class="compact-period-banner">
+            <div class="compact-period-title">
+              Riepilogo ${months[monthData.month]} ${monthData.year}
+            </div>
+            <div class="compact-period-metrics">
+              <div class="compact-period-stat">
+                <span class="stat-lbl">Totale Ore</span>
+                <span class="stat-num" style="color:var(--primary);">${monthTotalHours}h</span>
+              </div>
+              <div class="compact-period-stat">
+                <span class="stat-lbl">Costo Manodopera</span>
+                <span class="stat-num" style="color:var(--success);">${fmtMoney(monthTotalCost)}</span>
+              </div>
+            </div>
+          </div>
+          <div class="cal-month-grid">
+            ${headersHtml}
+            ${cellsHtml}
+          </div>
+          <div style="font-size:0.75rem; color:var(--text-muted); text-align:center; margin-top:12px;">
+            Suggerimento: tocca qualsiasi giorno del mese per aprire la visuale giornaliera con il dettaglio dei lavoratori.
+          </div>
+        `;
+      }
+      return;
+    }
+
+    // ==========================================
+    // VISTA GIORNO (DEFAULT)
+    // ==========================================
+    const weekDates = this.getWeekDates(this.calendarWeekOffset);
+
+    // Render della striscia dei giorni per la vista giorno
     if (strip) {
       strip.innerHTML = weekDates.map(w => {
-        const hasHours = store.data.timesheets.some(t => t.date === w.isoString);
+        const hasHours = filteredTimesheets.some(t => t.date === w.isoString);
         const isActive = w.isoString === this.selectedCalendarDate;
         const isToday = w.isoString === todayIso;
 
@@ -344,12 +572,7 @@ class GeemApp {
     }
 
     // Filtra le registrazioni per il giorno selezionato
-    let entries = store.data.timesheets.filter(e => e.date === this.selectedCalendarDate);
-
-    // Filtro cantiere
-    if (this.filters.timesheetSite !== 'all') {
-      entries = entries.filter(e => e.siteId === this.filters.timesheetSite);
-    }
+    let entries = filteredTimesheets.filter(e => e.date === this.selectedCalendarDate);
 
     // Aggiorna riepilogo del giorno selezionato
     if (summary) {
