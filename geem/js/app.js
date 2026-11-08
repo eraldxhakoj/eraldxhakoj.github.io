@@ -28,7 +28,7 @@ const fmtDate = (dStr) => {
 
 class GeemApp {
   constructor() {
-    this.currentTab = 'hours';
+    this.currentTab = 'home';
     this.currentAdminSubTab = 'workers';
     this.editingTimesheetId = null;
     this.editingExpenseId = null;

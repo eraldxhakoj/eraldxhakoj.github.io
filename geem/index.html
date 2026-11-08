@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="GEEM">
-  <title>GEEM - Gestionale Edile</title>
+  <title>GEEM</title>
   
   <link rel="stylesheet" href="css/styles.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23f59e0b%22/><text y=%2268%22 x=%2250%22 text-anchor=%22middle%22 font-size=%2260%22 font-family=%22system-ui%22 font-weight=%22900%22 fill=%22%230c111d%22>G</text></svg>">
@@ -16,17 +16,20 @@
 
   <!-- App Header -->
   <header class="app-header">
-    <div class="brand">
+    <div class="brand" style="cursor:pointer;" onclick="app.switchTab('home')">
       <div class="brand-icon">G</div>
       <div class="brand-info">
         <h1>GEEM</h1>
-        <p>Gestionale Edile Startup</p>
       </div>
     </div>
 
     <!-- Desktop Navigation -->
     <nav class="desktop-nav">
-      <button class="nav-btn active" data-tab="hours">
+      <button class="nav-btn active" data-tab="home">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Home
+      </button>
+      <button class="nav-btn" data-tab="hours">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
         Ore
       </button>
@@ -56,58 +59,98 @@
   <!-- Main Content Container -->
   <main class="main-content">
     
-    <!-- KPI Summary Row -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-header">
-          <span class="stat-title">Ore Oggi</span>
-          <span class="stat-icon">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
-          </span>
+    <!-- ======================================================================
+         VIEW 0: HOMEPAGE (DASHBOARD)
+         ====================================================================== -->
+    <section id="view-home" class="view-section active">
+      <div class="section-toolbar">
+        <div class="toolbar-title">
+          <h2>Panoramica</h2>
         </div>
-        <div id="kpi-hours" class="stat-value">0h</div>
-        <div class="stat-sub">Registrate oggi</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-header">
-          <span class="stat-title">Manodopera</span>
-          <span class="stat-icon">
-            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </span>
+        <div class="toolbar-actions">
+          <button class="btn btn-primary btn-sm" onclick="app.openTimesheetModal()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Ore
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="app.openExpenseModal()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Spesa
+          </button>
         </div>
-        <div id="kpi-hours-cost" class="stat-value">€0,00</div>
-        <div class="stat-sub">Costo ore odierne</div>
       </div>
-      <div class="stat-card">
-        <div class="stat-header">
-          <span class="stat-title">Spese Oggi</span>
-          <span class="stat-icon">
-            <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><circle cx="17" cy="15" r="1.5"/></svg>
-          </span>
+
+      <!-- KPI Summary Row (Ora SOLO nella Home) -->
+      <div class="stats-grid">
+        <div class="stat-card" style="cursor:pointer;" onclick="app.switchTab('hours')">
+          <div class="stat-header">
+            <span class="stat-title">Ore Oggi</span>
+            <span class="stat-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+            </span>
+          </div>
+          <div id="kpi-hours" class="stat-value">0h</div>
+          <div class="stat-sub">Registrate oggi</div>
         </div>
-        <div id="kpi-expenses" class="stat-value">€0,00</div>
-        <div class="stat-sub">Materiali, benza, mezzi</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-header">
-          <span class="stat-title">Cantieri Attivi</span>
-          <span class="stat-icon">
-            <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M13 11l6 3v7M9 9h1M9 13h1M9 17h1"/></svg>
-          </span>
+        <div class="stat-card" style="cursor:pointer;" onclick="app.switchTab('hours')">
+          <div class="stat-header">
+            <span class="stat-title">Manodopera</span>
+            <span class="stat-icon">
+              <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+          </div>
+          <div id="kpi-hours-cost" class="stat-value">€0,00</div>
+          <div class="stat-sub">Costo ore odierne</div>
         </div>
-        <div id="kpi-sites" class="stat-value">0</div>
-        <div class="stat-sub">Lavori in corso</div>
+        <div class="stat-card" style="cursor:pointer;" onclick="app.switchTab('expenses')">
+          <div class="stat-header">
+            <span class="stat-title">Spese Oggi</span>
+            <span class="stat-icon">
+              <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><circle cx="17" cy="15" r="1.5"/></svg>
+            </span>
+          </div>
+          <div id="kpi-expenses" class="stat-value">€0,00</div>
+          <div class="stat-sub">Materiali, carburante, mezzi</div>
+        </div>
+        <div class="stat-card" style="cursor:pointer;" onclick="app.switchTab('sites')">
+          <div class="stat-header">
+            <span class="stat-title">Cantieri Attivi</span>
+            <span class="stat-icon">
+              <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M13 11l6 3v7M9 9h1M9 13h1M9 17h1"/></svg>
+            </span>
+          </div>
+          <div id="kpi-sites" class="stat-value">0</div>
+          <div class="stat-sub">Lavori in corso</div>
+        </div>
       </div>
-    </div>
+
+      <!-- Quick Action Shortcuts in Home -->
+      <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-top:10px;">
+        <button class="btn btn-secondary" onclick="app.switchTab('hours')" style="justify-content:flex-start; padding:14px;">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+          Registro Ore
+        </button>
+        <button class="btn btn-secondary" onclick="app.switchTab('expenses')" style="justify-content:flex-start; padding:14px;">
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><circle cx="17" cy="15" r="1.5"/></svg>
+          Registro Spese
+        </button>
+        <button class="btn btn-secondary" onclick="app.switchTab('sites')" style="justify-content:flex-start; padding:14px;">
+          <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M13 11l6 3v7M9 9h1M9 13h1M9 17h1"/></svg>
+          Cantieri Attivi
+        </button>
+        <button class="btn btn-secondary" onclick="app.switchTab('admin')" style="justify-content:flex-start; padding:14px;">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Admin & Dati
+        </button>
+      </div>
+    </section>
 
     <!-- ======================================================================
          VIEW 1: GESTIONALE ORE
          ====================================================================== -->
-    <section id="view-hours" class="view-section active">
+    <section id="view-hours" class="view-section">
       <div class="section-toolbar">
         <div class="toolbar-title">
-          <h2>Registro Ore Lavoratori</h2>
-          <p>Presenze sul cantiere, ore lavorate e conteggio costi</p>
+          <h2>Registro Ore</h2>
         </div>
         <div class="toolbar-actions">
           <button class="btn btn-primary" onclick="app.openTimesheetModal()">
@@ -139,8 +182,7 @@
     <section id="view-expenses" class="view-section">
       <div class="section-toolbar">
         <div class="toolbar-title">
-          <h2>Spese & Fatture Giornaliere</h2>
-          <p>Camion, carburante, materiali, noleggi e scontrini</p>
+          <h2>Spese & Fatture</h2>
         </div>
         <div class="toolbar-actions">
           <button class="btn btn-primary" onclick="app.openExpenseModal()">
@@ -167,8 +209,7 @@
     <section id="view-sites" class="view-section">
       <div class="section-toolbar">
         <div class="toolbar-title">
-          <h2>Cantieri & Redditività</h2>
-          <p>Situazione cantieri aperti, contatti clienti e costi maturati</p>
+          <h2>Cantieri</h2>
         </div>
         <div class="toolbar-actions">
           <button class="btn btn-primary" onclick="app.openSiteModal()">
@@ -187,8 +228,7 @@
     <section id="view-admin" class="view-section">
       <div class="section-toolbar">
         <div class="toolbar-title">
-          <h2>Gestione Admin & Anagrafiche</h2>
-          <p>Configura lavoratori, clienti, cantieri, categorie e database</p>
+          <h2>Admin</h2>
         </div>
       </div>
 
@@ -284,7 +324,7 @@
           <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:14px;">I dati sono archiviati in file JSON versionati direttamente nel tuo repository GitHub privato.</p>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
             <button class="btn btn-primary btn-sm" onclick="app.openAuthModal()">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
               Configura Accesso GitHub
             </button>
             <button id="btn-logout" class="btn btn-danger btn-sm">Disconnetti</button>
@@ -313,10 +353,14 @@
   </main>
 
   <!-- ========================================================================
-       MOBILE BOTTOM NAVIGATION
+       MOBILE BOTTOM NAVIGATION (5 Tabs: Home, Ore, Spese, Cantieri, Admin)
        ======================================================================== -->
   <nav class="bottom-nav">
-    <button class="bottom-tab active" data-tab="hours">
+    <button class="bottom-tab active" data-tab="home">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </button>
+    <button class="bottom-tab" data-tab="hours">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
       <span>Ore</span>
     </button>
