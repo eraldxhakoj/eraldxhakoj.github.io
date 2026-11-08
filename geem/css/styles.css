@@ -472,6 +472,60 @@ body {
   font-size: 0.78rem;
 }
 
+/* Home Quick Action Pulsanti Giganti Mobile-First */
+.home-quick-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+@media (min-width: 640px) {
+  .home-quick-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.btn-hero {
+  min-height: 64px;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+  text-align: left;
+}
+
+.btn-hero svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 2.2;
+  flex-shrink: 0;
+}
+
+.btn-hero-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.btn-hero-text strong {
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.btn-hero-text small {
+  font-size: 0.76rem;
+  opacity: 0.85;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.btn-primary.btn-hero {
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.2);
+}
+
 /* Filter Bar */
 .filter-bar {
   display: flex;

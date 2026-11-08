@@ -182,7 +182,7 @@ class StateStore {
     this.initFromLocal();
   }
 
-  // Carica credenziali salvate se presenti
+  // Carica credenziali salvate se presenti e ripristina la cache
   initFromLocal() {
     try {
       if (typeof localStorage !== 'undefined') {
@@ -192,6 +192,15 @@ class StateStore {
           if (auth.owner && auth.repo && auth.token) {
             this.mode = 'github';
             this.githubClient = new GitHubStorage(auth.owner, auth.repo, auth.token);
+
+            // Carica l'ultima copia dei dati salvata localmente per GitHub
+            const cachedGitHubData = localStorage.getItem('geem_github_cache');
+            if (cachedGitHubData) {
+              try {
+                const parsed = JSON.parse(cachedGitHubData);
+                this.data = { ...this.data, ...parsed };
+              } catch (e) {}
+            }
           }
         }
 
@@ -226,6 +235,10 @@ class StateStore {
           console.warn('Errore scrittura local storage demo:', e);
         }
       }
+    } else if (this.mode === 'github' && typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem('geem_github_cache', JSON.stringify(this.data));
+      } catch (e) {}
     }
   }
 
@@ -269,7 +282,10 @@ class StateStore {
   switchToDemo() {
     this.mode = 'demo';
     this.githubClient = null;
-    if (typeof localStorage !== 'undefined') localStorage.removeItem('geem_auth');
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('geem_auth');
+      localStorage.removeItem('geem_github_cache');
+    }
     if (typeof sessionStorage !== 'undefined') sessionStorage.removeItem('geem_auth');
 
     const savedDemo = typeof localStorage !== 'undefined' ? localStorage.getItem('geem_demo_db') : null;
@@ -332,6 +348,13 @@ class StateStore {
         this.data = reload.data;
       } else {
         this.data = data;
+      }
+
+      // Salva copia cache in locale per ricaricamenti istantanei
+      if (typeof localStorage !== 'undefined') {
+        try {
+          localStorage.setItem('geem_github_cache', JSON.stringify(this.data));
+        } catch (e) {}
       }
 
       this.setSyncStatus('synced');

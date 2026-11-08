@@ -52,6 +52,10 @@ class GeemApp {
 
     if (store.mode === 'github') {
       this.showToast('Connesso al database GitHub', 'success');
+      // Sincronizza i dati freschi da GitHub in background
+      store.refreshDataFromGitHub().catch(err => {
+        console.warn('Errore sync automatico GitHub:', err);
+      });
     } else {
       this.showToast('Modalità Demo Locale attiva', 'info');
     }
