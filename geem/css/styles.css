@@ -92,6 +92,15 @@ body {
   gap: 10px;
 }
 
+.brand-logo-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  background: #ffffff;
+}
+
 .brand-icon {
   width: 32px;
   height: 32px;
