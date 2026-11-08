@@ -157,29 +157,21 @@
         </div>
       </div>
 
-      <!-- Navigatore Calendario Registro Ore (Giorno / Settimana / Mese) -->
+      <!-- Navigatore Calendario Settimanale Professionale Minimal -->
       <div class="calendar-nav-box">
         <div class="calendar-nav-header">
           <div class="cal-nav-controls">
-            <button class="btn-icon" title="Precedente" onclick="app.navigateCalendar(-1)">
+            <button class="btn-icon" title="Settimana precedente" onclick="app.changeCalendarWeek(-1)">
               <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
             <span id="cal-month-label" class="cal-month-label">Novembre 2026</span>
-            <button class="btn-icon" title="Successivo" onclick="app.navigateCalendar(1)">
+            <button class="btn-icon" title="Settimana successiva" onclick="app.changeCalendarWeek(1)">
               <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
             <button class="btn btn-secondary btn-sm" onclick="app.goToCalendarToday()" style="margin-left:4px; min-height:30px; padding:0 8px; font-size:0.75rem;">
               Oggi
             </button>
           </div>
-
-          <!-- Toggle Modalità Vista Calendario: Giorno / Settimana / Mese -->
-          <div class="cal-view-modes">
-            <button id="cal-mode-day" class="cal-mode-btn active" onclick="app.setCalendarMode('day')">Giorno</button>
-            <button id="cal-mode-week" class="cal-mode-btn" onclick="app.setCalendarMode('week')">Settimana</button>
-            <button id="cal-mode-month" class="cal-mode-btn" onclick="app.setCalendarMode('month')">Mese</button>
-          </div>
-
           <div style="flex-shrink:0;">
             <select id="filter-ts-site" class="form-select" style="min-height:32px; padding:4px 8px; font-size:0.78rem;">
               <option value="all">Tutti i Cantieri</option>
@@ -187,26 +179,15 @@
           </div>
         </div>
 
-        <!-- Striscia giorni della settimana (solo per visuale Giorno) -->
+        <!-- Striscia giorni della settimana (Lun - Dom) -->
         <div id="calendar-week-strip" class="calendar-week-strip"></div>
       </div>
 
-      <!-- Container Viste Calendario: Giorno (riepilogo + lista ore) / Settimana Compatta / Mese Compatto -->
-      <div id="calendar-view-container">
-        <!-- Vista Giorno (default) -->
-        <div id="day-view-section">
-          <!-- Riepilogo compatto del giorno selezionato -->
-          <div id="selected-day-summary" class="selected-day-summary"></div>
-          <!-- Lista Ore per il giorno selezionato -->
-          <div id="timesheets-list"></div>
-        </div>
+      <!-- Riepilogo compatto del giorno selezionato -->
+      <div id="selected-day-summary" class="selected-day-summary"></div>
 
-        <!-- Vista Compatta Settimanale -->
-        <div id="week-view-section" style="display:none;"></div>
-
-        <!-- Vista Compatta Mensile -->
-        <div id="month-view-section" style="display:none;"></div>
-      </div>
+      <!-- Lista Ore per il giorno selezionato -->
+      <div id="timesheets-list"></div>
     </section>
 
     <!-- ======================================================================
