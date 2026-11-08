@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0c111d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GEEM">
+  <title>GEEM - Gestionale Edile</title>
+  
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23f59e0b%22/><text y=%2268%22 x=%2250%22 text-anchor=%22middle%22 font-size=%2260%22 font-family=%22system-ui%22 font-weight=%22900%22 fill=%22%230c111d%22>G</text></svg>">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-icon">G</div>
+      <div class="brand-info">
+        <h1>GEEM</h1>
+        <p>Gestionale Edile Startup</p>
+      </div>
+    </div>
+
+    <!-- Desktop Navigation -->
+    <nav class="desktop-nav">
+      <button class="nav-btn active" data-tab="hours">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Ore
+      </button>
+      <button class="nav-btn" data-tab="expenses">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        Spese
+      </button>
+      <button class="nav-btn" data-tab="sites">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+        Cantieri
+      </button>
+      <button class="nav-btn" data-tab="admin">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Admin
+      </button>
+    </nav>
+
+    <!-- Header Actions (Sync Status & GitHub Connect) -->
+    <div class="header-actions">
+      <div id="sync-badge" class="sync-badge" title="Tocca per configurare Database GitHub">
+        <span class="sync-dot"></span>
+        <span id="sync-text">Connessione...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="main-content">
+    
+    <!-- KPI Summary Row -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-title">Ore Oggi</span>
+          <span class="stat-icon">⏱️</span>
+        </div>
+        <div id="kpi-hours" class="stat-value">0h</div>
+        <div class="stat-sub">Registrate oggi</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-title">Manodopera</span>
+          <span class="stat-icon">👷</span>
+        </div>
+        <div id="kpi-hours-cost" class="stat-value">€0,00</div>
+        <div class="stat-sub">Costo ore odierne</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-title">Spese Oggi</span>
+          <span class="stat-icon">💶</span>
+        </div>
+        <div id="kpi-expenses" class="stat-value">€0,00</div>
+        <div class="stat-sub">Materiali, benza, mezzi</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-title">Cantieri Attivi</span>
+          <span class="stat-icon">🏗️</span>
+        </div>
+        <div id="kpi-sites" class="stat-value">0</div>
+        <div class="stat-sub">Lavori in corso</div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         VIEW 1: GESTIONALE ORE
+         ====================================================================== -->
+    <section id="view-hours" class="view-section active">
+      <div class="section-toolbar">
+        <div class="toolbar-title">
+          <h2>Registro Ore Lavoratori</h2>
+          <p>Presenze sul cantiere, ore lavorate e conteggio costi</p>
+        </div>
+        <div class="toolbar-actions">
+          <button class="btn btn-primary" onclick="app.openTimesheetModal()">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Registra Ore
+          </button>
+        </div>
+      </div>
+
+      <!-- Filtri Ore -->
+      <div class="filter-bar">
+        <button class="filter-chip active" data-ts-period="today">Oggi</button>
+        <button class="filter-chip" data-ts-period="week">Ultimi 7 Giorni</button>
+        <button class="filter-chip" data-ts-period="all">Tutto</button>
+        <div style="flex-shrink:0; margin-left:auto;">
+          <select id="filter-ts-site" class="form-select" style="min-height:34px; padding:4px 10px; font-size:0.8rem;">
+            <option value="all">Tutti i Cantieri</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Lista Ore -->
+      <div id="timesheets-list"></div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 2: GESTIONALE SPESE
+         ====================================================================== -->
+    <section id="view-expenses" class="view-section">
+      <div class="section-toolbar">
+        <div class="toolbar-title">
+          <h2>Spese & Fatture Giornaliere</h2>
+          <p>Camion, benzina, materiali, noleggi e scontrini</p>
+        </div>
+        <div class="toolbar-actions">
+          <button class="btn btn-primary" onclick="app.openExpenseModal()">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Nuova Spesa
+          </button>
+        </div>
+      </div>
+
+      <!-- Filtro Cantieri Spese -->
+      <div style="margin-bottom:14px;">
+        <select id="filter-exp-site" class="form-select">
+          <option value="all">Tutti i Cantieri e Spese Generali</option>
+        </select>
+      </div>
+
+      <!-- Lista Spese -->
+      <div id="expenses-list"></div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 3: PANORAMICA CANTIERI
+         ====================================================================== -->
+    <section id="view-sites" class="view-section">
+      <div class="section-toolbar">
+        <div class="toolbar-title">
+          <h2>Cantieri & Redditività</h2>
+          <p>Situazione cantieri aperti, contatti clienti e costi maturati</p>
+        </div>
+        <div class="toolbar-actions">
+          <button class="btn btn-primary" onclick="app.openSiteModal()">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Nuovo Cantiere
+          </button>
+        </div>
+      </div>
+
+      <div id="sites-list"></div>
+    </section>
+
+    <!-- ======================================================================
+         VIEW 4: GESTIONALE ADMIN & DATI
+         ====================================================================== -->
+    <section id="view-admin" class="view-section">
+      <div class="section-toolbar">
+        <div class="toolbar-title">
+          <h2>Gestione Admin & Anagrafiche</h2>
+          <p>Configura lavoratori, clienti, cantieri, categorie e database</p>
+        </div>
+      </div>
+
+      <!-- Sub Navigation Admin -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-subtab="workers">👷 Lavoratori</button>
+        <button class="admin-tab" data-subtab="clients">👥 Clienti</button>
+        <button class="admin-tab" data-subtab="sites-admin">🏗️ Cantieri</button>
+        <button class="admin-tab" data-subtab="types">🏷️ Tipologie & Liste</button>
+        <button class="admin-tab" data-subtab="database">🔒 Database & Backup</button>
+      </div>
+
+      <!-- SubView: Lavoratori -->
+      <div id="admin-workers" class="admin-subview">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h3 style="font-size:1.05rem; font-weight:700;">Elenco Lavoratori</h3>
+          <button class="btn btn-secondary btn-sm" onclick="app.openWorkerModal()">+ Aggiungi Lavoratore</button>
+        </div>
+        <div id="admin-workers-list"></div>
+      </div>
+
+      <!-- SubView: Clienti -->
+      <div id="admin-clients" class="admin-subview" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h3 style="font-size:1.05rem; font-weight:700;">Elenco Clienti</h3>
+          <button class="btn btn-secondary btn-sm" onclick="app.openClientModal()">+ Aggiungi Cliente</button>
+        </div>
+        <div id="admin-clients-list"></div>
+      </div>
+
+      <!-- SubView: Cantieri Admin -->
+      <div id="admin-sites-admin" class="admin-subview" style="display:none;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h3 style="font-size:1.05rem; font-weight:700;">Elenco Cantieri</h3>
+          <button class="btn btn-secondary btn-sm" onclick="app.openSiteModal()">+ Aggiungi Cantiere</button>
+        </div>
+        <div id="admin-sites-list"></div>
+      </div>
+
+      <!-- SubView: Tipologie & Liste Dinamiche -->
+      <div id="admin-types" class="admin-subview" style="display:none;">
+        <!-- Ruoli Lavoratore -->
+        <div class="auth-box" style="margin-top:0; margin-bottom:16px;">
+          <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:8px;">Ruoli Lavoratori Aziendali</h3>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">Modifica o aggiungi ruoli e specializzazioni disponibili nei menu a tendina.</p>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="new-role-input" class="form-input" placeholder="Es. Ponteggiatore, Lattoniere..." style="max-width:300px;">
+            <button class="btn btn-primary btn-sm" onclick="app.addWorkerRole()">Aggiungi</button>
+          </div>
+          <div id="tags-roles" class="tag-list"></div>
+        </div>
+
+        <!-- Categorie Spesa -->
+        <div class="auth-box">
+          <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:8px;">Categorie Spese & Fatture</h3>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">Gestisci le voci di spesa (camion, carburante, fornitori materiali, ecc.).</p>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="new-cat-input" class="form-input" placeholder="Es. Noleggio Gru, Smaltimento..." style="max-width:300px;">
+            <button class="btn btn-primary btn-sm" onclick="app.addExpenseCategory()">Aggiungi</button>
+          </div>
+          <div id="tags-categories" class="tag-list"></div>
+        </div>
+      </div>
+
+      <!-- SubView: Database & Backup -->
+      <div id="admin-database" class="admin-subview" style="display:none;">
+        <div class="auth-box" style="margin-top:0; margin-bottom:16px;">
+          <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:8px;">Database su Repository Privato GitHub</h3>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">I tuoi dati (lavoratori, ore, cantieri e spese) sono memorizzati in file JSON versionati direttamente nel tuo repository GitHub privato.</p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="app.openAuthModal()">⚙️ Configura Accesso GitHub</button>
+            <button id="btn-logout" class="btn btn-danger">Disconnetti</button>
+          </div>
+        </div>
+
+        <div class="auth-box">
+          <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:8px;">Backup Locale (JSON)</h3>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">Puoi scaricare una copia di sicurezza completa in formato JSON o ripristinare un backup precedente.</p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <button id="btn-export-backup" class="btn btn-secondary">💾 Scarica Backup JSON</button>
+            <label class="btn btn-secondary" style="cursor:pointer; margin-bottom:0;">
+              📂 Ripristina da JSON
+              <input type="file" id="input-import-backup" accept=".json" style="display:none;">
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       MOBILE BOTTOM NAVIGATION
+       ======================================================================== -->
+  <nav class="bottom-nav">
+    <button class="bottom-tab active" data-tab="hours">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <span>Ore</span>
+    </button>
+    <button class="bottom-tab" data-tab="expenses">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+      <span>Spese</span>
+    </button>
+    <button class="bottom-tab" data-tab="sites">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+      <span>Cantieri</span>
+    </button>
+    <button class="bottom-tab" data-tab="admin">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      <span>Admin</span>
+    </button>
+  </nav>
+
+  <!-- ========================================================================
+       MODALS
+       ======================================================================== -->
+
+  <!-- MODAL: REGISTRA/MODIFICA ORE -->
+  <div id="modal-timesheet" class="modal-backdrop">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 id="modal-ts-title">Registra Ore Lavoratore</h3>
+        <button class="btn-icon" onclick="app.closeModal('modal-timesheet')">&times;</button>
+      </div>
+      <form id="form-timesheet">
+        <div class="form-group">
+          <label class="form-label" for="ts-date">Data Lavoro</label>
+          <input type="date" id="ts-date" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="ts-worker">Lavoratore</label>
+          <select id="ts-worker" class="form-select" required></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="ts-site">Cantiere di Destinazione</label>
+          <select id="ts-site" class="form-select" required></select>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="ts-hours">Ore Lavorate</label>
+            <div class="hours-stepper">
+              <button type="button" class="stepper-btn" data-stepper="-0.5">-</button>
+              <input type="number" id="ts-hours" class="form-input" step="0.5" min="0.5" max="24" value="8" required style="text-align:center; font-weight:800; font-size:1.1rem;">
+              <button type="button" class="stepper-btn" data-stepper="0.5">+</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ts-rate">Costo Orario (€/h)</label>
+            <input type="number" id="ts-rate" class="form-input" step="0.5" min="0" value="20" required>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-input); padding:12px; border-radius:var(--radius-md); display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <span style="font-size:0.85rem; color:var(--text-muted); font-weight:600;">Costo Manodopera Calcolato:</span>
+          <span id="ts-total-preview" style="font-size:1.2rem; font-weight:800; color:var(--primary);">€0,00</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="ts-notes">Note Lavoro (Opzionale)</label>
+          <textarea id="ts-notes" class="form-textarea" placeholder="Es. getto solaio, tracciamento pareti..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-timesheet')">Annulla</button>
+          <button type="submit" class="btn btn-primary">Salva Registrazione</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: REGISTRA/MODIFICA SPESA -->
+  <div id="modal-expense" class="modal-backdrop">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 id="modal-exp-title">Nuova Spesa</h3>
+        <button class="btn-icon" onclick="app.closeModal('modal-expense')">&times;</button>
+      </div>
+      <form id="form-expense">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="exp-date">Data Spesa</label>
+            <input type="date" id="exp-date" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="exp-amount">Importo (€)</label>
+            <input type="number" id="exp-amount" class="form-input" step="0.01" min="0.01" placeholder="0.00" required style="font-weight:800; font-size:1.1rem; color:var(--primary);">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="exp-category">Categoria Spesa</label>
+          <select id="exp-category" class="form-select" required></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="exp-site">Cantiere o Generale</label>
+          <select id="exp-site" class="form-select" required></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="exp-desc">Descrizione / Fornitore</label>
+          <input type="text" id="exp-desc" class="form-input" placeholder="Es. Gasolio furgone Eni, Bricoman cemento..." required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="exp-doc">N° Fattura o Scontrino</label>
+          <input type="text" id="exp-doc" class="form-input" placeholder="Es. Scontrino 124 / Fattura 45B">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="exp-notes">Note Aggiuntive</label>
+          <textarea id="exp-notes" class="form-textarea" placeholder="Dettagli metodo di pagamento, mezzo utilizzato..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-expense')">Annulla</button>
+          <button type="submit" class="btn btn-primary">Salva Spesa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: LAVORATORE -->
+  <div id="modal-worker" class="modal-backdrop">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 id="modal-worker-title">Lavoratore</h3>
+        <button class="btn-icon" onclick="app.closeModal('modal-worker')">&times;</button>
+      </div>
+      <form id="form-worker">
+        <div class="form-group">
+          <label class="form-label" for="worker-name">Nome e Cognome</label>
+          <input type="text" id="worker-name" class="form-input" placeholder="Es. Mario Rossi" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="worker-role">Ruolo Aziendale / Tipo</label>
+          <select id="worker-role" class="form-select" required></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="worker-phone">Numero di Telefono</label>
+          <input type="tel" id="worker-phone" class="form-input" placeholder="Es. +39 340 1234567">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="worker-rate">Costo Orario Standard (€/h)</label>
+          <input type="number" id="worker-rate" class="form-input" step="0.5" min="0" value="20" required>
+        </div>
+        <div class="form-group" style="display:flex; align-items:center; gap:10px; margin-top:8px;">
+          <input type="checkbox" id="worker-active" style="width:20px; height:20px; accent-color:var(--primary);" checked>
+          <label for="worker-active" style="font-size:0.9rem; font-weight:600; cursor:pointer;">Lavoratore Attivo in organico</label>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-worker')">Annulla</button>
+          <button type="submit" class="btn btn-primary">Salva Lavoratore</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CLIENTE -->
+  <div id="modal-client" class="modal-backdrop">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 id="modal-client-title">Cliente</h3>
+        <button class="btn-icon" onclick="app.closeModal('modal-client')">&times;</button>
+      </div>
+      <form id="form-client">
+        <div class="form-group">
+          <label class="form-label" for="client-name">Nome e Cognome / Ragione Sociale</label>
+          <input type="text" id="client-name" class="form-input" placeholder="Es. Mario Rossi oppure Rossi Costruzioni Srl" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="client-phone">Numero di Telefono</label>
+          <input type="tel" id="client-phone" class="form-input" placeholder="Es. +39 02 1234567">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="client-notes">Note / Indirizzo Fatturazione</label>
+          <textarea id="client-notes" class="form-textarea" placeholder="Referente, P.IVA o note commerciali..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-client')">Annulla</button>
+          <button type="submit" class="btn btn-primary">Salva Cliente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: CANTIERE -->
+  <div id="modal-site" class="modal-backdrop">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 id="modal-site-title">Cantiere</h3>
+        <button class="btn-icon" onclick="app.closeModal('modal-site')">&times;</button>
+      </div>
+      <form id="form-site">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="site-code">ID / Codice Cantiere</label>
+            <input type="text" id="site-code" class="form-input" placeholder="Es. CANT-01" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="site-status">Stato</label>
+            <select id="site-status" class="form-select">
+              <option value="in_corso">In Corso</option>
+              <option value="sospeso">Sospeso</option>
+              <option value="completato">Completato</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="site-name">Nome Cantiere / Descrizione</label>
+          <input type="text" id="site-name" class="form-input" placeholder="Es. Ristrutturazione Villa Monza" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="site-client">Cliente Associato</label>
+          <select id="site-client" class="form-select" required></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="site-address">Indirizzo del Cantiere</label>
+          <input type="text" id="site-address" class="form-input" placeholder="Es. Via Dante 14, Monza (per navigatore GPS)" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="site-notes">Note Tecniche</label>
+          <textarea id="site-notes" class="form-textarea" placeholder="Codici di accesso, ditta ponteggi, piano sicurezza..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-site')">Annulla</button>
+          <button type="submit" class="btn btn-primary">Salva Cantiere</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: GITHUB DATABASE LOGIN & CONFIG -->
+  <div id="modal-auth" class="modal-backdrop">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3>Database Sicuro GitHub</h3>
+        <button class="btn-icon" onclick="app.closeModal('modal-auth')">&times;</button>
+      </div>
+      <form id="form-auth">
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">
+          I tuoi dati sono custoditi al 100% nel tuo repository privato su GitHub. Inserisci le tue credenziali per accedere.
+        </p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="gh-owner">Account GitHub</label>
+            <input type="text" id="gh-owner" class="form-input" value="eraldxhakoj" placeholder="eraldxhakoj" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="gh-repo">Repo Privata</label>
+            <input type="text" id="gh-repo" class="form-input" value="geem-data" placeholder="geem-data" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="gh-token">GitHub Personal Access Token (Fine-Grained)</label>
+          <input type="password" id="gh-token" class="form-input" placeholder="github_pat_..." autocomplete="off" required>
+          <span style="font-size:0.75rem; color:var(--text-dim); display:block; margin-top:4px;">
+            Il token viene conservato solo nel tuo browser e comunica direttamente con GitHub via HTTPS.
+          </span>
+        </div>
+
+        <div class="form-group" style="display:flex; align-items:center; gap:8px;">
+          <input type="checkbox" id="gh-remember" style="accent-color:var(--primary); width:18px; height:18px;" checked>
+          <label for="gh-remember" style="font-size:0.85rem; cursor:pointer;">Resta collegato su questo dispositivo</label>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-auth')">Chiudi</button>
+          <button type="submit" id="btn-login-submit" class="btn btn-primary">Connetti a GitHub</button>
+        </div>
+
+        <!-- Guida rapida di creazione -->
+        <div class="auth-help">
+          <strong>Come creare il tuo Database Sicuro su GitHub:</strong>
+          <ol>
+            <li>Crea un nuovo repository <strong>Privato</strong> su GitHub chiamato <code>geem-data</code>.</li>
+            <li>Vai su <strong>Settings &gt; Developer settings &gt; Personal access tokens &gt; Fine-grained tokens</strong>.</li>
+            <li>Genera un token selezionando <em>Only select repositories &gt; geem-data</em> con permesso <strong>Contents: Read and write</strong>.</li>
+            <li>Incolla il token qui sopra e clicca <em>Connetti</em>: GEEM creerà automaticamente la struttura dati nel repository!</li>
+          </ol>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Core App Scripts (ES Modules) -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
+
