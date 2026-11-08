@@ -5,6 +5,19 @@
 
 import { store } from './state.js';
 
+// SVG Icons Helpers per render rapido senza emoji
+const ICONS = {
+  edit: `<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+  delete: `<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>`,
+  phone: `<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+  map: `<svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>`,
+  site: `<svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M13 11l6 3v7M9 9h1M9 13h1M9 17h1"/></svg>`,
+  user: `<svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+  company: `<svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`,
+  doc: `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+  note: `<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`
+};
+
 // Utilità di formattazione
 const fmtMoney = (val) => new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(val || 0);
 const fmtDate = (dStr) => {
@@ -37,7 +50,6 @@ class GeemApp {
     this.renderAll();
     this.initDates();
 
-    // Mostra toast di avvio
     if (store.mode === 'github') {
       this.showToast('Connesso al database GitHub', 'success');
     } else {
@@ -45,7 +57,6 @@ class GeemApp {
     }
   }
 
-  // Imposta le date odierne nei campi di default
   initDates() {
     const today = new Date().toISOString().split('T')[0];
     const tsDate = document.getElementById('ts-date');
@@ -54,7 +65,6 @@ class GeemApp {
     if (expDate) expDate.value = today;
   }
 
-  // Iscrizione ai cambiamenti di stato
   subscribeState() {
     store.subscribe((state, changedType) => {
       this.renderSyncStatus();
@@ -63,7 +73,6 @@ class GeemApp {
     });
   }
 
-  // Notifiche Toast
   showToast(message, type = 'info') {
     const container = document.getElementById('toast-container');
     if (!container) return;
@@ -78,10 +87,9 @@ class GeemApp {
 
     setTimeout(() => {
       if (toast.parentElement) toast.remove();
-    }, 3800);
+    }, 3200);
   }
 
-  // Gestione Modali
   openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
@@ -98,29 +106,24 @@ class GeemApp {
     }
   }
 
-  // Switch schermate principali
   switchTab(tabId) {
     this.currentTab = tabId;
 
-    // Aggiorna navigazione mobile
     document.querySelectorAll('.bottom-tab').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.tab === tabId);
     });
 
-    // Aggiorna navigazione desktop
     document.querySelectorAll('.nav-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.tab === tabId);
     });
 
-    // Aggiorna sezioni visibili
     document.querySelectorAll('.view-section').forEach(sec => {
       sec.classList.toggle('active', sec.id === `view-${tabId}`);
     });
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo(0, 0);
   }
 
-  // Switch sotto-tab Admin
   switchAdminSubTab(subTabId) {
     this.currentAdminSubTab = subTabId;
     document.querySelectorAll('.admin-tab').forEach(btn => {
@@ -155,14 +158,14 @@ class GeemApp {
     badge.className = `sync-badge ${store.syncStatus}`;
 
     if (store.mode === 'demo') {
-      text.textContent = 'Modalità Demo (Locale)';
+      text.textContent = 'Demo Locale';
     } else if (store.syncStatus === 'saving') {
-      text.textContent = 'Salvataggio su GitHub...';
+      text.textContent = 'Salvataggio...';
     } else if (store.syncStatus === 'error') {
-      text.textContent = 'Errore sincronizzazione';
+      text.textContent = 'Errore Connessione';
     } else {
       const timeStr = store.lastSaved ? store.lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'ora';
-      text.textContent = `GitHub: OK (${timeStr})`;
+      text.textContent = `GitHub (${timeStr})`;
     }
   }
 
@@ -180,7 +183,6 @@ class GeemApp {
     if (kpiSites) kpiSites.textContent = `${stats.activeSites}`;
   }
 
-  // Popola tutti i menu a discesa dell'app
   populateSelectDropdowns() {
     const workers = store.data.workers.filter(w => w.active);
     const sites = store.data.sites;
@@ -188,7 +190,6 @@ class GeemApp {
     const roles = store.data.config.workerRoles;
     const expenseCats = store.data.config.expenseCategories;
 
-    // Dropdown Lavoratori per Ore
     const tsWorker = document.getElementById('ts-worker');
     if (tsWorker) {
       const current = tsWorker.value;
@@ -197,7 +198,6 @@ class GeemApp {
       if (current) tsWorker.value = current;
     }
 
-    // Dropdown Cantieri per Ore
     const tsSite = document.getElementById('ts-site');
     if (tsSite) {
       const current = tsSite.value;
@@ -206,16 +206,14 @@ class GeemApp {
       if (current) tsSite.value = current;
     }
 
-    // Dropdown Cantieri per Spese
     const expSite = document.getElementById('exp-site');
     if (expSite) {
       const current = expSite.value;
-      expSite.innerHTML = '<option value="generale">🏢 Spesa Generale Aziendale</option>' +
-        sites.map(s => `<option value="${s.id}">🏗️ ${s.code} - ${s.name}</option>`).join('');
+      expSite.innerHTML = '<option value="generale">Spesa Generale Aziendale</option>' +
+        sites.map(s => `<option value="${s.id}">${s.code} - ${s.name}</option>`).join('');
       if (current) expSite.value = current;
     }
 
-    // Dropdown Categorie Spese
     const expCat = document.getElementById('exp-category');
     if (expCat) {
       const current = expCat.value;
@@ -223,7 +221,6 @@ class GeemApp {
       if (current) expCat.value = current;
     }
 
-    // Dropdown Ruoli Lavoratore (Form Admin Lavoratore)
     const workerRoleSelect = document.getElementById('worker-role');
     if (workerRoleSelect) {
       const current = workerRoleSelect.value;
@@ -231,7 +228,6 @@ class GeemApp {
       if (current) workerRoleSelect.value = current;
     }
 
-    // Dropdown Clienti (Form Admin Cantiere)
     const siteClientSelect = document.getElementById('site-client');
     if (siteClientSelect) {
       const current = siteClientSelect.value;
@@ -240,7 +236,6 @@ class GeemApp {
       if (current) siteClientSelect.value = current;
     }
 
-    // Dropdown Filtro Cantieri per lista Ore
     const filterTsSite = document.getElementById('filter-ts-site');
     if (filterTsSite) {
       const current = filterTsSite.value;
@@ -249,11 +244,10 @@ class GeemApp {
       if (current) filterTsSite.value = current;
     }
 
-    // Dropdown Filtro Cantieri per lista Spese
     const filterExpSite = document.getElementById('filter-exp-site');
     if (filterExpSite) {
       const current = filterExpSite.value;
-      filterExpSite.innerHTML = '<option value="all">Tutti i Cantieri</option><option value="generale">Spese Generali</option>' +
+      filterExpSite.innerHTML = '<option value="all">Tutti i Cantieri e Spese Generali</option><option value="generale">Solo Spese Generali</option>' +
         sites.map(s => `<option value="${s.id}">${s.code} - ${s.name}</option>`).join('');
       if (current) filterExpSite.value = current;
     }
@@ -267,7 +261,6 @@ class GeemApp {
     let entries = [...store.data.timesheets];
     const today = new Date().toISOString().split('T')[0];
 
-    // Filtro per periodo
     if (this.filters.timesheetPeriod === 'today') {
       entries = entries.filter(e => e.date === today);
     } else if (this.filters.timesheetPeriod === 'week') {
@@ -275,7 +268,6 @@ class GeemApp {
       entries = entries.filter(e => e.date >= weekAgo);
     }
 
-    // Filtro per cantiere
     if (this.filters.timesheetSite !== 'all') {
       entries = entries.filter(e => e.siteId === this.filters.timesheetSite);
     }
@@ -283,12 +275,13 @@ class GeemApp {
     if (entries.length === 0) {
       list.innerHTML = `
         <div class="empty-state">
-          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
           <h3>Nessuna ora registrata</h3>
-          <p>Non ci sono ore per il filtro selezionato. Tocca "Registra Ore" per iniziare.</p>
-          <button class="btn btn-primary" onclick="app.openTimesheetModal()">+ Registra Ore Lavoratori</button>
+          <p>Non ci sono registrazioni per il periodo selezionato.</p>
+          <button class="btn btn-primary" onclick="app.openTimesheetModal()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Registra Ore
+          </button>
         </div>
       `;
       return;
@@ -296,7 +289,7 @@ class GeemApp {
 
     list.innerHTML = entries.map(item => {
       const worker = store.data.workers.find(w => w.id === item.workerId) || { name: 'Lavoratore non trovato', role: '-' };
-      const site = store.data.sites.find(s => s.id === item.siteId) || { code: 'N/D', name: 'Cantiere non trovato' };
+      const site = store.data.sites.find(s => s.id === item.siteId) || { code: 'N/D', name: 'Cantiere' };
 
       return `
         <div class="item-card">
@@ -305,7 +298,7 @@ class GeemApp {
               <div class="item-card-title">${worker.name}</div>
               <div class="item-card-sub">
                 <span class="item-badge badge-amber">${worker.role}</span>
-                <span>• 🏗️ ${site.code} - ${site.name}</span>
+                <span class="sub-icon">${ICONS.site} ${site.code} - ${site.name}</span>
               </div>
             </div>
             <div style="text-align: right;">
@@ -324,13 +317,13 @@ class GeemApp {
               </div>
               <div class="metric-item">
                 <span class="metric-label">Totale Costo</span>
-                <span class="metric-val" style="color:#10b981;">${fmtMoney(item.total)}</span>
+                <span class="metric-val" style="color:var(--success);">${fmtMoney(item.total)}</span>
               </div>
             </div>
-            ${item.notes ? `<div style="font-size:0.8rem; color:var(--text-muted); width:100%; margin-top:4px;">📝 ${item.notes}</div>` : ''}
+            ${item.notes ? `<div style="font-size:0.78rem; color:var(--text-muted); width:100%; margin-top:4px;" class="sub-icon">${ICONS.note} ${item.notes}</div>` : ''}
             <div class="item-card-actions">
-              <button class="btn-icon" title="Modifica" onclick="app.openTimesheetModal('${item.id}')">✏️</button>
-              <button class="btn-icon" title="Elimina" onclick="app.deleteTimesheet('${item.id}')">🗑️</button>
+              <button class="btn-icon" title="Modifica" onclick="app.openTimesheetModal('${item.id}')">${ICONS.edit}</button>
+              <button class="btn-icon" title="Elimina" onclick="app.deleteTimesheet('${item.id}')">${ICONS.delete}</button>
             </div>
           </div>
         </div>
@@ -355,12 +348,13 @@ class GeemApp {
     if (entries.length === 0) {
       list.innerHTML = `
         <div class="empty-state">
-          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+          <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><circle cx="17" cy="15" r="1.5"/></svg>
           <h3>Nessuna spesa registrata</h3>
           <p>Tieni traccia delle spese per camion, benzina, materiali e scontrini.</p>
-          <button class="btn btn-primary" onclick="app.openExpenseModal()">+ Nuova Spesa</button>
+          <button class="btn btn-primary" onclick="app.openExpenseModal()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Nuova Spesa
+          </button>
         </div>
       `;
       return;
@@ -378,22 +372,22 @@ class GeemApp {
               <div class="item-card-title">${item.description || item.category}</div>
               <div class="item-card-sub">
                 <span class="item-badge badge-blue">${item.category}</span>
-                <span>• 🏗️ ${site.code} - ${site.name}</span>
+                <span class="sub-icon">${ICONS.site} ${site.code} - ${site.name}</span>
               </div>
             </div>
             <div style="text-align: right;">
-              <span class="metric-val" style="color:var(--primary); font-size:1.15rem;">${fmtMoney(item.amount)}</span>
-              <div style="font-size:0.75rem; color:var(--text-dim);">${fmtDate(item.date)}</div>
+              <span class="metric-val" style="color:var(--primary); font-size:1.1rem;">${fmtMoney(item.amount)}</span>
+              <div style="font-size:0.72rem; color:var(--text-dim);">${fmtDate(item.date)}</div>
             </div>
           </div>
           <div class="item-card-body">
-            <div style="font-size:0.82rem; color:var(--text-muted);">
-              ${item.docNumber ? `<span>📄 Doc: <strong>${item.docNumber}</strong></span> ` : ''}
-              ${item.notes ? `<span>• 📝 ${item.notes}</span>` : ''}
+            <div style="font-size:0.8rem; color:var(--text-muted); display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              ${item.docNumber ? `<span class="sub-icon">${ICONS.doc} Doc: <strong>${item.docNumber}</strong></span>` : ''}
+              ${item.notes ? `<span class="sub-icon">${ICONS.note} ${item.notes}</span>` : ''}
             </div>
             <div class="item-card-actions">
-              <button class="btn-icon" title="Modifica" onclick="app.openExpenseModal('${item.id}')">✏️</button>
-              <button class="btn-icon" title="Elimina" onclick="app.deleteExpense('${item.id}')">🗑️</button>
+              <button class="btn-icon" title="Modifica" onclick="app.openExpenseModal('${item.id}')">${ICONS.edit}</button>
+              <button class="btn-icon" title="Elimina" onclick="app.deleteExpense('${item.id}')">${ICONS.delete}</button>
             </div>
           </div>
         </div>
@@ -411,9 +405,13 @@ class GeemApp {
     if (sites.length === 0) {
       list.innerHTML = `
         <div class="empty-state">
+          <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M13 11l6 3v7M9 9h1M9 13h1M9 17h1"/></svg>
           <h3>Nessun cantiere presente</h3>
           <p>Aggiungi il tuo primo cantiere nella sezione Admin.</p>
-          <button class="btn btn-primary" onclick="app.openSiteModal()">+ Aggiungi Cantiere</button>
+          <button class="btn btn-primary" onclick="app.openSiteModal()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Aggiungi Cantiere
+          </button>
         </div>
       `;
       return;
@@ -435,24 +433,24 @@ class GeemApp {
             <div>
               <div class="item-card-title">${site.code} - ${site.name}</div>
               <div class="item-card-sub">
-                <span>👤 ${client.name}</span>
+                <span class="sub-icon">${ICONS.user} ${client.name}</span>
                 ${statusBadges[site.status] || ''}
               </div>
             </div>
             <div>
-              <button class="btn-icon" onclick="app.openSiteModal('${site.id}')">✏️</button>
+              <button class="btn-icon" onclick="app.openSiteModal('${site.id}')">${ICONS.edit}</button>
             </div>
           </div>
 
-          <div style="display:flex; flex-wrap:wrap; gap:8px; margin: 8px 0 12px 0;">
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin: 6px 0 10px 0;">
             ${client.phone ? `
               <a href="tel:${client.phone}" class="action-link">
-                📞 Chiama: ${client.phone}
+                ${ICONS.phone} Chiama: ${client.phone}
               </a>
             ` : ''}
             ${site.address ? `
               <a href="https://maps.google.com/?q=${encodeURIComponent(site.address)}" target="_blank" rel="noopener" class="action-link">
-                📍 Mappa: ${site.address}
+                ${ICONS.map} Mappa: ${site.address}
               </a>
             ` : ''}
           </div>
@@ -473,10 +471,10 @@ class GeemApp {
               </div>
               <div class="metric-item">
                 <span class="metric-label">Costo Totale</span>
-                <span class="metric-val highlight" style="font-size:1.1rem;">${fmtMoney(cost.totalCost)}</span>
+                <span class="metric-val highlight" style="font-size:1.05rem;">${fmtMoney(cost.totalCost)}</span>
               </div>
             </div>
-            ${site.notes ? `<div style="font-size:0.8rem; color:var(--text-muted); width:100%; margin-top:6px;">ℹ️ ${site.notes}</div>` : ''}
+            ${site.notes ? `<div style="font-size:0.78rem; color:var(--text-muted); width:100%; margin-top:4px;" class="sub-icon">${ICONS.note} ${site.notes}</div>` : ''}
           </div>
         </div>
       `;
@@ -496,12 +494,12 @@ class GeemApp {
             <div class="item-card-title">${w.name} ${!w.active ? '<span class="item-badge badge-red">Inattivo</span>' : ''}</div>
             <div class="item-card-sub">
               <span class="item-badge badge-amber">${w.role}</span>
-              ${w.phone ? `<span>• 📞 ${w.phone}</span>` : ''}
+              ${w.phone ? `<span class="sub-icon">${ICONS.phone} ${w.phone}</span>` : ''}
             </div>
           </div>
           <div class="item-card-actions">
-            <button class="btn-icon" onclick="app.openWorkerModal('${w.id}')">✏️</button>
-            <button class="btn-icon" onclick="app.deleteWorker('${w.id}')">🗑️</button>
+            <button class="btn-icon" onclick="app.openWorkerModal('${w.id}')">${ICONS.edit}</button>
+            <button class="btn-icon" onclick="app.deleteWorker('${w.id}')">${ICONS.delete}</button>
           </div>
         </div>
         <div class="item-card-body">
@@ -509,7 +507,7 @@ class GeemApp {
             <span class="metric-label">Costo Orario Base</span>
             <span class="metric-val highlight">${fmtMoney(w.hourlyRate)}/h</span>
           </div>
-          ${w.phone ? `<a href="tel:${w.phone}" class="action-link">Chiama</a>` : ''}
+          ${w.phone ? `<a href="tel:${w.phone}" class="action-link">${ICONS.phone} Chiama</a>` : ''}
         </div>
       </div>
     `).join('');
@@ -527,18 +525,18 @@ class GeemApp {
           <div>
             <div class="item-card-title">${c.name}</div>
             <div class="item-card-sub">
-              ${c.phone ? `<span>📞 ${c.phone}</span>` : ''}
-              ${c.notes ? `<span>• ${c.notes}</span>` : ''}
+              ${c.phone ? `<span class="sub-icon">${ICONS.phone} ${c.phone}</span>` : ''}
+              ${c.notes ? `<span class="sub-icon">${ICONS.note} ${c.notes}</span>` : ''}
             </div>
           </div>
           <div class="item-card-actions">
-            <button class="btn-icon" onclick="app.openClientModal('${c.id}')">✏️</button>
-            <button class="btn-icon" onclick="app.deleteClient('${c.id}')">🗑️</button>
+            <button class="btn-icon" onclick="app.openClientModal('${c.id}')">${ICONS.edit}</button>
+            <button class="btn-icon" onclick="app.deleteClient('${c.id}')">${ICONS.delete}</button>
           </div>
         </div>
         ${c.phone ? `
           <div class="item-card-body">
-            <a href="tel:${c.phone}" class="action-link">Chiama Cliente</a>
+            <a href="tel:${c.phone}" class="action-link">${ICONS.phone} Chiama Cliente</a>
           </div>
         ` : ''}
       </div>
@@ -559,18 +557,18 @@ class GeemApp {
             <div>
               <div class="item-card-title">${s.code} - ${s.name}</div>
               <div class="item-card-sub">
-                <span>Cliente: <strong>${client.name}</strong></span>
+                <span class="sub-icon">${ICONS.company} Cliente: <strong>${client.name}</strong></span>
                 <span>• Stato: ${s.status}</span>
               </div>
             </div>
             <div class="item-card-actions">
-              <button class="btn-icon" onclick="app.openSiteModal('${s.id}')">✏️</button>
-              <button class="btn-icon" onclick="app.deleteSite('${s.id}')">🗑️</button>
+              <button class="btn-icon" onclick="app.openSiteModal('${s.id}')">${ICONS.edit}</button>
+              <button class="btn-icon" onclick="app.deleteSite('${s.id}')">${ICONS.delete}</button>
             </div>
           </div>
           <div class="item-card-body">
-            <div style="font-size:0.82rem; color:var(--text-muted);">
-              📍 ${s.address || 'Nessun indirizzo'}
+            <div style="font-size:0.8rem; color:var(--text-muted);" class="sub-icon">
+              ${ICONS.map} ${s.address || 'Nessun indirizzo'}
             </div>
           </div>
         </div>
@@ -628,7 +626,6 @@ class GeemApp {
       title.textContent = 'Registra Ore Lavoratore';
       form.reset();
       this.initDates();
-      // Seleziona 8 ore di default
       document.getElementById('ts-hours').value = 8;
     }
 
@@ -950,7 +947,8 @@ class GeemApp {
   // Autenticazione & Database GitHub
   // ==========================================================================
   openAuthModal() {
-    const saved = localStorage.getItem('geem_auth') || sessionStorage.getItem('geem_auth');
+    const saved = (typeof localStorage !== 'undefined' && localStorage.getItem('geem_auth')) ||
+                  (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('geem_auth'));
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
@@ -959,7 +957,6 @@ class GeemApp {
         document.getElementById('gh-token').value = parsed.token || '';
       } catch (e) {}
     } else {
-      // Precompila username noto
       document.getElementById('gh-owner').value = 'eraldxhakoj';
       document.getElementById('gh-repo').value = 'geem-data';
     }
@@ -981,7 +978,7 @@ class GeemApp {
     }
 
     btn.disabled = true;
-    btn.textContent = 'Connessione in corso...';
+    btn.textContent = 'Connessione...';
 
     try {
       await store.loginGitHub(owner, repo, token, rememberMe);
@@ -991,14 +988,14 @@ class GeemApp {
       this.showToast(`Errore: ${err.message}`, 'error');
     } finally {
       btn.disabled = false;
-      btn.textContent = 'Connetti a GitHub Privato';
+      btn.textContent = 'Connetti a GitHub';
     }
   }
 
   handleLogout() {
     if (confirm('Vuoi disconnetterti dal repository GitHub e tornare alla modalità Demo?')) {
       store.logout();
-      this.showToast('Disconnesso. Sei in modalità Demo locale.', 'info');
+      this.showToast('Disconnesso. Modalità Demo attiva.', 'info');
       this.closeModal('modal-auth');
     }
   }
@@ -1038,31 +1035,26 @@ class GeemApp {
   // Binding Eventi
   // ==========================================================================
   bindEvents() {
-    // Navigazione principale
     document.querySelectorAll('[data-tab]').forEach(el => {
       el.addEventListener('click', () => this.switchTab(el.dataset.tab));
     });
 
-    // Navigazione sotto-tab Admin
     document.querySelectorAll('[data-subtab]').forEach(el => {
       el.addEventListener('click', () => this.switchAdminSubTab(el.dataset.subtab));
     });
 
-    // Backdrop click per chiusura modali
     document.querySelectorAll('.modal-backdrop').forEach(modal => {
       modal.addEventListener('click', (e) => {
         if (e.target === modal) this.closeModal(modal.id);
       });
     });
 
-    // Tasto ESC per chiusura modali
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         document.querySelectorAll('.modal-backdrop.open').forEach(m => this.closeModal(m.id));
       }
     });
 
-    // Auto-compilazione tariffa lavoratore quando viene selezionato nel form ore
     const tsWorkerSelect = document.getElementById('ts-worker');
     if (tsWorkerSelect) {
       tsWorkerSelect.addEventListener('change', () => {
@@ -1075,13 +1067,11 @@ class GeemApp {
       });
     }
 
-    // Ricalcolo totale ore in tempo reale
     const tsHours = document.getElementById('ts-hours');
     const tsRate = document.getElementById('ts-rate');
     if (tsHours) tsHours.addEventListener('input', () => this.updateTimesheetTotal());
     if (tsRate) tsRate.addEventListener('input', () => this.updateTimesheetTotal());
 
-    // Steppers per le ore (+0.5h, -0.5h)
     document.querySelectorAll('[data-stepper]').forEach(btn => {
       btn.addEventListener('click', () => {
         const delta = parseFloat(btn.dataset.stepper);
@@ -1095,7 +1085,6 @@ class GeemApp {
       });
     });
 
-    // Filtri Ore
     document.querySelectorAll('[data-ts-period]').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('[data-ts-period]').forEach(b => b.classList.remove('active'));
@@ -1113,7 +1102,6 @@ class GeemApp {
       });
     }
 
-    // Filtri Spese
     const filterExpSite = document.getElementById('filter-exp-site');
     if (filterExpSite) {
       filterExpSite.addEventListener('change', () => {
@@ -1122,7 +1110,6 @@ class GeemApp {
       });
     }
 
-    // Forms
     const formTs = document.getElementById('form-timesheet');
     if (formTs) formTs.addEventListener('submit', (e) => this.saveTimesheet(e));
 
@@ -1144,22 +1131,18 @@ class GeemApp {
     const btnLogout = document.getElementById('btn-logout');
     if (btnLogout) btnLogout.addEventListener('click', () => this.handleLogout());
 
-    // Backup
     const btnExport = document.getElementById('btn-export-backup');
     if (btnExport) btnExport.addEventListener('click', () => this.exportBackup());
 
     const inputImport = document.getElementById('input-import-backup');
     if (inputImport) inputImport.addEventListener('change', (e) => this.importBackup(e));
 
-    // Badge click per aprire configurazione GitHub
     const syncBadge = document.getElementById('sync-badge');
     if (syncBadge) syncBadge.addEventListener('click', () => this.openAuthModal());
   }
 }
 
-// Inizializza l'applicazione al caricamento
 window.app = new GeemApp();
 document.addEventListener('DOMContentLoaded', () => {
   window.app.init();
 });
-

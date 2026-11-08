@@ -27,19 +27,19 @@
     <!-- Desktop Navigation -->
     <nav class="desktop-nav">
       <button class="nav-btn active" data-tab="hours">
-        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
         Ore
       </button>
       <button class="nav-btn" data-tab="expenses">
-        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><circle cx="17" cy="15" r="1.5"/></svg>
         Spese
       </button>
       <button class="nav-btn" data-tab="sites">
-        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M13 11l6 3v7M9 9h1M9 13h1M9 17h1"/></svg>
         Cantieri
       </button>
       <button class="nav-btn" data-tab="admin">
-        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         Admin
       </button>
     </nav>
@@ -61,7 +61,9 @@
       <div class="stat-card">
         <div class="stat-header">
           <span class="stat-title">Ore Oggi</span>
-          <span class="stat-icon">⏱️</span>
+          <span class="stat-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+          </span>
         </div>
         <div id="kpi-hours" class="stat-value">0h</div>
         <div class="stat-sub">Registrate oggi</div>
@@ -69,7 +71,9 @@
       <div class="stat-card">
         <div class="stat-header">
           <span class="stat-title">Manodopera</span>
-          <span class="stat-icon">👷</span>
+          <span class="stat-icon">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
         </div>
         <div id="kpi-hours-cost" class="stat-value">€0,00</div>
         <div class="stat-sub">Costo ore odierne</div>
@@ -77,7 +81,9 @@
       <div class="stat-card">
         <div class="stat-header">
           <span class="stat-title">Spese Oggi</span>
-          <span class="stat-icon">💶</span>
+          <span class="stat-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><circle cx="17" cy="15" r="1.5"/></svg>
+          </span>
         </div>
         <div id="kpi-expenses" class="stat-value">€0,00</div>
         <div class="stat-sub">Materiali, benza, mezzi</div>
@@ -85,7 +91,9 @@
       <div class="stat-card">
         <div class="stat-header">
           <span class="stat-title">Cantieri Attivi</span>
-          <span class="stat-icon">🏗️</span>
+          <span class="stat-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M13 11l6 3v7M9 9h1M9 13h1M9 17h1"/></svg>
+          </span>
         </div>
         <div id="kpi-sites" class="stat-value">0</div>
         <div class="stat-sub">Lavori in corso</div>
@@ -103,7 +111,7 @@
         </div>
         <div class="toolbar-actions">
           <button class="btn btn-primary" onclick="app.openTimesheetModal()">
-            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Registra Ore
           </button>
         </div>
@@ -115,7 +123,7 @@
         <button class="filter-chip" data-ts-period="week">Ultimi 7 Giorni</button>
         <button class="filter-chip" data-ts-period="all">Tutto</button>
         <div style="flex-shrink:0; margin-left:auto;">
-          <select id="filter-ts-site" class="form-select" style="min-height:34px; padding:4px 10px; font-size:0.8rem;">
+          <select id="filter-ts-site" class="form-select" style="min-height:32px; padding:4px 8px; font-size:0.78rem;">
             <option value="all">Tutti i Cantieri</option>
           </select>
         </div>
@@ -132,18 +140,18 @@
       <div class="section-toolbar">
         <div class="toolbar-title">
           <h2>Spese & Fatture Giornaliere</h2>
-          <p>Camion, benzina, materiali, noleggi e scontrini</p>
+          <p>Camion, carburante, materiali, noleggi e scontrini</p>
         </div>
         <div class="toolbar-actions">
           <button class="btn btn-primary" onclick="app.openExpenseModal()">
-            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Nuova Spesa
           </button>
         </div>
       </div>
 
       <!-- Filtro Cantieri Spese -->
-      <div style="margin-bottom:14px;">
+      <div style="margin-bottom:12px;">
         <select id="filter-exp-site" class="form-select">
           <option value="all">Tutti i Cantieri e Spese Generali</option>
         </select>
@@ -164,7 +172,7 @@
         </div>
         <div class="toolbar-actions">
           <button class="btn btn-primary" onclick="app.openSiteModal()">
-            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Nuovo Cantiere
           </button>
         </div>
@@ -186,36 +194,60 @@
 
       <!-- Sub Navigation Admin -->
       <div class="admin-tabs">
-        <button class="admin-tab active" data-subtab="workers">👷 Lavoratori</button>
-        <button class="admin-tab" data-subtab="clients">👥 Clienti</button>
-        <button class="admin-tab" data-subtab="sites-admin">🏗️ Cantieri</button>
-        <button class="admin-tab" data-subtab="types">🏷️ Tipologie & Liste</button>
-        <button class="admin-tab" data-subtab="database">🔒 Database & Backup</button>
+        <button class="admin-tab active" data-subtab="workers">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Lavoratori
+        </button>
+        <button class="admin-tab" data-subtab="clients">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Clienti
+        </button>
+        <button class="admin-tab" data-subtab="sites-admin">
+          <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M13 11l6 3v7M9 9h1M9 13h1M9 17h1"/></svg>
+          Cantieri
+        </button>
+        <button class="admin-tab" data-subtab="types">
+          <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          Tipologie
+        </button>
+        <button class="admin-tab" data-subtab="database">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Database & Backup
+        </button>
       </div>
 
       <!-- SubView: Lavoratori -->
       <div id="admin-workers" class="admin-subview">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-          <h3 style="font-size:1.05rem; font-weight:700;">Elenco Lavoratori</h3>
-          <button class="btn btn-secondary btn-sm" onclick="app.openWorkerModal()">+ Aggiungi Lavoratore</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 style="font-size:1rem; font-weight:700;">Elenco Lavoratori</h3>
+          <button class="btn btn-secondary btn-sm" onclick="app.openWorkerModal()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Aggiungi Lavoratore
+          </button>
         </div>
         <div id="admin-workers-list"></div>
       </div>
 
       <!-- SubView: Clienti -->
       <div id="admin-clients" class="admin-subview" style="display:none;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-          <h3 style="font-size:1.05rem; font-weight:700;">Elenco Clienti</h3>
-          <button class="btn btn-secondary btn-sm" onclick="app.openClientModal()">+ Aggiungi Cliente</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 style="font-size:1rem; font-weight:700;">Elenco Clienti</h3>
+          <button class="btn btn-secondary btn-sm" onclick="app.openClientModal()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Aggiungi Cliente
+          </button>
         </div>
         <div id="admin-clients-list"></div>
       </div>
 
       <!-- SubView: Cantieri Admin -->
       <div id="admin-sites-admin" class="admin-subview" style="display:none;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-          <h3 style="font-size:1.05rem; font-weight:700;">Elenco Cantieri</h3>
-          <button class="btn btn-secondary btn-sm" onclick="app.openSiteModal()">+ Aggiungi Cantiere</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 style="font-size:1rem; font-weight:700;">Elenco Cantieri</h3>
+          <button class="btn btn-secondary btn-sm" onclick="app.openSiteModal()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Aggiungi Cantiere
+          </button>
         </div>
         <div id="admin-sites-list"></div>
       </div>
@@ -223,9 +255,9 @@
       <!-- SubView: Tipologie & Liste Dinamiche -->
       <div id="admin-types" class="admin-subview" style="display:none;">
         <!-- Ruoli Lavoratore -->
-        <div class="auth-box" style="margin-top:0; margin-bottom:16px;">
-          <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:8px;">Ruoli Lavoratori Aziendali</h3>
-          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">Modifica o aggiungi ruoli e specializzazioni disponibili nei menu a tendina.</p>
+        <div class="auth-box" style="margin-top:0; margin-bottom:14px;">
+          <h3 style="font-size:1rem; font-weight:700; margin-bottom:6px;">Ruoli Lavoratori Aziendali</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Modifica o aggiungi ruoli e specializzazioni nei menu di selezione.</p>
           <div style="display:flex; gap:8px;">
             <input type="text" id="new-role-input" class="form-input" placeholder="Es. Ponteggiatore, Lattoniere..." style="max-width:300px;">
             <button class="btn btn-primary btn-sm" onclick="app.addWorkerRole()">Aggiungi</button>
@@ -235,8 +267,8 @@
 
         <!-- Categorie Spesa -->
         <div class="auth-box">
-          <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:8px;">Categorie Spese & Fatture</h3>
-          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">Gestisci le voci di spesa (camion, carburante, fornitori materiali, ecc.).</p>
+          <h3 style="font-size:1rem; font-weight:700; margin-bottom:6px;">Categorie Spese & Fatture</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Gestisci le voci di spesa (camion, carburante, materiali, ecc.).</p>
           <div style="display:flex; gap:8px;">
             <input type="text" id="new-cat-input" class="form-input" placeholder="Es. Noleggio Gru, Smaltimento..." style="max-width:300px;">
             <button class="btn btn-primary btn-sm" onclick="app.addExpenseCategory()">Aggiungi</button>
@@ -247,22 +279,29 @@
 
       <!-- SubView: Database & Backup -->
       <div id="admin-database" class="admin-subview" style="display:none;">
-        <div class="auth-box" style="margin-top:0; margin-bottom:16px;">
-          <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:8px;">Database su Repository Privato GitHub</h3>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">I tuoi dati (lavoratori, ore, cantieri e spese) sono memorizzati in file JSON versionati direttamente nel tuo repository GitHub privato.</p>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <button class="btn btn-primary" onclick="app.openAuthModal()">⚙️ Configura Accesso GitHub</button>
-            <button id="btn-logout" class="btn btn-danger">Disconnetti</button>
+        <div class="auth-box" style="margin-top:0; margin-bottom:14px;">
+          <h3 style="font-size:1rem; font-weight:700; margin-bottom:6px;">Database su Repository Privato GitHub</h3>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:14px;">I dati sono archiviati in file JSON versionati direttamente nel tuo repository GitHub privato.</p>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="btn btn-primary btn-sm" onclick="app.openAuthModal()">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              Configura Accesso GitHub
+            </button>
+            <button id="btn-logout" class="btn btn-danger btn-sm">Disconnetti</button>
           </div>
         </div>
 
         <div class="auth-box">
-          <h3 style="font-size:1.05rem; font-weight:700; margin-bottom:8px;">Backup Locale (JSON)</h3>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">Puoi scaricare una copia di sicurezza completa in formato JSON o ripristinare un backup precedente.</p>
-          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-            <button id="btn-export-backup" class="btn btn-secondary">💾 Scarica Backup JSON</button>
-            <label class="btn btn-secondary" style="cursor:pointer; margin-bottom:0;">
-              📂 Ripristina da JSON
+          <h3 style="font-size:1rem; font-weight:700; margin-bottom:6px;">Backup Locale (JSON)</h3>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:14px;">Scarica una copia di sicurezza completa in formato JSON o ripristina un salvataggio precedente.</p>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+            <button id="btn-export-backup" class="btn btn-secondary btn-sm">
+              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Scarica Backup JSON
+            </button>
+            <label class="btn btn-secondary btn-sm" style="cursor:pointer; margin-bottom:0;">
+              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Ripristina da JSON
               <input type="file" id="input-import-backup" accept=".json" style="display:none;">
             </label>
           </div>
@@ -278,19 +317,19 @@
        ======================================================================== -->
   <nav class="bottom-nav">
     <button class="bottom-tab active" data-tab="hours">
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
       <span>Ore</span>
     </button>
     <button class="bottom-tab" data-tab="expenses">
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+      <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><circle cx="17" cy="15" r="1.5"/></svg>
       <span>Spese</span>
     </button>
     <button class="bottom-tab" data-tab="sites">
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M13 11l6 3v7M9 9h1M9 13h1M9 17h1"/></svg>
       <span>Cantieri</span>
     </button>
     <button class="bottom-tab" data-tab="admin">
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <span>Admin</span>
     </button>
   </nav>
@@ -304,7 +343,9 @@
     <div class="modal-sheet">
       <div class="modal-header">
         <h3 id="modal-ts-title">Registra Ore Lavoratore</h3>
-        <button class="btn-icon" onclick="app.closeModal('modal-timesheet')">&times;</button>
+        <button class="btn-icon" onclick="app.closeModal('modal-timesheet')">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
       <form id="form-timesheet">
         <div class="form-group">
@@ -334,9 +375,9 @@
           </div>
         </div>
 
-        <div style="background:var(--bg-input); padding:12px; border-radius:var(--radius-md); display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-          <span style="font-size:0.85rem; color:var(--text-muted); font-weight:600;">Costo Manodopera Calcolato:</span>
-          <span id="ts-total-preview" style="font-size:1.2rem; font-weight:800; color:var(--primary);">€0,00</span>
+        <div style="background:var(--bg-input); padding:10px 12px; border-radius:var(--radius-sm); display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border:1px solid var(--border-subtle);">
+          <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">Costo Manodopera:</span>
+          <span id="ts-total-preview" style="font-size:1.1rem; font-weight:800; color:var(--primary);">€0,00</span>
         </div>
 
         <div class="form-group">
@@ -356,7 +397,9 @@
     <div class="modal-sheet">
       <div class="modal-header">
         <h3 id="modal-exp-title">Nuova Spesa</h3>
-        <button class="btn-icon" onclick="app.closeModal('modal-expense')">&times;</button>
+        <button class="btn-icon" onclick="app.closeModal('modal-expense')">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
       <form id="form-expense">
         <div class="form-row">
@@ -387,7 +430,7 @@
         </div>
         <div class="form-group">
           <label class="form-label" for="exp-notes">Note Aggiuntive</label>
-          <textarea id="exp-notes" class="form-textarea" placeholder="Dettagli metodo di pagamento, mezzo utilizzato..."></textarea>
+          <textarea id="exp-notes" class="form-textarea" placeholder="Dettagli pagamento, mezzo utilizzato..."></textarea>
         </div>
         <div class="form-actions">
           <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-expense')">Annulla</button>
@@ -402,7 +445,9 @@
     <div class="modal-sheet">
       <div class="modal-header">
         <h3 id="modal-worker-title">Lavoratore</h3>
-        <button class="btn-icon" onclick="app.closeModal('modal-worker')">&times;</button>
+        <button class="btn-icon" onclick="app.closeModal('modal-worker')">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
       <form id="form-worker">
         <div class="form-group">
@@ -421,9 +466,9 @@
           <label class="form-label" for="worker-rate">Costo Orario Standard (€/h)</label>
           <input type="number" id="worker-rate" class="form-input" step="0.5" min="0" value="20" required>
         </div>
-        <div class="form-group" style="display:flex; align-items:center; gap:10px; margin-top:8px;">
-          <input type="checkbox" id="worker-active" style="width:20px; height:20px; accent-color:var(--primary);" checked>
-          <label for="worker-active" style="font-size:0.9rem; font-weight:600; cursor:pointer;">Lavoratore Attivo in organico</label>
+        <div class="form-group" style="display:flex; align-items:center; gap:8px; margin-top:6px;">
+          <input type="checkbox" id="worker-active" style="width:18px; height:18px; accent-color:var(--primary);" checked>
+          <label for="worker-active" style="font-size:0.86rem; font-weight:600; cursor:pointer;">Lavoratore Attivo in organico</label>
         </div>
         <div class="form-actions">
           <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-worker')">Annulla</button>
@@ -438,7 +483,9 @@
     <div class="modal-sheet">
       <div class="modal-header">
         <h3 id="modal-client-title">Cliente</h3>
-        <button class="btn-icon" onclick="app.closeModal('modal-client')">&times;</button>
+        <button class="btn-icon" onclick="app.closeModal('modal-client')">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
       <form id="form-client">
         <div class="form-group">
@@ -466,7 +513,9 @@
     <div class="modal-sheet">
       <div class="modal-header">
         <h3 id="modal-site-title">Cantiere</h3>
-        <button class="btn-icon" onclick="app.closeModal('modal-site')">&times;</button>
+        <button class="btn-icon" onclick="app.closeModal('modal-site')">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
       <form id="form-site">
         <div class="form-row">
@@ -512,11 +561,13 @@
     <div class="modal-sheet">
       <div class="modal-header">
         <h3>Database Sicuro GitHub</h3>
-        <button class="btn-icon" onclick="app.closeModal('modal-auth')">&times;</button>
+        <button class="btn-icon" onclick="app.closeModal('modal-auth')">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
       </div>
       <form id="form-auth">
-        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">
-          I tuoi dati sono custoditi al 100% nel tuo repository privato su GitHub. Inserisci le tue credenziali per accedere.
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:14px;">
+          I tuoi dati sono custoditi al 100% nel tuo repository privato su GitHub. Inserisci le credenziali di accesso.
         </p>
 
         <div class="form-row">
@@ -531,16 +582,16 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="gh-token">GitHub Personal Access Token (Fine-Grained)</label>
+          <label class="form-label" for="gh-token">GitHub Personal Access Token</label>
           <input type="password" id="gh-token" class="form-input" placeholder="github_pat_..." autocomplete="off" required>
-          <span style="font-size:0.75rem; color:var(--text-dim); display:block; margin-top:4px;">
-            Il token viene conservato solo nel tuo browser e comunica direttamente con GitHub via HTTPS.
+          <span style="font-size:0.72rem; color:var(--text-dim); display:block; margin-top:4px;">
+            Il token risiede solo in locale nel tuo browser e comunica con GitHub via HTTPS.
           </span>
         </div>
 
         <div class="form-group" style="display:flex; align-items:center; gap:8px;">
           <input type="checkbox" id="gh-remember" style="accent-color:var(--primary); width:18px; height:18px;" checked>
-          <label for="gh-remember" style="font-size:0.85rem; cursor:pointer;">Resta collegato su questo dispositivo</label>
+          <label for="gh-remember" style="font-size:0.84rem; cursor:pointer;">Resta collegato su questo dispositivo</label>
         </div>
 
         <div class="form-actions">
@@ -552,10 +603,10 @@
         <div class="auth-help">
           <strong>Come creare il tuo Database Sicuro su GitHub:</strong>
           <ol>
-            <li>Crea un nuovo repository <strong>Privato</strong> su GitHub chiamato <code>geem-data</code>.</li>
-            <li>Vai su <strong>Settings &gt; Developer settings &gt; Personal access tokens &gt; Fine-grained tokens</strong>.</li>
-            <li>Genera un token selezionando <em>Only select repositories &gt; geem-data</em> con permesso <strong>Contents: Read and write</strong>.</li>
-            <li>Incolla il token qui sopra e clicca <em>Connetti</em>: GEEM creerà automaticamente la struttura dati nel repository!</li>
+            <li>Crea un repository <strong>Privato</strong> su GitHub chiamato <code>geem-data</code>.</li>
+            <li>Vai su <strong>Settings &gt; Developer settings &gt; Personal access tokens</strong>.</li>
+            <li>Genera un token abilitando <strong>Contents: Read and write</strong> per <code>geem-data</code>.</li>
+            <li>Incolla il token e clicca <em>Connetti</em>: la struttura dati verrà inizializzata all'istante.</li>
           </ol>
         </div>
       </form>
@@ -569,4 +620,3 @@
   <script type="module" src="js/app.js"></script>
 </body>
 </html>
-
