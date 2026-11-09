@@ -15,7 +15,8 @@ const ICONS = {
   user: `<svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
   company: `<svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`,
   doc: `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
-  note: `<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`
+  note: `<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`,
+  calendar: `<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`
 };
 
 // Utilità di formattazione
@@ -765,6 +766,15 @@ class GeemApp {
         'completato': '<span class="item-badge badge-gray">Completato</span>'
       };
 
+      const dateRangeText = (site.startDate || site.endDate) ? `
+        <span class="sub-icon" style="color:var(--text-muted); font-size:0.75rem;">
+          ${ICONS.calendar}
+          ${site.startDate ? `Inizio: <strong>${fmtDate(site.startDate)}</strong>` : ''}
+          ${site.startDate && site.endDate ? ' • ' : ''}
+          ${site.endDate ? `Fine: <strong>${fmtDate(site.endDate)}</strong>` : (site.startDate ? '(in corso)' : '')}
+        </span>
+      ` : '';
+
       return `
         <div class="item-card">
           <div class="item-card-top">
@@ -780,7 +790,7 @@ class GeemApp {
             </div>
           </div>
 
-          <div style="display:flex; flex-wrap:wrap; gap:6px; margin: 6px 0 10px 0;">
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin: 6px 0 8px 0; align-items:center;">
             ${client.phone ? `
               <a href="tel:${client.phone}" class="action-link">
                 ${ICONS.phone} Chiama: ${client.phone}
@@ -792,6 +802,8 @@ class GeemApp {
               </a>
             ` : ''}
           </div>
+
+          ${dateRangeText ? `<div style="margin-bottom:8px;">${dateRangeText}</div>` : ''}
 
           <div class="item-card-body">
             <div class="item-card-metrics">
@@ -889,6 +901,12 @@ class GeemApp {
     const sites = store.data.sites;
     list.innerHTML = sites.map(s => {
       const client = store.data.clients.find(c => c.id === s.clientId) || { name: 'Cliente N/D' };
+      const dateRangeText = (s.startDate || s.endDate) ? `
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:3px;" class="sub-icon">
+          ${ICONS.calendar} ${s.startDate ? `Inizio: <strong>${fmtDate(s.startDate)}</strong>` : ''}${s.startDate && s.endDate ? ' • ' : ''}${s.endDate ? `Fine: <strong>${fmtDate(s.endDate)}</strong>` : ''}
+        </div>
+      ` : '';
+
       return `
         <div class="item-card">
           <div class="item-card-top">
@@ -905,9 +923,10 @@ class GeemApp {
             </div>
           </div>
           <div class="item-card-body">
-            <div style="font-size:0.8rem; color:var(--text-muted);" class="sub-icon">
+            <div style="font-size:0.8rem; color:var(--text-muted); width:100%;" class="sub-icon">
               ${ICONS.map} ${s.address || 'Nessun indirizzo'}
             </div>
+            ${dateRangeText}
           </div>
         </div>
       `;
@@ -1209,12 +1228,16 @@ class GeemApp {
         document.getElementById('site-client').value = s.clientId;
         document.getElementById('site-address').value = s.address || '';
         document.getElementById('site-status').value = s.status || 'in_corso';
+        document.getElementById('site-start-date').value = s.startDate || '';
+        document.getElementById('site-end-date').value = s.endDate || '';
         document.getElementById('site-notes').value = s.notes || '';
       }
     } else {
       title.textContent = 'Nuovo Cantiere';
       form.reset();
       document.getElementById('site-code').value = `CANT-${new Date().getFullYear()}-${String(store.data.sites.length + 1).padStart(2, '0')}`;
+      document.getElementById('site-start-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('site-end-date').value = '';
     }
 
     this.openModal('modal-site');
@@ -1227,6 +1250,8 @@ class GeemApp {
     const clientId = document.getElementById('site-client').value;
     const address = document.getElementById('site-address').value;
     const status = document.getElementById('site-status').value;
+    const startDate = document.getElementById('site-start-date').value;
+    const endDate = document.getElementById('site-end-date').value;
     const notes = document.getElementById('site-notes').value;
 
     if (!code.trim() || !name.trim()) {
@@ -1234,11 +1259,16 @@ class GeemApp {
       return;
     }
 
+    if (startDate && endDate && endDate < startDate) {
+      this.showToast('La data di fine non può essere precedente alla data di inizio', 'error');
+      return;
+    }
+
     if (this.editingSiteId) {
-      store.updateSite(this.editingSiteId, { code, name, clientId, address, status, notes });
+      store.updateSite(this.editingSiteId, { code, name, clientId, address, status, startDate, endDate, notes });
       this.showToast('Cantiere aggiornato', 'success');
     } else {
-      store.addSite({ code, name, clientId, address, status, notes });
+      store.addSite({ code, name, clientId, address, status, startDate, endDate, notes });
       this.showToast('Cantiere aggiunto', 'success');
     }
 

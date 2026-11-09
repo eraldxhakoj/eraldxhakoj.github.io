@@ -81,6 +81,8 @@ export const INITIAL_SITES = [
     clientId: 'c_1',
     address: 'Via Cavallotti 42, Monza',
     status: 'in_corso',
+    startDate: '2026-02-01',
+    endDate: '2026-06-30',
     notes: 'Demolizione tramezzi e rifacimento massetto'
   },
   {
@@ -90,6 +92,8 @@ export const INITIAL_SITES = [
     clientId: 'c_2',
     address: 'Via Volturno 15, Milano',
     status: 'in_corso',
+    startDate: '2026-03-15',
+    endDate: '',
     notes: 'Rifacimento bagno e impianti idraulici'
   }
 ];
@@ -552,6 +556,8 @@ class StateStore {
       clientId: site.clientId || '',
       address: (site.address || '').trim(),
       status: site.status || 'in_corso',
+      startDate: site.startDate || '',
+      endDate: site.endDate || '',
       notes: (site.notes || '').trim()
     };
 

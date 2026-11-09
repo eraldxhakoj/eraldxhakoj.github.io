@@ -21,7 +21,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/logo.png?v=7">
   <link rel="icon" type="image/png" href="assets/logo.png?v=7">
 
-  <link rel="stylesheet" href="css/styles.css?v=7">
+  <link rel="stylesheet" href="css/styles.css?v=8">
 </head>
 <body>
 
@@ -660,6 +660,16 @@
           <label class="form-label" for="site-address">Indirizzo del Cantiere</label>
           <input type="text" id="site-address" class="form-input" placeholder="Es. Via Dante 14, Monza (per navigatore GPS)" required>
         </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="site-start-date">Data Inizio Lavori</label>
+            <input type="date" id="site-start-date" class="form-input">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="site-end-date">Data Fine Lavori</label>
+            <input type="date" id="site-end-date" class="form-input">
+          </div>
+        </div>
         <div class="form-group">
           <label class="form-label" for="site-notes">Note Tecniche</label>
           <textarea id="site-notes" class="form-textarea" placeholder="Codici di accesso, ditta ponteggi, piano sicurezza..."></textarea>
@@ -733,6 +743,6 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Core App Scripts (ES Modules) -->
-  <script type="module" src="js/app.js?v=5"></script>
+  <script type="module" src="js/app.js?v=8"></script>
 </body>
 </html>
