@@ -394,23 +394,59 @@ body {
    ========================================================================== */
 .section-toolbar {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
   gap: 10px;
   margin-bottom: 14px;
 }
 
-@media (min-width: 640px) {
-  .section-toolbar {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
+.toolbar-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
 }
 
 .toolbar-title h2 {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: #fff;
+  line-height: 1.2;
+}
+
+.title-filter-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.title-filter-toggle svg {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  fill: none;
+}
+
+.title-filter-toggle.active {
+  background: var(--bg-input);
+  color: var(--primary);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.title-filter-toggle.active svg {
+  transform: rotate(180deg);
 }
 
 .toolbar-title p {
@@ -422,7 +458,17 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+/* Pannello filtri a scomparsa per ogni pagina */
+.page-filter-panel {
+  display: block;
+  margin-bottom: 14px;
+}
+
+.page-filter-panel.hidden {
+  display: none !important;
 }
 
 /* Buttons */

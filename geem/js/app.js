@@ -45,7 +45,8 @@ class GeemApp {
     this.filters = {
       timesheetSite: 'all',
       expenseSite: 'all',
-      expenseCategory: 'all'
+      expenseCategory: 'all',
+      siteStatus: 'all'
     };
   }
 
@@ -131,6 +132,26 @@ class GeemApp {
     });
 
     window.scrollTo(0, 0);
+  }
+
+  toggleFilterPanel(viewName) {
+    const panel = document.getElementById(`filter-panel-${viewName}`);
+    const toggle = document.getElementById(`toggle-filter-${viewName}`);
+    if (!panel) return;
+
+    const isCurrentlyHidden = panel.classList.contains('hidden');
+    if (isCurrentlyHidden) {
+      panel.classList.remove('hidden');
+      if (toggle) toggle.classList.add('active');
+    } else {
+      panel.classList.add('hidden');
+      if (toggle) toggle.classList.remove('active');
+    }
+  }
+
+  filterSiteStatus(status) {
+    this.filters.siteStatus = status;
+    this.renderSites();
   }
 
   switchAdminSubTab(subTabId) {
@@ -714,7 +735,10 @@ class GeemApp {
     const list = document.getElementById('sites-list');
     if (!list) return;
 
-    const sites = store.data.sites;
+    let sites = [...store.data.sites];
+    if (this.filters.siteStatus && this.filters.siteStatus !== 'all') {
+      sites = sites.filter(s => s.status === this.filters.siteStatus);
+    }
 
     if (sites.length === 0) {
       list.innerHTML = `
