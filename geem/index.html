@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="GEEM">
   <title>GEEM</title>
   
-  <link rel="stylesheet" href="css/styles.css?v=4">
+  <link rel="stylesheet" href="css/styles.css?v=5">
   <link rel="icon" type="image/png" href="assets/logo.png">
 </head>
 <body>
@@ -148,7 +148,7 @@
       <div class="section-toolbar">
         <div class="toolbar-title" onclick="app.toggleFilterPanel('hours')" title="Tocca per mostrare/nascondere calendario e filtri">
           <h2>Registro Ore</h2>
-          <span id="toggle-filter-hours" class="title-filter-toggle active" aria-label="Mostra/Nascondi filtri">
+          <span id="toggle-filter-hours" class="title-filter-toggle" aria-label="Mostra/Nascondi filtri">
             <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
           </span>
         </div>
@@ -160,8 +160,8 @@
         </div>
       </div>
 
-      <!-- Navigatore Calendario Registro Ore (Giorno / Settimana / Mese) -->
-      <div id="filter-panel-hours" class="calendar-nav-box page-filter-panel">
+      <!-- Navigatore Calendario Registro Ore (Giorno / Settimana / Mese) (Chiuso di default) -->
+      <div id="filter-panel-hours" class="calendar-nav-box page-filter-panel hidden">
         <div class="calendar-nav-header">
           <div class="cal-nav-controls">
             <button class="btn-icon" title="Precedente" onclick="app.navigateCalendar(-1)">
@@ -219,7 +219,7 @@
       <div class="section-toolbar">
         <div class="toolbar-title" onclick="app.toggleFilterPanel('expenses')" title="Tocca per mostrare/nascondere i filtri cantiere">
           <h2>Spese & Fatture</h2>
-          <span id="toggle-filter-expenses" class="title-filter-toggle active" aria-label="Mostra/Nascondi filtri">
+          <span id="toggle-filter-expenses" class="title-filter-toggle" aria-label="Mostra/Nascondi filtri">
             <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
           </span>
         </div>
@@ -231,8 +231,8 @@
         </div>
       </div>
 
-      <!-- Filtro Cantieri Spese (Collassabile) -->
-      <div id="filter-panel-expenses" class="page-filter-panel" style="margin-bottom:12px;">
+      <!-- Filtro Cantieri Spese (Collassabile, Chiuso di default) -->
+      <div id="filter-panel-expenses" class="page-filter-panel hidden" style="margin-bottom:12px;">
         <select id="filter-exp-site" class="form-select">
           <option value="all">Tutti i Cantieri e Spese Generali</option>
         </select>
@@ -722,6 +722,6 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Core App Scripts (ES Modules) -->
-  <script type="module" src="js/app.js?v=4"></script>
+  <script type="module" src="js/app.js?v=5"></script>
 </body>
 </html>
