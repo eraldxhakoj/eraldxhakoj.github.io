@@ -56,6 +56,12 @@ html, body {
   font-size: 15px;
   line-height: 1.45;
   -webkit-font-smoothing: antialiased;
+  touch-action: manipulation; /* Disattiva gesture di doppio tap per zoomare */
+}
+
+/* Impedisci esplicitamente il double-tap zoom su pulsanti, link e controlli interattivi */
+button, input, select, textarea, a, .btn, .btn-icon, .cal-day-cell, .cal-compact-day-card, .cal-month-day-cell, .cal-mode-btn, .stat-card, .nav-btn, .bottom-item {
+  touch-action: manipulation;
 }
 
 body {

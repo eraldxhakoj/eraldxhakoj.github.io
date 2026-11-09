@@ -1463,6 +1463,20 @@ class GeemApp {
 
     const syncBadge = document.getElementById('sync-badge');
     if (syncBadge) syncBadge.addEventListener('click', () => this.openAuthModal());
+
+    // Disattiva il doppio tap rapido per zoomare su iOS Safari e Android Chrome
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (e) => {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        // Se il tap non è dentro un campo testo editable, previeni lo zoom
+        const tag = e.target.tagName ? e.target.tagName.toLowerCase() : '';
+        if (tag !== 'input' && tag !== 'textarea') {
+          e.preventDefault();
+        }
+      }
+      lastTouchEnd = now;
+    }, { passive: false });
   }
 }
 
