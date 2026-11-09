@@ -3,7 +3,7 @@
   "short_name": "GEEM",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0c111d",
+  "background_color": "#f3f4f6",
   "theme_color": "#0c111d",
   "icons": [
     {
