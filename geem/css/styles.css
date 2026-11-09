@@ -1098,6 +1098,105 @@ body {
   gap: 6px;
 }
 
+/* Sezione Finanziaria / Preventivo & SAL Cantiere */
+.site-finance-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin: 10px 0;
+}
+
+.site-finance-header {
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-finance-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.finance-metric {
+  display: flex;
+  flex-direction: column;
+}
+
+.finance-lbl {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.finance-val {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.finance-val.val-quote { color: #fff; }
+.finance-val.val-paid  { color: var(--success); }
+.finance-val.val-due   { color: var(--warning); }
+.finance-val.val-zero  { color: var(--text-dim); }
+
+/* Righe Pagamenti Dinamiche nel Modal Cantiere */
+.payment-row {
+  display: grid;
+  grid-template-columns: 130px 110px 1fr 34px;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+@media (max-width: 600px) {
+  .payment-row {
+    grid-template-columns: 1fr 1fr 34px;
+  }
+  .payment-row .payment-note-col {
+    grid-column: 1 / span 2;
+  }
+}
+
+.payment-row-delete {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--danger);
+  border-radius: var(--radius-sm);
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.payment-row-delete:hover {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+}
+
+.payments-summary-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
 /* Call / Map Links */
 .action-link {
   display: inline-flex;

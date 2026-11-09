@@ -805,6 +805,32 @@ class GeemApp {
 
           ${dateRangeText ? `<div style="margin-bottom:8px;">${dateRangeText}</div>` : ''}
 
+          <!-- Sezione Economica & SAL Preventivo -->
+          ${cost.quoteAmount > 0 || (site.payments && site.payments.length > 0) ? `
+            <div class="site-finance-box">
+              <div class="site-finance-header">
+                <span>Stato Pagamenti & SAL</span>
+                <span>${site.payments ? site.payments.length : 0} Versamenti</span>
+              </div>
+              <div class="site-finance-metrics">
+                <div class="finance-metric">
+                  <span class="finance-lbl">Preventivo</span>
+                  <span class="finance-val val-quote">${fmtMoney(cost.quoteAmount)}</span>
+                </div>
+                <div class="finance-metric">
+                  <span class="finance-lbl">Incassato</span>
+                  <span class="finance-val val-paid">${fmtMoney(cost.paymentsTotal)}</span>
+                </div>
+                <div class="finance-metric">
+                  <span class="finance-lbl">Da Incassare</span>
+                  <span class="finance-val ${cost.balanceRemaining > 0 ? 'val-due' : 'val-zero'}">
+                    ${fmtMoney(cost.balanceRemaining)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ` : ''}
+
           <div class="item-card-body">
             <div class="item-card-metrics">
               <div class="metric-item">
@@ -901,9 +927,19 @@ class GeemApp {
     const sites = store.data.sites;
     list.innerHTML = sites.map(s => {
       const client = store.data.clients.find(c => c.id === s.clientId) || { name: 'Cliente N/D' };
+      const cost = store.getSiteCost(s.id);
+
       const dateRangeText = (s.startDate || s.endDate) ? `
         <div style="font-size:0.75rem; color:var(--text-muted); margin-top:3px;" class="sub-icon">
           ${ICONS.calendar} ${s.startDate ? `Inizio: <strong>${fmtDate(s.startDate)}</strong>` : ''}${s.startDate && s.endDate ? ' • ' : ''}${s.endDate ? `Fine: <strong>${fmtDate(s.endDate)}</strong>` : ''}
+        </div>
+      ` : '';
+
+      const financeSummary = (cost.quoteAmount > 0) ? `
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:3px; display:flex; gap:10px; flex-wrap:wrap;">
+          <span>Prev: <strong style="color:#fff;">${fmtMoney(cost.quoteAmount)}</strong></span>
+          <span>Incassato: <strong style="color:var(--success);">${fmtMoney(cost.paymentsTotal)}</strong></span>
+          <span>Saldo: <strong style="color:var(--warning);">${fmtMoney(cost.balanceRemaining)}</strong></span>
         </div>
       ` : '';
 
@@ -927,6 +963,7 @@ class GeemApp {
               ${ICONS.map} ${s.address || 'Nessun indirizzo'}
             </div>
             ${dateRangeText}
+            ${financeSummary}
           </div>
         </div>
       `;
@@ -1215,6 +1252,7 @@ class GeemApp {
   // --- MODAL CANTIERI ---
   openSiteModal(id = null) {
     this.editingSiteId = id;
+    this.currentSitePayments = [];
     const title = document.getElementById('modal-site-title');
     const form = document.getElementById('form-site');
     if (!form) return;
@@ -1230,7 +1268,9 @@ class GeemApp {
         document.getElementById('site-status').value = s.status || 'in_corso';
         document.getElementById('site-start-date').value = s.startDate || '';
         document.getElementById('site-end-date').value = s.endDate || '';
+        document.getElementById('site-quote-amount').value = s.quoteAmount || '';
         document.getElementById('site-notes').value = s.notes || '';
+        this.currentSitePayments = Array.isArray(s.payments) ? JSON.parse(JSON.stringify(s.payments)) : [];
       }
     } else {
       title.textContent = 'Nuovo Cantiere';
@@ -1238,9 +1278,95 @@ class GeemApp {
       document.getElementById('site-code').value = `CANT-${new Date().getFullYear()}-${String(store.data.sites.length + 1).padStart(2, '0')}`;
       document.getElementById('site-start-date').value = new Date().toISOString().split('T')[0];
       document.getElementById('site-end-date').value = '';
+      document.getElementById('site-quote-amount').value = '';
+      this.currentSitePayments = [];
     }
 
+    this.renderModalPayments();
     this.openModal('modal-site');
+  }
+
+  addPaymentRow(amount = '', note = '', date = '') {
+    const today = new Date().toISOString().split('T')[0];
+    this.currentSitePayments.push({
+      id: 'p_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      date: date || today,
+      amount: amount !== '' ? parseFloat(amount) : '',
+      note: note || `Rata/Acconto #${this.currentSitePayments.length + 1}`
+    });
+    this.renderModalPayments();
+  }
+
+  removePaymentRow(index) {
+    this.currentSitePayments.splice(index, 1);
+    this.renderModalPayments();
+  }
+
+  renderModalPayments() {
+    const container = document.getElementById('site-payments-list');
+    if (!container) return;
+
+    if (this.currentSitePayments.length === 0) {
+      container.innerHTML = `
+        <div style="font-size:0.78rem; color:var(--text-dim); padding:6px 0;">
+          Nessun pagamento registrato finora. Clicca su "+ Aggiungi Pagamento" per inserire acconti o rate.
+        </div>
+      `;
+      this.recalcModalPaymentSummary();
+      return;
+    }
+
+    container.innerHTML = this.currentSitePayments.map((p, idx) => `
+      <div class="payment-row">
+        <div>
+          <input type="date" class="form-input form-input-sm" value="${p.date}" 
+                 onchange="app.updatePaymentField(${idx}, 'date', this.value)" style="min-height:36px; padding:4px 6px; font-size:0.78rem;">
+        </div>
+        <div>
+          <input type="number" class="form-input form-input-sm" step="0.01" min="0" placeholder="€ Importo" 
+                 value="${p.amount !== '' ? p.amount : ''}" 
+                 oninput="app.updatePaymentField(${idx}, 'amount', this.value)" 
+                 style="min-height:36px; padding:4px 8px; font-weight:700; color:var(--success); font-size:0.84rem;">
+        </div>
+        <div class="payment-note-col">
+          <input type="text" class="form-input form-input-sm" placeholder="Descrizione rata (es. Acconto, 2° SAL...)" 
+                 value="${p.note || ''}" 
+                 oninput="app.updatePaymentField(${idx}, 'note', this.value)" 
+                 style="min-height:36px; padding:4px 8px; font-size:0.78rem;">
+        </div>
+        <div>
+          <button type="button" class="payment-row-delete" onclick="app.removePaymentRow(${idx})" title="Elimina pagamento">
+            <svg viewBox="0 0 24 24" style="width:14px; height:14px; stroke:currentColor; stroke-width:2.2; fill:none;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+    `).join('');
+
+    this.recalcModalPaymentSummary();
+  }
+
+  updatePaymentField(index, field, value) {
+    if (!this.currentSitePayments[index]) return;
+    if (field === 'amount') {
+      this.currentSitePayments[index].amount = value !== '' ? parseFloat(value) : '';
+    } else {
+      this.currentSitePayments[index][field] = value;
+    }
+    this.recalcModalPaymentSummary();
+  }
+
+  recalcModalPaymentSummary() {
+    const quoteInput = document.getElementById('site-quote-amount');
+    const totalPaidEl = document.getElementById('site-modal-total-paid');
+    const balanceDueEl = document.getElementById('site-modal-balance-due');
+    if (!totalPaidEl || !balanceDueEl) return;
+
+    const quote = parseFloat(quoteInput ? quoteInput.value : 0) || 0;
+    const totalPaid = (this.currentSitePayments || []).reduce((acc, p) => acc + (parseFloat(p.amount) || 0), 0);
+    const balanceDue = Math.max(0, quote - totalPaid);
+
+    totalPaidEl.textContent = fmtMoney(totalPaid);
+    balanceDueEl.textContent = fmtMoney(balanceDue);
   }
 
   saveSite(e) {
@@ -1252,6 +1378,7 @@ class GeemApp {
     const status = document.getElementById('site-status').value;
     const startDate = document.getElementById('site-start-date').value;
     const endDate = document.getElementById('site-end-date').value;
+    const quoteAmount = parseFloat(document.getElementById('site-quote-amount').value) || 0;
     const notes = document.getElementById('site-notes').value;
 
     if (!code.trim() || !name.trim()) {
@@ -1264,12 +1391,44 @@ class GeemApp {
       return;
     }
 
+    // Filtra eventuali pagamenti lasciati vuoti
+    const validPayments = (this.currentSitePayments || [])
+      .filter(p => !isNaN(parseFloat(p.amount)) && parseFloat(p.amount) > 0)
+      .map(p => ({
+        id: p.id,
+        date: p.date || new Date().toISOString().split('T')[0],
+        amount: parseFloat(p.amount) || 0,
+        note: (p.note || '').trim()
+      }));
+
     if (this.editingSiteId) {
-      store.updateSite(this.editingSiteId, { code, name, clientId, address, status, startDate, endDate, notes });
-      this.showToast('Cantiere aggiornato', 'success');
+      store.updateSite(this.editingSiteId, { 
+        code, 
+        name, 
+        clientId, 
+        address, 
+        status, 
+        startDate, 
+        endDate, 
+        quoteAmount, 
+        payments: validPayments, 
+        notes 
+      });
+      this.showToast('Cantiere aggiornato con successo', 'success');
     } else {
-      store.addSite({ code, name, clientId, address, status, startDate, endDate, notes });
-      this.showToast('Cantiere aggiunto', 'success');
+      store.addSite({ 
+        code, 
+        name, 
+        clientId, 
+        address, 
+        status, 
+        startDate, 
+        endDate, 
+        quoteAmount, 
+        payments: validPayments, 
+        notes 
+      });
+      this.showToast('Cantiere aggiunto con successo', 'success');
     }
 
     this.closeModal('modal-site');

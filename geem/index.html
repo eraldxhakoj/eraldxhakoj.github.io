@@ -21,7 +21,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/logo.png?v=7">
   <link rel="icon" type="image/png" href="assets/logo.png?v=7">
 
-  <link rel="stylesheet" href="css/styles.css?v=8">
+  <link rel="stylesheet" href="css/styles.css?v=9">
 </head>
 <body>
 
@@ -670,6 +670,36 @@
             <input type="date" id="site-end-date" class="form-input">
           </div>
         </div>
+
+        <!-- Sezione Preventivo & Pagamenti Effettuati (SAL) -->
+        <div style="background:var(--bg-input); border:1px solid var(--border-subtle); border-radius:var(--radius-sm); padding:12px; margin-bottom:14px;">
+          <div class="form-group" style="margin-bottom:10px;">
+            <label class="form-label" for="site-quote-amount" style="color:#fff; font-weight:800;">
+              Valore Totale Preventivo / Contratto (€)
+            </label>
+            <input type="number" id="site-quote-amount" class="form-input" step="0.01" min="0" placeholder="0.00" style="font-size:1.1rem; font-weight:800; color:var(--primary);" oninput="app.recalcModalPaymentSummary()">
+          </div>
+
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; margin-top:14px;">
+            <label class="form-label" style="margin:0; font-weight:800; color:#fff;">
+              Pagamenti / Acconti Ricevuti dal Cliente
+            </label>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="app.addPaymentRow()">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              + Aggiungi Pagamento
+            </button>
+          </div>
+
+          <div id="site-payments-list" style="margin-top:6px;">
+            <!-- Righe pagamenti generate dinamicamente -->
+          </div>
+
+          <div class="payments-summary-bar">
+            <span>Incassato: <strong id="site-modal-total-paid" style="color:var(--success);">€0,00</strong></span>
+            <span>Saldo Mancante: <strong id="site-modal-balance-due" style="color:var(--warning);">€0,00</strong></span>
+          </div>
+        </div>
+
         <div class="form-group">
           <label class="form-label" for="site-notes">Note Tecniche</label>
           <textarea id="site-notes" class="form-textarea" placeholder="Codici di accesso, ditta ponteggi, piano sicurezza..."></textarea>
@@ -743,6 +773,6 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Core App Scripts (ES Modules) -->
-  <script type="module" src="js/app.js?v=8"></script>
+  <script type="module" src="js/app.js?v=9"></script>
 </body>
 </html>

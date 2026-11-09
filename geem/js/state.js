@@ -83,6 +83,11 @@ export const INITIAL_SITES = [
     status: 'in_corso',
     startDate: '2026-02-01',
     endDate: '2026-06-30',
+    quoteAmount: 45000.00,
+    payments: [
+      { id: 'p_1', date: '2026-02-05', amount: 15000.00, note: 'Acconto iniziale inizio lavori' },
+      { id: 'p_2', date: '2026-03-20', amount: 15000.00, note: '2° SAL fine tramezze e impianti' }
+    ],
     notes: 'Demolizione tramezzi e rifacimento massetto'
   },
   {
@@ -94,6 +99,10 @@ export const INITIAL_SITES = [
     status: 'in_corso',
     startDate: '2026-03-15',
     endDate: '',
+    quoteAmount: 18500.00,
+    payments: [
+      { id: 'p_3', date: '2026-03-18', amount: 6000.00, note: 'Acconto avvio cantiere' }
+    ],
     notes: 'Rifacimento bagno e impianti idraulici'
   }
 ];
@@ -549,6 +558,14 @@ class StateStore {
 
   // ===== GESTIONE CANTIERI =====
   addSite(site) {
+    const quoteAmount = parseFloat(site.quoteAmount) || 0;
+    const payments = Array.isArray(site.payments) ? site.payments.map(p => ({
+      id: p.id || ('p_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4)),
+      date: p.date || new Date().toISOString().split('T')[0],
+      amount: parseFloat(p.amount) || 0,
+      note: (p.note || '').trim()
+    })) : [];
+
     const newSite = {
       id: 's_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       code: (site.code || `CANT-${Date.now().toString().slice(-4)}`).trim(),
@@ -558,6 +575,8 @@ class StateStore {
       status: site.status || 'in_corso',
       startDate: site.startDate || '',
       endDate: site.endDate || '',
+      quoteAmount: quoteAmount,
+      payments: payments,
       notes: (site.notes || '').trim()
     };
 
@@ -571,9 +590,20 @@ class StateStore {
     const index = this.data.sites.findIndex(s => s.id === id);
     if (index === -1) return false;
 
+    const current = this.data.sites[index];
+    const quoteAmount = updated.quoteAmount !== undefined ? (parseFloat(updated.quoteAmount) || 0) : (current.quoteAmount || 0);
+    const payments = updated.payments !== undefined ? (Array.isArray(updated.payments) ? updated.payments.map(p => ({
+      id: p.id || ('p_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4)),
+      date: p.date || new Date().toISOString().split('T')[0],
+      amount: parseFloat(p.amount) || 0,
+      note: (p.note || '').trim()
+    })) : []) : (current.payments || []);
+
     this.data.sites[index] = {
-      ...this.data.sites[index],
-      ...updated
+      ...current,
+      ...updated,
+      quoteAmount,
+      payments
     };
 
     this.notify('sites');
@@ -666,8 +696,9 @@ class StateStore {
     };
   }
 
-  // Calcola il costo totale di un cantiere (ore + spese)
+  // Calcola il costo totale e i pagamenti di un cantiere
   getSiteCost(siteId) {
+    const site = this.data.sites.find(s => s.id === siteId);
     const siteTimesheets = this.data.timesheets.filter(t => t.siteId === siteId);
     const hoursTotal = siteTimesheets.reduce((acc, t) => acc + (t.hours || 0), 0);
     const laborCost = siteTimesheets.reduce((acc, t) => acc + (t.total || 0), 0);
@@ -675,11 +706,20 @@ class StateStore {
     const siteExpenses = this.data.expenses.filter(e => e.siteId === siteId);
     const expensesTotal = siteExpenses.reduce((acc, e) => acc + (e.amount || 0), 0);
 
+    const quoteAmount = (site && parseFloat(site.quoteAmount)) || 0;
+    const payments = (site && Array.isArray(site.payments)) ? site.payments : [];
+    const paymentsTotal = payments.reduce((acc, p) => acc + (parseFloat(p.amount) || 0), 0);
+    const balanceRemaining = Math.max(0, quoteAmount - paymentsTotal);
+
     return {
       hoursTotal,
       laborCost,
       expensesTotal,
-      totalCost: laborCost + expensesTotal
+      totalCost: laborCost + expensesTotal,
+      quoteAmount,
+      paymentsTotal,
+      balanceRemaining,
+      paymentsCount: payments.length
     };
   }
 }
