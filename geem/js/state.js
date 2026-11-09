@@ -577,6 +577,7 @@ class StateStore {
       endDate: site.endDate || '',
       quoteAmount: quoteAmount,
       payments: payments,
+      attachments: Array.isArray(site.attachments) ? site.attachments : [],
       notes: (site.notes || '').trim()
     };
 
@@ -599,11 +600,14 @@ class StateStore {
       note: (p.note || '').trim()
     })) : []) : (current.payments || []);
 
+    const attachments = updated.attachments !== undefined ? updated.attachments : (current.attachments || []);
+
     this.data.sites[index] = {
       ...current,
       ...updated,
       quoteAmount,
-      payments
+      payments,
+      attachments
     };
 
     this.notify('sites');
@@ -708,6 +712,7 @@ class StateStore {
 
     const quoteAmount = (site && parseFloat(site.quoteAmount)) || 0;
     const payments = (site && Array.isArray(site.payments)) ? site.payments : [];
+    const attachments = (site && Array.isArray(site.attachments)) ? site.attachments : [];
     const paymentsTotal = payments.reduce((acc, p) => acc + (parseFloat(p.amount) || 0), 0);
     const balanceRemaining = Math.max(0, quoteAmount - paymentsTotal);
 
@@ -719,7 +724,8 @@ class StateStore {
       quoteAmount,
       paymentsTotal,
       balanceRemaining,
-      paymentsCount: payments.length
+      paymentsCount: payments.length,
+      attachmentsCount: attachments.length
     };
   }
 }

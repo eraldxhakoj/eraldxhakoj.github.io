@@ -80,6 +80,12 @@ export class GitHubStorage {
 
     const fileMeta = await response.json();
     this.fileShas[path] = fileMeta.sha;
+
+    // Se è un file generico o non-JSON (es. allegato base64) o un path in attachments/
+    if (path.startsWith('attachments/')) {
+      return { found: true, contentBase64: fileMeta.content, sha: fileMeta.sha };
+    }
+
     const contentText = GitHubStorage.base64ToUtf8(fileMeta.content);
     
     try {
@@ -88,6 +94,67 @@ export class GitHubStorage {
     } catch (e) {
       throw new Error(`Formato JSON non valido in ${path}`);
     }
+  }
+
+  // Scrivi un file binario/base64 su GitHub (ad es. allegati PDF, immagini o documenti)
+  async writeBinaryFile(path, base64Content, commitMessage = 'Upload allegato GEEM') {
+    const url = `${this.baseUrl}/contents/${path}`;
+    // Rimuovi eventuali prefissi data:...;base64, e spazi
+    const cleanBase64 = base64Content.replace(/^data:[^;]+;base64,/, '').replace(/\s/g, '');
+
+    const body = {
+      message: commitMessage,
+      content: cleanBase64
+    };
+
+    if (this.fileShas[path]) {
+      body.sha = this.fileShas[path];
+    } else {
+      const existing = await this.readFile(path).catch(() => ({ found: false }));
+      if (existing.found && existing.sha) {
+        body.sha = existing.sha;
+      }
+    }
+
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`Errore upload allegato ${path}: ${errorData.message || response.statusText}`);
+    }
+
+    const result = await response.json();
+    this.fileShas[path] = result.content.sha;
+    return result;
+  }
+
+  // Elimina un file su GitHub
+  async deleteFile(path, commitMessage = 'Eliminazione file GEEM') {
+    const url = `${this.baseUrl}/contents/${path}`;
+    let sha = this.fileShas[path];
+    if (!sha) {
+      const existing = await this.readFile(path).catch(() => ({ found: false }));
+      if (existing.found) sha = existing.sha;
+    }
+
+    if (!sha) return false;
+
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: this.getHeaders(),
+      body: JSON.stringify({ message: commitMessage, sha })
+    });
+
+    if (response.ok) {
+      delete this.fileShas[path];
+      return true;
+    }
+    return false;
+  }
   }
 
   // Scrivi/Aggiorna un file JSON su GitHub

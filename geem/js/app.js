@@ -16,7 +16,9 @@ const ICONS = {
   company: `<svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`,
   doc: `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
   note: `<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`,
-  calendar: `<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`
+  calendar: `<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  clip: `<svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>`,
+  download: `<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`
 };
 
 // Utilità di formattazione
@@ -805,6 +807,25 @@ class GeemApp {
 
           ${dateRangeText ? `<div style="margin-bottom:8px;">${dateRangeText}</div>` : ''}
 
+          <!-- Allegati e Documenti del Cantiere -->
+          ${site.attachments && site.attachments.length > 0 ? `
+            <div class="site-attachments-box">
+              <div class="site-attachments-header">
+                <span class="sub-icon">${ICONS.clip} Documenti & File (${site.attachments.length})</span>
+                <span style="font-size:0.65rem; color:var(--text-dim); text-transform:none;">Tocca per aprire o scaricare</span>
+              </div>
+              <div class="attachment-chips-list">
+                ${site.attachments.map((att, attIdx) => `
+                  <a href="${att.dataUrl || '#'}" download="${att.name}" class="attachment-chip" target="_blank" rel="noopener" title="${att.name} (${att.sizeStr || ''})">
+                    ${ICONS.doc}
+                    <span class="attachment-chip-name">${att.name}</span>
+                    <span class="attachment-chip-size">${att.sizeStr || ''}</span>
+                  </a>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+
           <!-- Sezione Economica & SAL Preventivo -->
           ${cost.quoteAmount > 0 || (site.payments && site.payments.length > 0) ? `
             <div class="site-finance-box">
@@ -1253,6 +1274,7 @@ class GeemApp {
   openSiteModal(id = null) {
     this.editingSiteId = id;
     this.currentSitePayments = [];
+    this.currentSiteAttachments = [];
     const title = document.getElementById('modal-site-title');
     const form = document.getElementById('form-site');
     if (!form) return;
@@ -1271,6 +1293,7 @@ class GeemApp {
         document.getElementById('site-quote-amount').value = s.quoteAmount || '';
         document.getElementById('site-notes').value = s.notes || '';
         this.currentSitePayments = Array.isArray(s.payments) ? JSON.parse(JSON.stringify(s.payments)) : [];
+        this.currentSiteAttachments = Array.isArray(s.attachments) ? JSON.parse(JSON.stringify(s.attachments)) : [];
       }
     } else {
       title.textContent = 'Nuovo Cantiere';
@@ -1280,10 +1303,96 @@ class GeemApp {
       document.getElementById('site-end-date').value = '';
       document.getElementById('site-quote-amount').value = '';
       this.currentSitePayments = [];
+      this.currentSiteAttachments = [];
     }
 
     this.renderModalPayments();
+    this.renderModalAttachments();
     this.openModal('modal-site');
+  }
+
+  // --- GESTIONE ALLEGATI DOCUMENTI ---
+  async handleSiteFileUpload(e) {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    for (const file of files) {
+      // Limite di prudenza per file in-line JSON (5MB per file)
+      if (file.size > 5 * 1024 * 1024) {
+        this.showToast(`Il file ${file.name} supera 5MB. Preferisci file compressi o PDF standard`, 'error');
+        continue;
+      }
+
+      try {
+        const dataUrl = await this.readFileAsDataURL(file);
+        const sizeFormatted = file.size > 1024 * 1024 
+          ? (file.size / (1024 * 1024)).toFixed(1) + ' MB'
+          : Math.round(file.size / 1024) + ' KB';
+
+        this.currentSiteAttachments.push({
+          id: 'att_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+          name: file.name,
+          type: file.type || 'application/octet-stream',
+          sizeStr: sizeFormatted,
+          dataUrl: dataUrl,
+          uploadedAt: new Date().toISOString()
+        });
+      } catch (err) {
+        console.error('Errore lettura file:', err);
+        this.showToast(`Errore caricamento ${file.name}`, 'error');
+      }
+    }
+
+    // Reset input per permettere di ricaricare lo stesso file se necessario
+    e.target.value = '';
+    this.renderModalAttachments();
+    this.showToast('Allegato pronto per il salvataggio', 'info');
+  }
+
+  readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  removeSiteAttachment(index) {
+    this.currentSiteAttachments.splice(index, 1);
+    this.renderModalAttachments();
+  }
+
+  renderModalAttachments() {
+    const container = document.getElementById('site-attachments-list');
+    if (!container) return;
+
+    if (!this.currentSiteAttachments || this.currentSiteAttachments.length === 0) {
+      container.innerHTML = `
+        <div style="font-size:0.78rem; color:var(--text-dim); padding:4px 0;">
+          Nessun documento o file allegato a questo cantiere.
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = this.currentSiteAttachments.map((att, idx) => `
+      <div class="attachment-edit-row">
+        <div class="attachment-edit-info">
+          ${ICONS.doc}
+          <span style="font-weight:700; color:#fff;">${att.name}</span>
+          <span style="font-size:0.7rem; color:var(--text-dim);">(${att.sizeStr || ''})</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <a href="${att.dataUrl}" download="${att.name}" class="btn-icon" title="Scarica o visualizza anteprima" style="width:30px; height:30px;">
+            ${ICONS.download}
+          </a>
+          <button type="button" class="btn-icon" onclick="app.removeSiteAttachment(${idx})" title="Rimuovi allegato" style="width:30px; height:30px; color:var(--danger);">
+            ${ICONS.delete}
+          </button>
+        </div>
+      </div>
+    `).join('');
   }
 
   addPaymentRow(amount = '', note = '', date = '') {
@@ -1412,6 +1521,7 @@ class GeemApp {
         endDate, 
         quoteAmount, 
         payments: validPayments, 
+        attachments: this.currentSiteAttachments || [],
         notes 
       });
       this.showToast('Cantiere aggiornato con successo', 'success');
@@ -1426,6 +1536,7 @@ class GeemApp {
         endDate, 
         quoteAmount, 
         payments: validPayments, 
+        attachments: this.currentSiteAttachments || [],
         notes 
       });
       this.showToast('Cantiere aggiunto con successo', 'success');
