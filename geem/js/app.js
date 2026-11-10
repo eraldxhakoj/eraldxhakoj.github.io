@@ -7,18 +7,18 @@ import { store } from './state.js';
 
 // SVG Icons Helpers per render rapido senza emoji
 const ICONS = {
-  edit: `<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
-  delete: `<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>`,
-  phone: `<svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
-  map: `<svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>`,
-  site: `<svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M13 11l6 3v7M9 9h1M9 13h1M9 17h1"/></svg>`,
-  user: `<svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
-  company: `<svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`,
-  doc: `<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
-  note: `<svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`,
-  calendar: `<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
-  clip: `<svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>`,
-  download: `<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`
+  edit: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+  delete: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>`,
+  phone: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+  map: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>`,
+  site: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l8-4v18M13 11l6 3v7M9 9h1M9 13h1M9 17h1"/></svg>`,
+  user: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`,
+  company: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`,
+  doc: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+  note: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`,
+  calendar: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  clip: `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>`,
+  download: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`
 };
 
 // Utilità di formattazione
@@ -59,6 +59,7 @@ class GeemApp {
     this.subscribeState();
     this.renderAll();
     this.initDates();
+    this.initRouting();
 
     if (store.mode === 'github') {
       this.showToast('Connesso al database GitHub', 'success');
@@ -69,6 +70,44 @@ class GeemApp {
     } else {
       this.showToast('Modalità Demo Locale attiva', 'info');
     }
+  }
+
+  initRouting() {
+    const validTabs = ['home', 'hours', 'expenses', 'sites', 'admin'];
+    const getHashTab = () => {
+      if (typeof window === 'undefined' || !window.location || !window.location.hash) return '';
+      return window.location.hash.replace(/^#/, '').trim();
+    };
+
+    const applyRoute = () => {
+      const hash = getHashTab();
+      if (validTabs.includes(hash)) {
+        this.switchTab(hash, false);
+      } else {
+        let fallback = 'home';
+        try {
+          const saved = typeof localStorage !== 'undefined' && localStorage.getItem('geem_active_tab');
+          if (validTabs.includes(saved)) fallback = saved;
+        } catch (e) {}
+        this.switchTab(fallback, true);
+      }
+    };
+
+    if (typeof window !== 'undefined' && window.addEventListener) {
+      window.addEventListener('hashchange', () => {
+        const hash = getHashTab();
+        if (validTabs.includes(hash) && hash !== this.currentTab) {
+          this.switchTab(hash, false);
+        }
+      });
+    }
+
+    applyRoute();
+
+    try {
+      const savedSubTab = typeof localStorage !== 'undefined' && localStorage.getItem('geem_active_admin_subtab');
+      if (savedSubTab) this.switchAdminSubTab(savedSubTab);
+    } catch (e) {}
   }
 
   initDates() {
@@ -120,8 +159,25 @@ class GeemApp {
     }
   }
 
-  switchTab(tabId) {
+  switchTab(tabId, updateHash = true) {
+    const validTabs = ['home', 'hours', 'expenses', 'sites', 'admin'];
+    if (!validTabs.includes(tabId)) {
+      tabId = 'home';
+    }
+
     this.currentTab = tabId;
+
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('geem_active_tab', tabId);
+      }
+    } catch (e) {}
+
+    if (updateHash && typeof window !== 'undefined' && window.location) {
+      if (window.location.hash !== `#${tabId}`) {
+        window.location.hash = `#${tabId}`;
+      }
+    }
 
     document.querySelectorAll('.bottom-tab').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.tab === tabId);
@@ -135,7 +191,9 @@ class GeemApp {
       sec.classList.toggle('active', sec.id === `view-${tabId}`);
     });
 
-    window.scrollTo(0, 0);
+    if (typeof window !== 'undefined' && window.scrollTo) {
+      window.scrollTo(0, 0);
+    }
   }
 
   toggleFilterPanel(viewName) {
@@ -160,6 +218,11 @@ class GeemApp {
 
   switchAdminSubTab(subTabId) {
     this.currentAdminSubTab = subTabId;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('geem_active_admin_subtab', subTabId);
+      }
+    } catch (e) {}
     document.querySelectorAll('.admin-tab').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.subtab === subTabId);
     });
@@ -770,7 +833,7 @@ class GeemApp {
       };
 
       const attachmentsBadge = (site.attachments && site.attachments.length > 0)
-        ? `<span class="item-badge badge-gray" style="font-size:0.7rem;">${ICONS.clip} ${site.attachments.length}</span>`
+        ? `<span class="item-badge badge-gray" style="font-size:0.7rem;" title="${site.attachments.length} allegati">${ICONS.clip}<span>${site.attachments.length}</span></span>`
         : '';
 
       const profitBadge = (cost.quoteAmount > 0 && cost.profitMargin !== null)

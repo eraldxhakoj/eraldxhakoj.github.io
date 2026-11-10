@@ -1055,6 +1055,8 @@ body {
   stroke-width: 2.2;
   fill: none;
   flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .badge-amber { background: var(--warning-bg); color: var(--warning); }
