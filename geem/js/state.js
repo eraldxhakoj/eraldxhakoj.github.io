@@ -738,44 +738,158 @@ class StateStore {
     };
   }
 
-  // Riepilogo Finanziario Globale Aziendale & Scadenzario Incassi
-  getFinancialSummary() {
+  // Riepilogo Finanziario Aziendale, Cash Flow & Scadenzario Incassi con filtri periodo
+  getFinancialSummary(periodKey = 'year') {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth(); // 0 to 11
+
+    let periodType = 'date'; // 'date' | 'active_sites' | 'all'
+    let startDate = '';
+    let endDate = '';
+    let periodLabel = '';
+
+    const pad = (n) => String(n).padStart(2, '0');
+    const monthNames = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+
+    if (periodKey === 'month') {
+      startDate = `${currentYear}-${pad(currentMonth + 1)}-01`;
+      const lastDay = new Date(currentYear, currentMonth + 1, 0).getDate();
+      endDate = `${currentYear}-${pad(currentMonth + 1)}-${pad(lastDay)}`;
+      periodLabel = `${monthNames[currentMonth]} ${currentYear}`;
+    } else if (periodKey === 'last_month') {
+      const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+      const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+      startDate = `${prevYear}-${pad(prevMonth + 1)}-01`;
+      const lastDay = new Date(prevYear, prevMonth + 1, 0).getDate();
+      endDate = `${prevYear}-${pad(prevMonth + 1)}-${pad(lastDay)}`;
+      periodLabel = `${monthNames[prevMonth]} ${prevYear}`;
+    } else if (periodKey === 'year') {
+      startDate = `${currentYear}-01-01`;
+      endDate = `${currentYear}-12-31`;
+      periodLabel = `Anno ${currentYear}`;
+    } else if (periodKey === 'active') {
+      periodType = 'active_sites';
+      periodLabel = 'Cantieri In Corso';
+    } else {
+      // 'all'
+      periodType = 'all';
+      periodLabel = 'Tutto lo Storico';
+    }
+
     let totalQuotes = 0;
     let totalPaid = 0;
     let totalBalanceDue = 0;
     let totalLaborCost = 0;
     let totalExpenses = 0;
     let totalCosts = 0;
+    let totalHours = 0;
 
     const sitesWithPendingBalance = [];
     const sitesAtRisk = [];
 
-    this.data.sites.forEach(site => {
-      const cost = this.getSiteCost(site.id);
-      totalQuotes += cost.quoteAmount;
-      totalPaid += cost.paymentsTotal;
-      totalBalanceDue += cost.balanceRemaining;
-      totalLaborCost += cost.laborCost;
-      totalExpenses += cost.expensesTotal;
-      totalCosts += cost.totalCost;
+    if (periodType === 'date') {
+      // 1. Manodopera nel periodo
+      const periodTimesheets = this.data.timesheets.filter(t => t.date && t.date >= startDate && t.date <= endDate);
+      totalHours = periodTimesheets.reduce((acc, t) => acc + (t.hours || 0), 0);
+      totalLaborCost = periodTimesheets.reduce((acc, t) => acc + (t.total || 0), 0);
 
-      if (cost.quoteAmount > 0 && cost.balanceRemaining > 0) {
-        sitesWithPendingBalance.push({
-          site,
-          cost,
-          percentPaid: cost.quoteAmount > 0 ? Math.round((cost.paymentsTotal / cost.quoteAmount) * 100) : 0,
-          isCompleted: site.status === 'completato'
-        });
-      }
+      // 2. Spese nel periodo
+      const periodExpenses = this.data.expenses.filter(e => e.date && e.date >= startDate && e.date <= endDate);
+      totalExpenses = periodExpenses.reduce((acc, e) => acc + (e.amount || 0), 0);
+      totalCosts = totalLaborCost + totalExpenses;
 
-      // Alert se cantiere in perdita o oltre l'85% del preventivo
-      if (cost.quoteAmount > 0 && (cost.profit < 0 || (cost.costBudgetUsage !== null && cost.costBudgetUsage >= 85))) {
-        sitesAtRisk.push({
-          site,
-          cost
-        });
-      }
-    });
+      // 3. Incassi e commesse
+      this.data.sites.forEach(site => {
+        const cost = this.getSiteCost(site.id);
+        const payments = Array.isArray(site.payments) ? site.payments : [];
+
+        // Pagamenti ricevuti nel periodo selezionato
+        const periodPayments = payments.filter(p => p.date && p.date >= startDate && p.date <= endDate);
+        const periodPaid = periodPayments.reduce((acc, p) => acc + (parseFloat(p.amount) || 0), 0);
+        totalPaid += periodPaid;
+
+        // Attività cantiere nel periodo
+        const hasActivity = (
+          (site.startDate && site.startDate >= startDate && site.startDate <= endDate) ||
+          periodPayments.length > 0 ||
+          periodTimesheets.some(t => t.siteId === site.id) ||
+          periodExpenses.some(e => e.siteId === site.id)
+        );
+
+        if (hasActivity) {
+          totalQuotes += (parseFloat(site.quoteAmount) || 0);
+        }
+
+        // Crediti vivi (saldo da incassare)
+        if (cost.quoteAmount > 0 && cost.balanceRemaining > 0) {
+          totalBalanceDue += cost.balanceRemaining;
+          sitesWithPendingBalance.push({
+            site,
+            cost,
+            percentPaid: cost.quoteAmount > 0 ? Math.round((cost.paymentsTotal / cost.quoteAmount) * 100) : 0,
+            isCompleted: site.status === 'completato'
+          });
+        }
+
+        // Alert redditività
+        if (cost.quoteAmount > 0 && (cost.profit < 0 || (cost.costBudgetUsage !== null && cost.costBudgetUsage >= 85))) {
+          sitesAtRisk.push({ site, cost });
+        }
+      });
+    } else if (periodType === 'active_sites') {
+      // Solo commesse aperte
+      const activeSitesList = this.data.sites.filter(s => s.status !== 'completato');
+
+      activeSitesList.forEach(site => {
+        const cost = this.getSiteCost(site.id);
+        totalQuotes += cost.quoteAmount;
+        totalPaid += cost.paymentsTotal;
+        totalBalanceDue += cost.balanceRemaining;
+        totalLaborCost += cost.laborCost;
+        totalExpenses += cost.expensesTotal;
+        totalCosts += cost.totalCost;
+        totalHours += cost.hoursTotal;
+
+        if (cost.quoteAmount > 0 && cost.balanceRemaining > 0) {
+          sitesWithPendingBalance.push({
+            site,
+            cost,
+            percentPaid: cost.quoteAmount > 0 ? Math.round((cost.paymentsTotal / cost.quoteAmount) * 100) : 0,
+            isCompleted: false
+          });
+        }
+
+        if (cost.quoteAmount > 0 && (cost.profit < 0 || (cost.costBudgetUsage !== null && cost.costBudgetUsage >= 85))) {
+          sitesAtRisk.push({ site, cost });
+        }
+      });
+    } else {
+      // 'all' - Tutto lo storico cumulativo
+      this.data.sites.forEach(site => {
+        const cost = this.getSiteCost(site.id);
+        totalQuotes += cost.quoteAmount;
+        totalPaid += cost.paymentsTotal;
+        totalBalanceDue += cost.balanceRemaining;
+        totalLaborCost += cost.laborCost;
+        totalExpenses += cost.expensesTotal;
+        totalCosts += cost.totalCost;
+        totalHours += cost.hoursTotal;
+
+        if (cost.quoteAmount > 0 && cost.balanceRemaining > 0) {
+          sitesWithPendingBalance.push({
+            site,
+            cost,
+            percentPaid: cost.quoteAmount > 0 ? Math.round((cost.paymentsTotal / cost.quoteAmount) * 100) : 0,
+            isCompleted: site.status === 'completato'
+          });
+        }
+
+        if (cost.quoteAmount > 0 && (cost.profit < 0 || (cost.costBudgetUsage !== null && cost.costBudgetUsage >= 85))) {
+          sitesAtRisk.push({ site, cost });
+        }
+      });
+    }
 
     // Ordina cantieri con saldo pendente: prima i completati (emergenza sollecito!), poi per saldo decrescente
     sitesWithPendingBalance.sort((a, b) => {
@@ -784,17 +898,29 @@ class StateStore {
       return b.cost.balanceRemaining - a.cost.balanceRemaining;
     });
 
-    const totalProfit = totalQuotes > 0 ? (totalQuotes - totalCosts) : 0;
-    const avgProfitMargin = totalQuotes > 0 ? Math.round((totalProfit / totalQuotes) * 100) : null;
+    const totalProfit = periodType === 'date'
+      ? (totalPaid - totalCosts)
+      : (totalQuotes > 0 ? (totalQuotes - totalCosts) : 0);
+
+    const avgProfitMargin = periodType === 'date'
+      ? (totalPaid > 0 ? Math.round(((totalPaid - totalCosts) / totalPaid) * 100) : null)
+      : (totalQuotes > 0 ? Math.round(((totalQuotes - totalCosts) / totalQuotes) * 100) : null);
+
     const overallPaidPercent = totalQuotes > 0 ? Math.round((totalPaid / totalQuotes) * 100) : 0;
 
     return {
+      periodKey,
+      periodType,
+      periodLabel,
+      startDate,
+      endDate,
       totalQuotes,
       totalPaid,
       totalBalanceDue,
       totalLaborCost,
       totalExpenses,
       totalCosts,
+      totalHours,
       totalProfit,
       avgProfitMargin,
       overallPaidPercent,

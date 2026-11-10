@@ -21,7 +21,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/logo.png?v=7">
   <link rel="icon" type="image/png" href="assets/logo.png?v=7">
 
-  <link rel="stylesheet" href="css/styles.css?v=17">
+  <link rel="stylesheet" href="css/styles.css?v=18">
 </head>
 <body>
 
@@ -87,6 +87,25 @@
         </button>
       </div>
 
+      <!-- Filtro Periodo Finanziario & Cash Flow -->
+      <div class="dashboard-period-bar">
+        <button type="button" class="period-btn active" data-period="year" onclick="app.setDashboardPeriod('year')">
+          Quest'Anno
+        </button>
+        <button type="button" class="period-btn" data-period="month" onclick="app.setDashboardPeriod('month')">
+          Questo Mese
+        </button>
+        <button type="button" class="period-btn" data-period="last_month" onclick="app.setDashboardPeriod('last_month')">
+          Mese Scorso
+        </button>
+        <button type="button" class="period-btn" data-period="active" onclick="app.setDashboardPeriod('active')">
+          Cantieri In Corso
+        </button>
+        <button type="button" class="period-btn" data-period="all" onclick="app.setDashboardPeriod('all')">
+          Tutto lo Storico
+        </button>
+      </div>
+
       <!-- Financial Health & Cash Flow KPIs -->
       <div class="stats-grid">
         <div class="stat-card stat-card-gold" style="cursor:pointer;" onclick="app.scrollToPendingPayments()">
@@ -102,7 +121,7 @@
 
         <div class="stat-card stat-card-green" style="cursor:pointer;" onclick="app.switchTab('sites')">
           <div class="stat-header">
-            <span class="stat-title">Incassato</span>
+            <span id="kpi-paid-title" class="stat-title">Incassato</span>
             <span class="stat-icon" style="color:var(--success);">
               <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
             </span>
@@ -113,7 +132,7 @@
 
         <div class="stat-card" style="cursor:pointer;" onclick="app.switchTab('sites')">
           <div class="stat-header">
-            <span class="stat-title">Utile Stimato</span>
+            <span id="kpi-profit-title" class="stat-title">Utile Stimato</span>
             <span class="stat-icon" style="color:var(--success);">
               <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
             </span>
@@ -124,7 +143,7 @@
 
         <div class="stat-card" style="cursor:pointer;" onclick="app.switchTab('expenses')">
           <div class="stat-header">
-            <span class="stat-title">Costi Lavori</span>
+            <span id="kpi-costs-title" class="stat-title">Costi Lavori</span>
             <span class="stat-icon">
               <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><circle cx="17" cy="15" r="1.5"/></svg>
             </span>
@@ -846,6 +865,6 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Core App Scripts (ES Modules) -->
-  <script type="module" src="js/app.js?v=17"></script>
+  <script type="module" src="js/app.js?v=18"></script>
 </body>
 </html>

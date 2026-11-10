@@ -56,6 +56,13 @@ class GeemApp {
       expenseCategory: 'all',
       siteStatus: 'all'
     };
+
+    // Filtro Periodo Finanziario Dashboard ('year' | 'month' | 'last_month' | 'active' | 'all')
+    try {
+      this.dashboardPeriod = (typeof localStorage !== 'undefined' && localStorage.getItem('geem_dashboard_period')) || 'year';
+    } catch (e) {
+      this.dashboardPeriod = 'year';
+    }
   }
 
   init() {
@@ -64,6 +71,11 @@ class GeemApp {
     this.renderAll();
     this.initDates();
     this.initRouting();
+
+    // Sincronizza stato pulsante periodo selezionato
+    document.querySelectorAll('.period-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.period === this.dashboardPeriod);
+    });
 
     if (store.mode === 'github') {
       this.showToast('Connesso al database GitHub', 'success');
@@ -270,42 +282,96 @@ class GeemApp {
     }
   }
 
+  setDashboardPeriod(period) {
+    this.dashboardPeriod = period;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('geem_dashboard_period', period);
+      }
+    } catch (e) {}
+
+    document.querySelectorAll('.period-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.period === period);
+    });
+
+    this.renderKPIs();
+  }
+
   renderKPIs() {
     const stats = store.getStats();
-    const fin = store.getFinancialSummary();
+    const period = this.dashboardPeriod || 'year';
+    const fin = store.getFinancialSummary(period);
     
     // Financial Overview Cards (Cash Flow & Margini)
     const kpiBalanceDue = document.getElementById('kpi-balance-due');
     const kpiBalanceSub = document.getElementById('kpi-balance-sub');
     const kpiPaid = document.getElementById('kpi-paid');
+    const kpiPaidTitle = document.getElementById('kpi-paid-title');
     const kpiPaidSub = document.getElementById('kpi-paid-sub');
     const kpiProfit = document.getElementById('kpi-profit');
+    const kpiProfitTitle = document.getElementById('kpi-profit-title');
     const kpiProfitSub = document.getElementById('kpi-profit-sub');
     const kpiCosts = document.getElementById('kpi-costs');
+    const kpiCostsTitle = document.getElementById('kpi-costs-title');
     const kpiCostsSub = document.getElementById('kpi-costs-sub');
 
+    // 1. Da Incassare (Crediti Aperti)
     if (kpiBalanceDue) kpiBalanceDue.textContent = fmtMoney(fin.totalBalanceDue);
     if (kpiBalanceSub) {
       if (fin.completedWithBalanceCount > 0) {
-        kpiBalanceSub.innerHTML = `<span style="color:var(--danger); font-weight:800;">🚨 ${fin.completedWithBalanceCount} completati non saldati!</span>`;
+        kpiBalanceSub.innerHTML = `<span style="color:var(--danger); font-weight:800;">🚨 ${fin.completedWithBalanceCount} chiusi non saldati!</span>`;
       } else {
-        kpiBalanceSub.textContent = `${fin.pendingCount} cantieri con saldo aperto`;
+        kpiBalanceSub.textContent = `${fin.pendingCount} cantieri con saldo`;
       }
     }
 
+    // 2. Incassato
     if (kpiPaid) kpiPaid.textContent = fmtMoney(fin.totalPaid);
-    if (kpiPaidSub) kpiPaidSub.textContent = `${fin.overallPaidPercent}% di ${fmtMoney(fin.totalQuotes)}`;
+    if (kpiPaidTitle) {
+      if (fin.periodKey === 'month') kpiPaidTitle.textContent = 'Incassato Mese';
+      else if (fin.periodKey === 'last_month') kpiPaidTitle.textContent = 'Incassato Mese Prec.';
+      else if (fin.periodKey === 'year') kpiPaidTitle.textContent = 'Incassato Anno';
+      else if (fin.periodKey === 'active') kpiPaidTitle.textContent = 'Incassato Commesse';
+      else kpiPaidTitle.textContent = 'Incassato Totale';
+    }
+    if (kpiPaidSub) {
+      if (fin.periodType === 'date') {
+        kpiPaidSub.textContent = `Entrate ${fin.periodLabel}`;
+      } else {
+        kpiPaidSub.textContent = `${fin.overallPaidPercent}% di ${fmtMoney(fin.totalQuotes)}`;
+      }
+    }
 
+    // 3. Utile / Flusso Netto del Periodo
     if (kpiProfit) {
       kpiProfit.textContent = (fin.totalProfit >= 0 ? '+' : '') + fmtMoney(fin.totalProfit);
       kpiProfit.style.color = fin.totalProfit >= 0 ? 'var(--success)' : 'var(--danger)';
     }
+    if (kpiProfitTitle) {
+      if (fin.periodType === 'date') kpiProfitTitle.textContent = 'Flusso Netto';
+      else kpiProfitTitle.textContent = 'Utile Stimato';
+    }
     if (kpiProfitSub) {
-      kpiProfitSub.textContent = fin.avgProfitMargin !== null ? `Margine medio: ${fin.avgProfitMargin}%` : 'Nessun preventivo';
+      if (fin.periodType === 'date') {
+        kpiProfitSub.textContent = fin.totalProfit >= 0 
+          ? `Saldo positivo ${fin.periodLabel}` 
+          : `Uscite > Entrate (${fin.periodLabel})`;
+      } else {
+        kpiProfitSub.textContent = fin.avgProfitMargin !== null ? `Margine: ${fin.avgProfitMargin}%` : 'N/D';
+      }
     }
 
+    // 4. Costi Lavori
     if (kpiCosts) kpiCosts.textContent = fmtMoney(fin.totalCosts);
-    if (kpiCostsSub) kpiCostsSub.textContent = `Manodopera: ${fmtMoney(fin.totalLaborCost)} | Spese: ${fmtMoney(fin.totalExpenses)}`;
+    if (kpiCostsTitle) {
+      if (fin.periodKey === 'month') kpiCostsTitle.textContent = 'Uscite Mese';
+      else if (fin.periodKey === 'last_month') kpiCostsTitle.textContent = 'Uscite Mese Prec.';
+      else if (fin.periodKey === 'year') kpiCostsTitle.textContent = 'Uscite Anno';
+      else kpiCostsTitle.textContent = 'Costi Lavori';
+    }
+    if (kpiCostsSub) {
+      kpiCostsSub.textContent = `Ore: ${fmtMoney(fin.totalLaborCost)} | Mat.: ${fmtMoney(fin.totalExpenses)}`;
+    }
 
     // Today Strip
     const todayHours = document.getElementById('kpi-today-hours');
