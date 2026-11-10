@@ -1040,11 +1040,21 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 7px;
+  padding: 3px 8px;
   border-radius: var(--radius-full);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.item-badge svg {
+  width: 13px;
+  height: 13px;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  fill: none;
+  flex-shrink: 0;
 }
 
 .badge-amber { background: var(--warning-bg); color: var(--warning); }
@@ -1319,14 +1329,23 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 
 .site-card-compact-title {
   font-size: 0.98rem;
   font-weight: 800;
   color: #fff;
-  line-height: 1.2;
+  line-height: 1.25;
+  flex: 1;
+}
+
+.site-card-compact-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 7px;
 }
 
 .site-card-compact-sub {
@@ -1340,13 +1359,22 @@ body {
 
 .site-card-compact-footer {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 4px;
   margin-top: 8px;
   padding-top: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   font-size: 0.76rem;
   color: var(--text-muted);
+}
+
+@media (min-width: 640px) {
+  .site-card-compact-footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
 }
 
 .site-card-compact-footer .footer-cost {

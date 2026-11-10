@@ -770,27 +770,28 @@ class GeemApp {
       };
 
       const attachmentsBadge = (site.attachments && site.attachments.length > 0)
-        ? `<span class="item-badge badge-gray" style="font-size:0.68rem;">${ICONS.clip} ${site.attachments.length}</span>`
+        ? `<span class="item-badge badge-gray" style="font-size:0.7rem;">${ICONS.clip} ${site.attachments.length}</span>`
         : '';
 
       const profitBadge = (cost.quoteAmount > 0 && cost.profitMargin !== null)
         ? (cost.profit >= 0
-            ? `<span class="item-badge badge-green" style="font-size:0.68rem;">+${cost.profitMargin}% utile</span>`
-            : `<span class="item-badge badge-red" style="font-size:0.68rem;">${cost.profitMargin}% perdita</span>`)
+            ? `<span class="item-badge badge-green" style="font-size:0.7rem;">+${cost.profitMargin}% utile</span>`
+            : `<span class="item-badge badge-red" style="font-size:0.7rem;">${cost.profitMargin}% perdita</span>`)
         : '';
 
       return `
         <div class="site-card-compact" onclick="app.openSiteDetailModal('${site.id}')">
           <div class="site-card-compact-head">
             <div class="site-card-compact-title">${site.code} - ${site.name}</div>
-            <div style="display:flex; align-items:center; gap:6px;">
-              ${profitBadge}
-              ${attachmentsBadge}
-              ${statusBadges[site.status] || ''}
-              <span class="site-card-compact-arrow">
-                <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-              </span>
-            </div>
+            <span class="site-card-compact-arrow">
+              <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </span>
+          </div>
+
+          <div class="site-card-compact-badges">
+            ${statusBadges[site.status] || ''}
+            ${profitBadge}
+            ${attachmentsBadge}
           </div>
 
           <div class="site-card-compact-sub">
