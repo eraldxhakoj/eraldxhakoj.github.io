@@ -1404,6 +1404,107 @@ body {
   border-bottom: none;
 }
 
+/* Stili Box Redditività e Margine Cantiere */
+.profit-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.profit-box.profit-positive {
+  border-left: 4px solid var(--success);
+}
+
+.profit-box.profit-warning {
+  border-left: 4px solid var(--warning);
+}
+
+.profit-box.profit-danger {
+  border-left: 4px solid var(--danger);
+  background: rgba(239, 68, 68, 0.04);
+}
+
+.profit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.profit-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.profit-pill {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.profit-pill.pill-green {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.profit-pill.pill-yellow {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.profit-pill.pill-red {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.profit-val-big {
+  font-size: 1.35rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.profit-val-big.green { color: var(--success); }
+.profit-val-big.yellow { color: var(--warning); }
+.profit-val-big.red { color: var(--danger); }
+
+.profit-progress-wrap {
+  margin-top: 10px;
+}
+
+.profit-progress-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-input);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+
+.profit-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+}
+
+.profit-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
 /* Call / Map Links */
 .action-link {
   display: inline-flex;

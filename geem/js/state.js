@@ -716,14 +716,23 @@ class StateStore {
     const paymentsTotal = payments.reduce((acc, p) => acc + (parseFloat(p.amount) || 0), 0);
     const balanceRemaining = Math.max(0, quoteAmount - paymentsTotal);
 
+    const totalCost = laborCost + expensesTotal;
+    // Calcolo Utile & Margine Operativo
+    const profit = quoteAmount > 0 ? (quoteAmount - totalCost) : 0;
+    const profitMargin = quoteAmount > 0 ? Math.round((profit / quoteAmount) * 100) : null;
+    const costBudgetUsage = quoteAmount > 0 ? Math.round((totalCost / quoteAmount) * 100) : null;
+
     return {
       hoursTotal,
       laborCost,
       expensesTotal,
-      totalCost: laborCost + expensesTotal,
+      totalCost,
       quoteAmount,
       paymentsTotal,
       balanceRemaining,
+      profit,
+      profitMargin,
+      costBudgetUsage,
       paymentsCount: payments.length,
       attachmentsCount: attachments.length
     };

@@ -773,11 +773,18 @@ class GeemApp {
         ? `<span class="item-badge badge-gray" style="font-size:0.68rem;">${ICONS.clip} ${site.attachments.length}</span>`
         : '';
 
+      const profitBadge = (cost.quoteAmount > 0 && cost.profitMargin !== null)
+        ? (cost.profit >= 0
+            ? `<span class="item-badge badge-green" style="font-size:0.68rem;">+${cost.profitMargin}% utile</span>`
+            : `<span class="item-badge badge-red" style="font-size:0.68rem;">${cost.profitMargin}% perdita</span>`)
+        : '';
+
       return `
         <div class="site-card-compact" onclick="app.openSiteDetailModal('${site.id}')">
           <div class="site-card-compact-head">
             <div class="site-card-compact-title">${site.code} - ${site.name}</div>
             <div style="display:flex; align-items:center; gap:6px;">
+              ${profitBadge}
               ${attachmentsBadge}
               ${statusBadges[site.status] || ''}
               <span class="site-card-compact-arrow">
@@ -856,6 +863,47 @@ class GeemApp {
 
       ${site.address ? `<div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;"><strong>Indirizzo:</strong> ${site.address}</div>` : ''}
       ${site.notes ? `<div style="font-size:0.78rem; color:var(--text-muted); background:var(--bg-input); padding:8px 10px; border-radius:var(--radius-sm); margin-bottom:12px;">${site.notes}</div>` : ''}
+
+      <!-- Redditività & Margine Operativo in Tempo Reale -->
+      ${cost.quoteAmount > 0 ? (() => {
+        const isLoss = cost.profit < 0;
+        const isWarning = !isLoss && cost.costBudgetUsage > 80;
+        const boxClass = isLoss ? 'profit-danger' : (isWarning ? 'profit-warning' : 'profit-positive');
+        const textClass = isLoss ? 'red' : (isWarning ? 'yellow' : 'green');
+        const pillClass = isLoss ? 'pill-red' : (isWarning ? 'pill-yellow' : 'pill-green');
+        const progressColor = isLoss ? 'var(--danger)' : (isWarning ? 'var(--warning)' : 'var(--success)');
+        const progressPercent = Math.min(100, Math.max(0, cost.costBudgetUsage || 0));
+
+        return `
+          <div class="profit-box ${boxClass}">
+            <div class="profit-header">
+              <span class="profit-title">
+                <svg viewBox="0 0 24 24" style="width:16px; height:16px; stroke:currentColor; stroke-width:2.2; fill:none;"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                Redditività & Margine Operativo
+              </span>
+              <span class="profit-pill ${pillClass}">
+                ${isLoss ? 'In Perdita' : `${cost.profitMargin}% Margine`}
+              </span>
+            </div>
+            <div class="profit-val-big ${textClass}">
+              ${isLoss ? '-' : '+'}${fmtMoney(Math.abs(cost.profit))}
+              <span style="font-size:0.75rem; font-weight:600; color:var(--text-dim); margin-left:6px;">
+                ${isLoss ? 'perdita sui costi sostenuti' : 'utile netto stimato finora'}
+              </span>
+            </div>
+
+            <div class="profit-progress-wrap">
+              <div class="profit-progress-bar-bg">
+                <div class="profit-progress-fill" style="width:${progressPercent}%; background:${progressColor};"></div>
+              </div>
+              <div class="profit-progress-labels">
+                <span>Costi sostenuti: <strong>${cost.costBudgetUsage}%</strong> del preventivo</span>
+                <span>Budget preventivo: <strong>${fmtMoney(cost.quoteAmount)}</strong></span>
+              </div>
+            </div>
+          </div>
+        `;
+      })() : ''}
 
       <!-- Bilancio Economico Cantiere -->
       <div class="site-finance-box" style="margin-top:0;">
