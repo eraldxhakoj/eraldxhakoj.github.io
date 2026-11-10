@@ -389,6 +389,16 @@ body {
   margin-top: 3px;
 }
 
+.stat-card-gold {
+  border-color: rgba(245, 158, 11, 0.35);
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.08) 0%, var(--bg-card) 100%);
+}
+
+.stat-card-green {
+  border-color: rgba(16, 185, 129, 0.3);
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.06) 0%, var(--bg-card) 100%);
+}
+
 /* ==========================================================================
    Section Headers & Controls
    ========================================================================== */
@@ -585,6 +595,276 @@ body {
 
 .btn-primary.btn-hero {
   box-shadow: 0 4px 14px rgba(245, 158, 11, 0.2);
+}
+
+/* Home Strip "Oggi in Cantiere" */
+.home-today-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  margin-bottom: 20px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.home-today-strip strong {
+  color: #fff;
+}
+
+.home-today-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.home-today-item:hover {
+  opacity: 0.85;
+}
+
+.home-today-item svg {
+  width: 14px;
+  height: 14px;
+  stroke: var(--primary);
+  stroke-width: 2;
+  fill: none;
+}
+
+/* Scadenzario Incassi & Crediti da Ricevere */
+.pending-payments-section {
+  margin-top: 10px;
+  margin-bottom: 24px;
+}
+
+.pending-payments-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.pending-payments-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pending-payments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pending-payment-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.1s, border-color 0.15s;
+}
+
+.pending-payment-card.card-alert-urgent {
+  border-color: rgba(239, 68, 68, 0.45);
+  background: linear-gradient(180deg, rgba(239, 68, 68, 0.08) 0%, var(--bg-card) 100%);
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);
+}
+
+.pending-payment-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.pending-payment-site {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.pending-payment-site strong {
+  font-size: 0.96rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.25;
+}
+
+.pending-payment-due {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.pending-payment-due small {
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.pending-payment-due strong {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--primary);
+  line-height: 1.2;
+}
+
+.pending-payment-card.card-alert-urgent .pending-payment-due strong {
+  color: var(--danger);
+}
+
+.pending-payment-client-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.02);
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.quick-call-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.quick-call-link:hover {
+  background: rgba(16, 185, 129, 0.25);
+}
+
+.quick-call-link svg {
+  width: 12px;
+  height: 12px;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  fill: none;
+}
+
+.pending-payment-progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.pending-payment-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.pending-payment-progress-fill {
+  height: 100%;
+  background: var(--success);
+  border-radius: var(--radius-full);
+}
+
+.pending-payment-progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+.pending-payment-last-note {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--primary);
+}
+
+.pending-payment-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* Home Alert Card (Budget a rischio / perdita) */
+.home-alert-card {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.home-alert-card.danger {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.home-alert-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--warning);
+  margin-top: 1px;
+}
+
+.home-alert-card.danger .home-alert-icon {
+  color: var(--danger);
+}
+
+.home-alert-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  fill: none;
+}
+
+.home-alert-body {
+  flex: 1;
+}
+
+.home-alert-title {
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 3px;
+}
+
+.home-alert-desc {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  line-height: 1.4;
 }
 
 /* ==========================================================================

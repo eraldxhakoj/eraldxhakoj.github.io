@@ -18,7 +18,11 @@ const ICONS = {
   note: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`,
   calendar: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
   clip: `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>`,
-  download: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`
+  download: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
+  wallet: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 3H4a2 2 0 0 0-2 2v2"/><circle cx="16" cy="14" r="1"/></svg>`,
+  trend: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`,
+  check: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+  alert: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`
 };
 
 // Utilità di formattazione
@@ -268,16 +272,207 @@ class GeemApp {
 
   renderKPIs() {
     const stats = store.getStats();
+    const fin = store.getFinancialSummary();
     
-    const kpiHours = document.getElementById('kpi-hours');
-    const kpiHoursCost = document.getElementById('kpi-hours-cost');
-    const kpiExpenses = document.getElementById('kpi-expenses');
-    const kpiSites = document.getElementById('kpi-sites');
+    // Financial Overview Cards (Cash Flow & Margini)
+    const kpiBalanceDue = document.getElementById('kpi-balance-due');
+    const kpiBalanceSub = document.getElementById('kpi-balance-sub');
+    const kpiPaid = document.getElementById('kpi-paid');
+    const kpiPaidSub = document.getElementById('kpi-paid-sub');
+    const kpiProfit = document.getElementById('kpi-profit');
+    const kpiProfitSub = document.getElementById('kpi-profit-sub');
+    const kpiCosts = document.getElementById('kpi-costs');
+    const kpiCostsSub = document.getElementById('kpi-costs-sub');
 
-    if (kpiHours) kpiHours.textContent = `${stats.todayHours}h`;
-    if (kpiHoursCost) kpiHoursCost.textContent = fmtMoney(stats.todayHoursCost);
-    if (kpiExpenses) kpiExpenses.textContent = fmtMoney(stats.todayExpensesTotal);
-    if (kpiSites) kpiSites.textContent = `${stats.activeSites}`;
+    if (kpiBalanceDue) kpiBalanceDue.textContent = fmtMoney(fin.totalBalanceDue);
+    if (kpiBalanceSub) {
+      if (fin.completedWithBalanceCount > 0) {
+        kpiBalanceSub.innerHTML = `<span style="color:var(--danger); font-weight:800;">🚨 ${fin.completedWithBalanceCount} completati non saldati!</span>`;
+      } else {
+        kpiBalanceSub.textContent = `${fin.pendingCount} cantieri con saldo aperto`;
+      }
+    }
+
+    if (kpiPaid) kpiPaid.textContent = fmtMoney(fin.totalPaid);
+    if (kpiPaidSub) kpiPaidSub.textContent = `${fin.overallPaidPercent}% di ${fmtMoney(fin.totalQuotes)}`;
+
+    if (kpiProfit) {
+      kpiProfit.textContent = (fin.totalProfit >= 0 ? '+' : '') + fmtMoney(fin.totalProfit);
+      kpiProfit.style.color = fin.totalProfit >= 0 ? 'var(--success)' : 'var(--danger)';
+    }
+    if (kpiProfitSub) {
+      kpiProfitSub.textContent = fin.avgProfitMargin !== null ? `Margine medio: ${fin.avgProfitMargin}%` : 'Nessun preventivo';
+    }
+
+    if (kpiCosts) kpiCosts.textContent = fmtMoney(fin.totalCosts);
+    if (kpiCostsSub) kpiCostsSub.textContent = `Manodopera: ${fmtMoney(fin.totalLaborCost)} | Spese: ${fmtMoney(fin.totalExpenses)}`;
+
+    // Today Strip
+    const todayHours = document.getElementById('kpi-today-hours');
+    const todayHoursCost = document.getElementById('kpi-today-hours-cost');
+    const todayExpenses = document.getElementById('kpi-today-expenses');
+    const todaySites = document.getElementById('kpi-today-sites');
+
+    if (todayHours) todayHours.textContent = `${stats.todayHours}h`;
+    if (todayHoursCost) todayHoursCost.textContent = fmtMoney(stats.todayHoursCost);
+    if (todayExpenses) todayExpenses.textContent = fmtMoney(stats.todayExpensesTotal);
+    if (todaySites) todaySites.textContent = `${stats.activeSites}`;
+
+    // Render Scadenzario Incassi & Budget Alerts
+    this.renderHomePendingPayments(fin);
+    this.renderHomeBudgetAlerts(fin);
+  }
+
+  scrollToPendingPayments() {
+    const el = document.getElementById('section-pending-payments');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  quickAddPaymentToSite(siteId) {
+    this.openSiteModal(siteId);
+    this.addPaymentRow('', 'Acconto / Saldo', new Date().toISOString().split('T')[0]);
+    this.showToast('Nuovo pagamento aggiunto. Inserisci l\'importo e premi Salva.', 'info');
+    setTimeout(() => {
+      const box = document.getElementById('site-payments-list');
+      if (box) {
+        box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const inputs = box.querySelectorAll('input[type="number"]');
+        if (inputs.length > 0) {
+          inputs[inputs.length - 1].focus();
+        }
+      }
+    }, 180);
+  }
+
+  renderHomePendingPayments(fin) {
+    const list = document.getElementById('home-pending-payments-list');
+    const badge = document.getElementById('home-pending-badge');
+    const totalDueEl = document.getElementById('home-pending-total-due');
+
+    if (badge) badge.textContent = `${fin.pendingCount}`;
+    if (totalDueEl) totalDueEl.textContent = fmtMoney(fin.totalBalanceDue);
+
+    if (!list) return;
+
+    if (fin.sitesWithPendingBalance.length === 0) {
+      list.innerHTML = `
+        <div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:20px; text-align:center;">
+          <div style="font-size:1.8rem; margin-bottom:8px;">✅</div>
+          <div style="font-weight:800; color:#fff; font-size:0.95rem;">Tutti i cantieri sono saldati!</div>
+          <div style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">
+            Nessun cantiere ha pagamenti o saldi in sospeso. Ottimo lavoro con gli incassi!
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = fin.sitesWithPendingBalance.map(({ site, cost, percentPaid, isCompleted }) => {
+      const client = store.data.clients.find(c => c.id === site.clientId) || { name: 'Cliente N/D', phone: '' };
+      
+      const lastPayment = Array.isArray(site.payments) && site.payments.length > 0
+        ? site.payments[site.payments.length - 1]
+        : null;
+
+      const alertClass = isCompleted ? 'card-alert-urgent' : '';
+
+      return `
+        <div class="pending-payment-card ${alertClass}">
+          <div class="pending-payment-head">
+            <div class="pending-payment-site">
+              <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                <strong>${site.code} - ${site.name}</strong>
+              </div>
+              <div>
+                ${isCompleted
+                  ? `<span class="item-badge badge-red" style="font-size:0.68rem; font-weight:800;">🚨 LAVORI FINITI - SALDARE SUBITO</span>`
+                  : `<span class="item-badge badge-amber" style="font-size:0.68rem;">Saldo Aperto</span>`
+                }
+              </div>
+            </div>
+            <div class="pending-payment-due">
+              <small>Saldo Residuo</small>
+              <strong>${fmtMoney(cost.balanceRemaining)}</strong>
+            </div>
+          </div>
+
+          <div class="pending-payment-client-row">
+            <span>Cliente: <strong style="color:#fff;">${client.name}</strong></span>
+            ${client.phone ? `
+              <a href="tel:${client.phone}" class="quick-call-link" title="Chiama cliente per sollecito">
+                ${ICONS.phone}
+                <span>Chiama</span>
+              </a>
+            ` : ''}
+          </div>
+
+          <div class="pending-payment-progress-container">
+            <div class="pending-payment-progress-bar">
+              <div class="pending-payment-progress-fill" style="width:${percentPaid}%;"></div>
+            </div>
+            <div class="pending-payment-progress-labels">
+              <span>Incassato: <strong style="color:var(--success);">${fmtMoney(cost.paymentsTotal)}</strong> (${percentPaid}%)</span>
+              <span>Preventivo: ${fmtMoney(cost.quoteAmount)}</span>
+            </div>
+          </div>
+
+          ${lastPayment ? `
+            <div class="pending-payment-last-note">
+              <span>Ultimo acconto: <strong>${fmtMoney(lastPayment.amount)}</strong> il ${fmtDate(lastPayment.date)}${lastPayment.note ? ` (${lastPayment.note})` : ''}</span>
+            </div>
+          ` : `
+            <div class="pending-payment-last-note" style="border-left-color:var(--text-dim); color:var(--text-dim);">
+              <span>Ancora nessun acconto ricevuto su questo cantiere.</span>
+            </div>
+          `}
+
+          <div class="pending-payment-actions">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="app.openSiteDetailModal('${site.id}')">
+              Dettagli
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="app.quickAddPaymentToSite('${site.id}')">
+              + Registra Incasso
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  renderHomeBudgetAlerts(fin) {
+    const container = document.getElementById('home-budget-alerts-container');
+    if (!container) return;
+
+    if (!fin.sitesAtRisk || fin.sitesAtRisk.length === 0) {
+      container.innerHTML = '';
+      return;
+    }
+
+    container.innerHTML = fin.sitesAtRisk.map(({ site, cost }) => {
+      const isLoss = cost.profit < 0;
+      return `
+        <div class="home-alert-card ${isLoss ? 'danger' : ''}">
+          <div class="home-alert-icon">
+            ${ICONS.alert}
+          </div>
+          <div class="home-alert-body">
+            <div class="home-alert-title">
+              ${isLoss ? `🚨 Budget Superato: ${site.code} - ${site.name}` : `⚠️ Margine a Rischio (85%+ speso): ${site.code} - ${site.name}`}
+            </div>
+            <div class="home-alert-desc">
+              Costi sostenuti: <strong>${fmtMoney(cost.totalCost)}</strong> su <strong>${fmtMoney(cost.quoteAmount)}</strong> di preventivo. 
+              ${isLoss 
+                ? `Perdita attuale: <strong style="color:var(--danger);">${fmtMoney(cost.profit)} (${cost.profitMargin}%)</strong>.` 
+                : `Utile residuo: <strong>${fmtMoney(cost.profit)} (+${cost.profitMargin}%)</strong>.`
+              }
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="app.openSiteDetailModal('${site.id}')" style="align-self:center; white-space:nowrap;">
+            Verifica
+          </button>
+        </div>
+      `;
+    }).join('');
   }
 
   populateSelectDropdowns() {

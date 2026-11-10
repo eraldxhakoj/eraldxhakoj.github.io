@@ -21,7 +21,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/logo.png?v=7">
   <link rel="icon" type="image/png" href="assets/logo.png?v=7">
 
-  <link rel="stylesheet" href="css/styles.css?v=16">
+  <link rel="stylesheet" href="css/styles.css?v=17">
 </head>
 <body>
 
@@ -66,7 +66,7 @@
   <main class="main-content">
     
     <!-- ======================================================================
-         VIEW 0: HOMEPAGE (DASHBOARD)
+         VIEW 0: HOMEPAGE (DASHBOARD & CONTROLLO FINANZIARIO)
          ====================================================================== -->
     <section id="view-home" class="view-section active">
       <!-- Quick Action Pulsanti Giganti Mobile-First per Cantiere -->
@@ -87,68 +87,86 @@
         </button>
       </div>
 
-      <!-- KPI Summary Row -->
+      <!-- Financial Health & Cash Flow KPIs -->
       <div class="stats-grid">
-        <div class="stat-card" style="cursor:pointer;" onclick="app.switchTab('hours')">
+        <div class="stat-card stat-card-gold" style="cursor:pointer;" onclick="app.scrollToPendingPayments()">
           <div class="stat-header">
-            <span class="stat-title">Ore Oggi</span>
-            <span class="stat-icon">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+            <span class="stat-title">Da Incassare</span>
+            <span class="stat-icon" style="color:var(--primary);">
+              <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 3H4a2 2 0 0 0-2 2v2"/><circle cx="16" cy="14" r="1"/></svg>
             </span>
           </div>
-          <div id="kpi-hours" class="stat-value">0h</div>
-          <div class="stat-sub">Registrate oggi</div>
+          <div id="kpi-balance-due" class="stat-value" style="color:var(--primary);">€0,00</div>
+          <div id="kpi-balance-sub" class="stat-sub">Crediti su cantieri</div>
         </div>
-        <div class="stat-card" style="cursor:pointer;" onclick="app.switchTab('hours')">
+
+        <div class="stat-card stat-card-green" style="cursor:pointer;" onclick="app.switchTab('sites')">
           <div class="stat-header">
-            <span class="stat-title">Manodopera</span>
-            <span class="stat-icon">
-              <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="stat-title">Incassato</span>
+            <span class="stat-icon" style="color:var(--success);">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
             </span>
           </div>
-          <div id="kpi-hours-cost" class="stat-value">€0,00</div>
-          <div class="stat-sub">Costo ore odierne</div>
+          <div id="kpi-paid" class="stat-value" style="color:var(--success);">€0,00</div>
+          <div id="kpi-paid-sub" class="stat-sub">Su totale preventivato</div>
         </div>
+
+        <div class="stat-card" style="cursor:pointer;" onclick="app.switchTab('sites')">
+          <div class="stat-header">
+            <span class="stat-title">Utile Stimato</span>
+            <span class="stat-icon" style="color:var(--success);">
+              <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            </span>
+          </div>
+          <div id="kpi-profit" class="stat-value" style="color:#fff;">€0,00</div>
+          <div id="kpi-profit-sub" class="stat-sub">Margine aziendale</div>
+        </div>
+
         <div class="stat-card" style="cursor:pointer;" onclick="app.switchTab('expenses')">
           <div class="stat-header">
-            <span class="stat-title">Spese Oggi</span>
+            <span class="stat-title">Costi Lavori</span>
             <span class="stat-icon">
               <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><circle cx="17" cy="15" r="1.5"/></svg>
             </span>
           </div>
-          <div id="kpi-expenses" class="stat-value">€0,00</div>
-          <div class="stat-sub">Materiali, carburante, mezzi</div>
-        </div>
-        <div class="stat-card" style="cursor:pointer;" onclick="app.switchTab('sites')">
-          <div class="stat-header">
-            <span class="stat-title">Cantieri Attivi</span>
-            <span class="stat-icon">
-              <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M13 11l6 3v7M9 9h1M9 13h1M9 17h1"/></svg>
-            </span>
-          </div>
-          <div id="kpi-sites" class="stat-value">0</div>
-          <div class="stat-sub">Lavori in corso</div>
+          <div id="kpi-costs" class="stat-value">€0,00</div>
+          <div id="kpi-costs-sub" class="stat-sub">Spese + Manodopera</div>
         </div>
       </div>
 
-      <!-- Quick Action Shortcuts in Home -->
-      <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-top:10px;">
-        <button class="btn btn-secondary" onclick="app.switchTab('hours')" style="justify-content:flex-start; padding:14px;">
+      <!-- Barra Sintetica "Oggi in Cantiere" -->
+      <div class="home-today-strip">
+        <div class="home-today-item" onclick="app.switchTab('hours')" title="Vedi dettaglio registro ore">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
-          Registro Ore
-        </button>
-        <button class="btn btn-secondary" onclick="app.switchTab('expenses')" style="justify-content:flex-start; padding:14px;">
+          <span>Oggi: <strong id="kpi-today-hours">0h</strong> (<span id="kpi-today-hours-cost">€0,00</span>)</span>
+        </div>
+        <div class="home-today-item" onclick="app.switchTab('expenses')" title="Vedi dettaglio spese">
           <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><circle cx="17" cy="15" r="1.5"/></svg>
-          Registro Spese
-        </button>
-        <button class="btn btn-secondary" onclick="app.switchTab('sites')" style="justify-content:flex-start; padding:14px;">
+          <span>Spese: <strong id="kpi-today-expenses">€0,00</strong></span>
+        </div>
+        <div class="home-today-item" onclick="app.switchTab('sites')" title="Vedi tutti i cantieri">
           <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M13 11l6 3v7M9 9h1M9 13h1M9 17h1"/></svg>
-          Cantieri Attivi
-        </button>
-        <button class="btn btn-secondary" onclick="app.switchTab('admin')" style="justify-content:flex-start; padding:14px;">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          Admin & Dati
-        </button>
+          <span><strong id="kpi-today-sites">0</strong> cantieri aperti</span>
+        </div>
+      </div>
+
+      <!-- Container Allerte Budget (se rilevate) -->
+      <div id="home-budget-alerts-container"></div>
+
+      <!-- Sezione Scadenzario Incassi & Crediti da Ricevere -->
+      <div id="section-pending-payments" class="pending-payments-section">
+        <div class="pending-payments-header">
+          <div class="pending-payments-title">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 3H4a2 2 0 0 0-2 2v2"/><circle cx="16" cy="14" r="1"/></svg>
+            <span>Soldi da Incassare</span>
+            <span id="home-pending-badge" class="item-badge badge-amber" style="font-size:0.7rem;">0</span>
+          </div>
+          <span id="home-pending-total-due" style="font-size:0.86rem; font-weight:800; color:var(--primary);">€0,00</span>
+        </div>
+
+        <div id="home-pending-payments-list" class="pending-payments-list">
+          <!-- Card cantieri con saldo pendente renderizzate dinamicamente -->
+        </div>
       </div>
     </section>
 
@@ -828,6 +846,6 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Core App Scripts (ES Modules) -->
-  <script type="module" src="js/app.js?v=16"></script>
+  <script type="module" src="js/app.js?v=17"></script>
 </body>
 </html>

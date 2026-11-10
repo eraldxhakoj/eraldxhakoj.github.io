@@ -737,6 +737,73 @@ class StateStore {
       attachmentsCount: attachments.length
     };
   }
+
+  // Riepilogo Finanziario Globale Aziendale & Scadenzario Incassi
+  getFinancialSummary() {
+    let totalQuotes = 0;
+    let totalPaid = 0;
+    let totalBalanceDue = 0;
+    let totalLaborCost = 0;
+    let totalExpenses = 0;
+    let totalCosts = 0;
+
+    const sitesWithPendingBalance = [];
+    const sitesAtRisk = [];
+
+    this.data.sites.forEach(site => {
+      const cost = this.getSiteCost(site.id);
+      totalQuotes += cost.quoteAmount;
+      totalPaid += cost.paymentsTotal;
+      totalBalanceDue += cost.balanceRemaining;
+      totalLaborCost += cost.laborCost;
+      totalExpenses += cost.expensesTotal;
+      totalCosts += cost.totalCost;
+
+      if (cost.quoteAmount > 0 && cost.balanceRemaining > 0) {
+        sitesWithPendingBalance.push({
+          site,
+          cost,
+          percentPaid: cost.quoteAmount > 0 ? Math.round((cost.paymentsTotal / cost.quoteAmount) * 100) : 0,
+          isCompleted: site.status === 'completato'
+        });
+      }
+
+      // Alert se cantiere in perdita o oltre l'85% del preventivo
+      if (cost.quoteAmount > 0 && (cost.profit < 0 || (cost.costBudgetUsage !== null && cost.costBudgetUsage >= 85))) {
+        sitesAtRisk.push({
+          site,
+          cost
+        });
+      }
+    });
+
+    // Ordina cantieri con saldo pendente: prima i completati (emergenza sollecito!), poi per saldo decrescente
+    sitesWithPendingBalance.sort((a, b) => {
+      if (a.isCompleted && !b.isCompleted) return -1;
+      if (!a.isCompleted && b.isCompleted) return 1;
+      return b.cost.balanceRemaining - a.cost.balanceRemaining;
+    });
+
+    const totalProfit = totalQuotes > 0 ? (totalQuotes - totalCosts) : 0;
+    const avgProfitMargin = totalQuotes > 0 ? Math.round((totalProfit / totalQuotes) * 100) : null;
+    const overallPaidPercent = totalQuotes > 0 ? Math.round((totalPaid / totalQuotes) * 100) : 0;
+
+    return {
+      totalQuotes,
+      totalPaid,
+      totalBalanceDue,
+      totalLaborCost,
+      totalExpenses,
+      totalCosts,
+      totalProfit,
+      avgProfitMargin,
+      overallPaidPercent,
+      sitesWithPendingBalance,
+      sitesAtRisk,
+      pendingCount: sitesWithPendingBalance.length,
+      completedWithBalanceCount: sitesWithPendingBalance.filter(s => s.isCompleted).length
+    };
+  }
 }
 
 export const store = new StateStore();
