@@ -155,7 +155,6 @@ export class GitHubStorage {
     }
     return false;
   }
-  }
 
   // Scrivi/Aggiorna un file JSON su GitHub
   async writeFile(path, data, commitMessage = 'Aggiornamento dati GEEM') {
