@@ -1297,6 +1297,113 @@ body {
   flex-shrink: 0;
 }
 
+/* Scheda Cantiere Compatta & Minimal */
+.site-card-compact {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.site-card-compact:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--text-dim);
+}
+
+.site-card-compact-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.site-card-compact-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.site-card-compact-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.site-card-compact-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.site-card-compact-footer .footer-cost {
+  font-weight: 800;
+  color: var(--primary);
+  font-size: 0.92rem;
+}
+
+.site-card-compact-footer .footer-quote {
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.site-card-compact-arrow {
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+}
+
+.site-card-compact-arrow svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  fill: none;
+}
+
+/* Modal Dettaglio Cantiere */
+.detail-section-title {
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 14px 0 6px 0;
+  letter-spacing: 0.03em;
+}
+
+.detail-table-list {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.detail-table-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 0.8rem;
+}
+
+.detail-table-row:last-child {
+  border-bottom: none;
+}
+
 /* Call / Map Links */
 .action-link {
   display: inline-flex;

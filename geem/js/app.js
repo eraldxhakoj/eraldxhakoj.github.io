@@ -38,6 +38,7 @@ class GeemApp {
     this.editingWorkerId = null;
     this.editingClientId = null;
     this.editingSiteId = null;
+    this.activeDetailSiteId = null;
 
     // Calendario per il registro ore
     this.selectedCalendarDate = new Date().toISOString().split('T')[0];
@@ -768,114 +769,213 @@ class GeemApp {
         'completato': '<span class="item-badge badge-gray">Completato</span>'
       };
 
-      const dateRangeText = (site.startDate || site.endDate) ? `
-        <span class="sub-icon" style="color:var(--text-muted); font-size:0.75rem;">
-          ${ICONS.calendar}
-          ${site.startDate ? `Inizio: <strong>${fmtDate(site.startDate)}</strong>` : ''}
-          ${site.startDate && site.endDate ? ' • ' : ''}
-          ${site.endDate ? `Fine: <strong>${fmtDate(site.endDate)}</strong>` : (site.startDate ? '(in corso)' : '')}
-        </span>
-      ` : '';
+      const attachmentsBadge = (site.attachments && site.attachments.length > 0)
+        ? `<span class="item-badge badge-gray" style="font-size:0.68rem;">${ICONS.clip} ${site.attachments.length}</span>`
+        : '';
 
       return `
-        <div class="item-card">
-          <div class="item-card-top">
-            <div>
-              <div class="item-card-title">${site.code} - ${site.name}</div>
-              <div class="item-card-sub">
-                <span class="sub-icon">${ICONS.user} ${client.name}</span>
-                ${statusBadges[site.status] || ''}
-              </div>
-            </div>
-            <div>
-              <button class="btn-icon" onclick="app.openSiteModal('${site.id}')">${ICONS.edit}</button>
+        <div class="site-card-compact" onclick="app.openSiteDetailModal('${site.id}')">
+          <div class="site-card-compact-head">
+            <div class="site-card-compact-title">${site.code} - ${site.name}</div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              ${attachmentsBadge}
+              ${statusBadges[site.status] || ''}
+              <span class="site-card-compact-arrow">
+                <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+              </span>
             </div>
           </div>
 
-          <div style="display:flex; flex-wrap:wrap; gap:6px; margin: 6px 0 8px 0; align-items:center;">
-            ${client.phone ? `
-              <a href="tel:${client.phone}" class="action-link">
-                ${ICONS.phone} Chiama: ${client.phone}
-              </a>
-            ` : ''}
-            ${site.address ? `
-              <a href="https://maps.google.com/?q=${encodeURIComponent(site.address)}" target="_blank" rel="noopener" class="action-link">
-                ${ICONS.map} Mappa: ${site.address}
-              </a>
-            ` : ''}
+          <div class="site-card-compact-sub">
+            <span class="sub-icon">${ICONS.user} ${client.name}</span>
+            ${site.address ? `<span class="sub-icon">${ICONS.map} ${site.address}</span>` : ''}
           </div>
 
-          ${dateRangeText ? `<div style="margin-bottom:8px;">${dateRangeText}</div>` : ''}
-
-          <!-- Allegati e Documenti del Cantiere -->
-          ${site.attachments && site.attachments.length > 0 ? `
-            <div class="site-attachments-box">
-              <div class="site-attachments-header">
-                <span class="sub-icon">${ICONS.clip} Documenti & File (${site.attachments.length})</span>
-                <span style="font-size:0.65rem; color:var(--text-dim); text-transform:none;">Tocca per aprire o scaricare</span>
-              </div>
-              <div class="attachment-chips-list">
-                ${site.attachments.map((att, attIdx) => `
-                  <button type="button" class="attachment-chip" onclick="app.openOrDownloadAttachment('${site.id}', '${att.id || attIdx}')" title="${att.name} (${att.sizeStr || ''})">
-                    ${ICONS.doc}
-                    <span class="attachment-chip-name">${att.name}</span>
-                    <span class="attachment-chip-size">${att.sizeStr || ''}</span>
-                  </button>
-                `).join('')}
-              </div>
+          <div class="site-card-compact-footer">
+            <div>
+              <span>Ore: <strong>${cost.hoursTotal}h</strong></span>
+              <span style="margin: 0 4px; opacity:0.4;">|</span>
+              <span>Speso: <span class="footer-cost">${fmtMoney(cost.totalCost)}</span></span>
             </div>
-          ` : ''}
-
-          <!-- Sezione Economica & SAL Preventivo -->
-          ${cost.quoteAmount > 0 || (site.payments && site.payments.length > 0) ? `
-            <div class="site-finance-box">
-              <div class="site-finance-header">
-                <span>Stato Pagamenti & SAL</span>
-                <span>${site.payments ? site.payments.length : 0} Versamenti</span>
+            ${cost.quoteAmount > 0 ? `
+              <div class="footer-quote">
+                <span>Prev: <strong>${fmtMoney(cost.quoteAmount)}</strong></span>
+                ${cost.balanceRemaining > 0 ? `<span style="color:var(--warning); margin-left:4px;">(Saldo ${fmtMoney(cost.balanceRemaining)})</span>` : ''}
               </div>
-              <div class="site-finance-metrics">
-                <div class="finance-metric">
-                  <span class="finance-lbl">Preventivo</span>
-                  <span class="finance-val val-quote">${fmtMoney(cost.quoteAmount)}</span>
-                </div>
-                <div class="finance-metric">
-                  <span class="finance-lbl">Incassato</span>
-                  <span class="finance-val val-paid">${fmtMoney(cost.paymentsTotal)}</span>
-                </div>
-                <div class="finance-metric">
-                  <span class="finance-lbl">Da Incassare</span>
-                  <span class="finance-val ${cost.balanceRemaining > 0 ? 'val-due' : 'val-zero'}">
-                    ${fmtMoney(cost.balanceRemaining)}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ` : ''}
-
-          <div class="item-card-body">
-            <div class="item-card-metrics">
-              <div class="metric-item">
-                <span class="metric-label">Ore Cantiere</span>
-                <span class="metric-val">${cost.hoursTotal}h</span>
-              </div>
-              <div class="metric-item">
-                <span class="metric-label">Costo Manodopera</span>
-                <span class="metric-val">${fmtMoney(cost.laborCost)}</span>
-              </div>
-              <div class="metric-item">
-                <span class="metric-label">Spese & Materiali</span>
-                <span class="metric-val">${fmtMoney(cost.expensesTotal)}</span>
-              </div>
-              <div class="metric-item">
-                <span class="metric-label">Costo Totale</span>
-                <span class="metric-val highlight" style="font-size:1.05rem;">${fmtMoney(cost.totalCost)}</span>
-              </div>
-            </div>
-            ${site.notes ? `<div style="font-size:0.78rem; color:var(--text-muted); width:100%; margin-top:4px;" class="sub-icon">${ICONS.note} ${site.notes}</div>` : ''}
+            ` : ''}
           </div>
         </div>
       `;
     }).join('');
+  }
+
+  // --- MODAL DETTAGLIO CANTIERE (VISTA APPROFONDITA) ---
+  openSiteDetailModal(siteId) {
+    this.activeDetailSiteId = siteId;
+    const site = store.data.sites.find(s => s.id === siteId);
+    if (!site) return;
+
+    const client = store.data.clients.find(c => c.id === site.clientId) || { name: 'Cliente non assegnato', phone: '', notes: '' };
+    const cost = store.getSiteCost(site.id);
+
+    const titleEl = document.getElementById('site-detail-title');
+    const subEl = document.getElementById('site-detail-sub');
+    const bodyEl = document.getElementById('site-detail-body');
+    const editBtn = document.getElementById('site-detail-edit-btn');
+
+    if (titleEl) titleEl.textContent = `${site.code} - ${site.name}`;
+    if (subEl) subEl.textContent = `Cliente: ${client.name}`;
+    if (editBtn) {
+      editBtn.onclick = () => {
+        this.closeModal('modal-site-detail');
+        this.openSiteModal(site.id);
+      };
+    }
+
+    const statusBadges = {
+      'in_corso': '<span class="item-badge badge-green">In Corso</span>',
+      'sospeso': '<span class="item-badge badge-amber">Sospeso</span>',
+      'completato': '<span class="item-badge badge-gray">Completato</span>'
+    };
+
+    const siteTimesheets = store.data.timesheets.filter(t => t.siteId === site.id);
+    const siteExpenses = store.data.expenses.filter(e => e.siteId === site.id);
+
+    bodyEl.innerHTML = `
+      <!-- Stato & Contatti Rapidi -->
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+        <div style="display:flex; align-items:center; gap:6px;">
+          ${statusBadges[site.status] || ''}
+          ${site.startDate ? `<span class="sub-icon" style="font-size:0.75rem; color:var(--text-muted);">${ICONS.calendar} Dal ${fmtDate(site.startDate)} ${site.endDate ? `al ${fmtDate(site.endDate)}` : ''}</span>` : ''}
+        </div>
+        <div style="display:flex; gap:6px;">
+          ${client.phone ? `<a href="tel:${client.phone}" class="action-link">${ICONS.phone} Chiama</a>` : ''}
+          ${site.address ? `<a href="https://maps.google.com/?q=${encodeURIComponent(site.address)}" target="_blank" rel="noopener" class="action-link">${ICONS.map} Mappa</a>` : ''}
+        </div>
+      </div>
+
+      ${site.address ? `<div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;"><strong>Indirizzo:</strong> ${site.address}</div>` : ''}
+      ${site.notes ? `<div style="font-size:0.78rem; color:var(--text-muted); background:var(--bg-input); padding:8px 10px; border-radius:var(--radius-sm); margin-bottom:12px;">${site.notes}</div>` : ''}
+
+      <!-- Bilancio Economico Cantiere -->
+      <div class="site-finance-box" style="margin-top:0;">
+        <div class="site-finance-header">
+          <span>Bilancio Costi Cantiere</span>
+          <span style="color:var(--primary); font-weight:800;">Totale Speso: ${fmtMoney(cost.totalCost)}</span>
+        </div>
+        <div class="site-finance-metrics" style="grid-template-columns:repeat(3, 1fr);">
+          <div class="finance-metric">
+            <span class="finance-lbl">Ore (${cost.hoursTotal}h)</span>
+            <span class="finance-val">${fmtMoney(cost.laborCost)}</span>
+          </div>
+          <div class="finance-metric">
+            <span class="finance-lbl">Spese Mat.</span>
+            <span class="finance-val">${fmtMoney(cost.expensesTotal)}</span>
+          </div>
+          <div class="finance-metric">
+            <span class="finance-lbl">Costo Totale</span>
+            <span class="finance-val" style="color:var(--primary);">${fmtMoney(cost.totalCost)}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preventivo e Pagamenti Clienti -->
+      ${cost.quoteAmount > 0 || (site.payments && site.payments.length > 0) ? `
+        <div class="site-finance-box">
+          <div class="site-finance-header">
+            <span>Preventivo & Incassi Cliente</span>
+            <span>${site.payments ? site.payments.length : 0} Versamenti</span>
+          </div>
+          <div class="site-finance-metrics" style="grid-template-columns:repeat(3, 1fr); margin-bottom:10px;">
+            <div class="finance-metric">
+              <span class="finance-lbl">Preventivo</span>
+              <span class="finance-val val-quote">${fmtMoney(cost.quoteAmount)}</span>
+            </div>
+            <div class="finance-metric">
+              <span class="finance-lbl">Incassato</span>
+              <span class="finance-val val-paid">${fmtMoney(cost.paymentsTotal)}</span>
+            </div>
+            <div class="finance-metric">
+              <span class="finance-lbl">Da Incassare</span>
+              <span class="finance-val ${cost.balanceRemaining > 0 ? 'val-due' : 'val-zero'}">
+                ${fmtMoney(cost.balanceRemaining)}
+              </span>
+            </div>
+          </div>
+
+          ${site.payments && site.payments.length > 0 ? `
+            <div style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Elenco Rate / Acconti:</div>
+            <div class="detail-table-list">
+              ${site.payments.map(p => `
+                <div class="detail-table-row">
+                  <div>
+                    <strong style="color:#fff;">${p.note || 'Pagamento'}</strong>
+                    <div style="font-size:0.7rem; color:var(--text-dim);">${fmtDate(p.date)}</div>
+                  </div>
+                  <strong style="color:var(--success); font-size:0.86rem;">+${fmtMoney(p.amount)}</strong>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+      ` : ''}
+
+      <!-- Allegati e Documenti -->
+      ${site.attachments && site.attachments.length > 0 ? `
+        <div class="site-attachments-box">
+          <div class="site-attachments-header">
+            <span class="sub-icon">${ICONS.clip} Documenti Allegati (${site.attachments.length})</span>
+            <span style="font-size:0.68rem; color:var(--text-dim); text-transform:none;">Tocca per aprire/scaricare</span>
+          </div>
+          <div class="attachment-chips-list">
+            ${site.attachments.map((att, attIdx) => `
+              <button type="button" class="attachment-chip" onclick="app.openOrDownloadAttachment('${site.id}', '${att.id || attIdx}')" title="${att.name} (${att.sizeStr || ''})">
+                ${ICONS.doc}
+                <span class="attachment-chip-name">${att.name}</span>
+                <span class="attachment-chip-size">${att.sizeStr || ''}</span>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      ` : ''}
+
+      <!-- Ultimi Movimenti Ore sul Cantiere -->
+      <div class="detail-section-title">Ore Lavorate Recenti (${siteTimesheets.length} registrazioni)</div>
+      ${siteTimesheets.length > 0 ? `
+        <div class="detail-table-list" style="margin-bottom:12px;">
+          ${siteTimesheets.slice(0, 6).map(t => {
+            const w = store.data.workers.find(worker => worker.id === t.workerId) || { name: 'Operatore' };
+            return `
+              <div class="detail-table-row">
+                <div>
+                  <strong>${w.name}</strong> (${t.hours}h)
+                  <div style="font-size:0.7rem; color:var(--text-dim);">${fmtDate(t.date)} ${t.notes ? `• ${t.notes}` : ''}</div>
+                </div>
+                <strong style="color:var(--text-main); font-size:0.82rem;">${fmtMoney(t.total)}</strong>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      ` : `<div style="font-size:0.75rem; color:var(--text-dim); margin-bottom:12px;">Nessuna ora registrata su questo cantiere.</div>`}
+
+      <!-- Ultime Spese sul Cantiere -->
+      <div class="detail-section-title">Spese & Materiali Recenti (${siteExpenses.length} movimenti)</div>
+      ${siteExpenses.length > 0 ? `
+        <div class="detail-table-list">
+          ${siteExpenses.slice(0, 6).map(e => `
+            <div class="detail-table-row">
+              <div>
+                <strong>${e.description || e.category}</strong>
+                <div style="font-size:0.7rem; color:var(--text-dim);">${fmtDate(e.date)} • ${e.category}</div>
+              </div>
+              <strong style="color:var(--primary); font-size:0.82rem;">${fmtMoney(e.amount)}</strong>
+            </div>
+          `).join('')}
+        </div>
+      ` : `<div style="font-size:0.75rem; color:var(--text-dim);">Nessuna spesa registrata su questo cantiere.</div>`}
+    `;
+
+    this.openModal('modal-site-detail');
   }
 
   // --- RENDERING ADMIN LAVORATORI ---
