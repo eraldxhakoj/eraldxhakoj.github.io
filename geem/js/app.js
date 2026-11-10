@@ -816,11 +816,11 @@ class GeemApp {
               </div>
               <div class="attachment-chips-list">
                 ${site.attachments.map((att, attIdx) => `
-                  <a href="${att.dataUrl || '#'}" download="${att.name}" class="attachment-chip" target="_blank" rel="noopener" title="${att.name} (${att.sizeStr || ''})">
+                  <button type="button" class="attachment-chip" onclick="app.openOrDownloadAttachment('${site.id}', '${att.id || attIdx}')" title="${att.name} (${att.sizeStr || ''})">
                     ${ICONS.doc}
                     <span class="attachment-chip-name">${att.name}</span>
                     <span class="attachment-chip-size">${att.sizeStr || ''}</span>
-                  </a>
+                  </button>
                 `).join('')}
               </div>
             </div>
@@ -1363,6 +1363,60 @@ class GeemApp {
     this.renderModalAttachments();
   }
 
+  // Scarica o apre in modo compatibile su iOS Safari e Desktop
+  downloadDataUrl(dataUrl, filename) {
+    try {
+      // Converti DataURL in Blob per aggirare i blocchi di Safari/Chrome sui data-URI lunghi
+      const arr = dataUrl.split(',');
+      const mime = (arr[0].match(/:(.*?);/) || ['', 'application/octet-stream'])[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      const blob = new Blob([u8arr], { type: mime });
+      const blobUrl = URL.createObjectURL(blob);
+
+      // Crea link temporaneo
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = filename || 'documento';
+      link.target = '_blank';
+      link.rel = 'noopener';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 15000);
+    } catch (err) {
+      console.warn('Fallback a window.open:', err);
+      const win = window.open(dataUrl, '_blank');
+      if (!win) {
+        this.showToast('Consenti i popup per aprire il documento', 'error');
+      }
+    }
+  }
+
+  downloadCurrentAttachment(index) {
+    const att = this.currentSiteAttachments[index];
+    if (!att || !att.dataUrl) return;
+    this.downloadDataUrl(att.dataUrl, att.name);
+  }
+
+  openOrDownloadAttachment(siteId, attachmentId) {
+    const site = store.data.sites.find(s => s.id === siteId);
+    if (!site || !site.attachments) return;
+
+    const att = site.attachments.find(a => (a.id === attachmentId || String(site.attachments.indexOf(a)) === String(attachmentId)));
+    if (!att || !att.dataUrl) {
+      this.showToast('Documento non disponibile', 'error');
+      return;
+    }
+
+    this.downloadDataUrl(att.dataUrl, att.name);
+  }
+
   renderModalAttachments() {
     const container = document.getElementById('site-attachments-list');
     if (!container) return;
@@ -1384,9 +1438,9 @@ class GeemApp {
           <span style="font-size:0.7rem; color:var(--text-dim);">(${att.sizeStr || ''})</span>
         </div>
         <div style="display:flex; align-items:center; gap:6px;">
-          <a href="${att.dataUrl}" download="${att.name}" class="btn-icon" title="Scarica o visualizza anteprima" style="width:30px; height:30px;">
+          <button type="button" class="btn-icon" onclick="app.downloadCurrentAttachment(${idx})" title="Scarica o visualizza" style="width:30px; height:30px;">
             ${ICONS.download}
-          </a>
+          </button>
           <button type="button" class="btn-icon" onclick="app.removeSiteAttachment(${idx})" title="Rimuovi allegato" style="width:30px; height:30px; color:var(--danger);">
             ${ICONS.delete}
           </button>
