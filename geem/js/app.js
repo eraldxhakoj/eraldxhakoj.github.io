@@ -17,7 +17,7 @@ const ICONS = {
   doc: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
   note: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`,
   calendar: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
-  clip: `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>`,
+  clip: `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; flex-shrink:0;"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>`,
   download: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`,
   wallet: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 3H4a2 2 0 0 0-2 2v2"/><circle cx="16" cy="14" r="1"/></svg>`,
   trend: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`,
@@ -100,7 +100,7 @@ class GeemApp {
   }
 
   initRouting() {
-    const validTabs = ['home', 'hours', 'expenses', 'sites', 'admin'];
+    const validTabs = ['home', 'hours', 'expenses', 'sites', 'people', 'places', 'admin'];
     const getHashTab = () => {
       if (typeof window === 'undefined' || !window.location || !window.location.hash) return '';
       return window.location.hash.replace(/^#/, '').trim();
@@ -186,8 +186,34 @@ class GeemApp {
     }
   }
 
+  // --- GESTIONE SIDEBAR DRAWER (DESTRA) ---
+  openSidebar() {
+    const sidebar = document.getElementById('app-sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    if (sidebar) sidebar.classList.add('open');
+    if (backdrop) backdrop.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeSidebar() {
+    const sidebar = document.getElementById('app-sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    if (sidebar) sidebar.classList.remove('open');
+    if (backdrop) backdrop.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  toggleSidebar() {
+    const sidebar = document.getElementById('app-sidebar');
+    if (sidebar && sidebar.classList.contains('open')) {
+      this.closeSidebar();
+    } else {
+      this.openSidebar();
+    }
+  }
+
   switchTab(tabId, updateHash = true) {
-    const validTabs = ['home', 'hours', 'expenses', 'sites', 'admin'];
+    const validTabs = ['home', 'hours', 'expenses', 'sites', 'people', 'places', 'admin'];
     if (!validTabs.includes(tabId)) {
       tabId = 'home';
     }
@@ -212,6 +238,10 @@ class GeemApp {
 
     document.querySelectorAll('.nav-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.tab === tabId);
+    });
+
+    document.querySelectorAll('.sidebar-link[data-sidebar-tab]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.sidebarTab === tabId);
     });
 
     document.querySelectorAll('.view-section').forEach(sec => {
@@ -1111,7 +1141,7 @@ class GeemApp {
       };
 
       const attachmentsBadge = (site.attachments && site.attachments.length > 0)
-        ? `<span class="item-badge badge-gray" style="font-size:0.7rem;" title="${site.attachments.length} allegati">${ICONS.clip}<span>${site.attachments.length}</span></span>`
+        ? `<span class="item-badge badge-gray" style="font-size:0.7rem; display:inline-flex; align-items:center; gap:4px;" title="${site.attachments.length} allegati">${ICONS.clip}<span>${site.attachments.length}</span></span>`
         : '';
 
       const profitBadge = (cost.quoteAmount > 0 && cost.profitMargin !== null)
@@ -2250,6 +2280,7 @@ class GeemApp {
 
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
+        this.closeSidebar();
         document.querySelectorAll('.modal-backdrop.open').forEach(m => this.closeModal(m.id));
       }
     });
