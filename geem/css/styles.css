@@ -797,18 +797,20 @@ body {
   align-items: center;
   gap: 4px;
   padding: 3px 8px;
-  background: rgba(16, 185, 129, 0.15);
-  color: var(--success);
-  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: var(--info-bg);
+  color: var(--info);
+  border: 1px solid rgba(56, 189, 248, 0.35);
   border-radius: var(--radius-full);
   font-size: 0.72rem;
   font-weight: 700;
   text-decoration: none;
-  transition: background 0.15s;
+  transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
 .quick-call-link:hover {
-  background: rgba(16, 185, 129, 0.25);
+  background: rgba(56, 189, 248, 0.25);
+  border-color: rgba(56, 189, 248, 0.6);
 }
 
 .quick-call-link svg {
