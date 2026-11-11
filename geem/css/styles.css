@@ -819,6 +819,35 @@ body {
   fill: none;
 }
 
+.quick-whatsapp-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: rgba(37, 211, 102, 0.15);
+  color: #25d366;
+  border: 1px solid rgba(37, 211, 102, 0.35);
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.quick-whatsapp-link:hover {
+  background: rgba(37, 211, 102, 0.25);
+  border-color: rgba(37, 211, 102, 0.6);
+}
+
+.quick-whatsapp-link svg {
+  width: 12px;
+  height: 12px;
+  fill: currentColor;
+  stroke: none;
+  flex-shrink: 0;
+}
+
 .pending-payment-progress-container {
   display: flex;
   flex-direction: column;
@@ -1892,6 +1921,22 @@ body {
 
 .action-link:hover {
   background: var(--bg-card-hover);
+}
+
+.action-link.action-whatsapp {
+  color: #25d366;
+  border-color: rgba(37, 211, 102, 0.35);
+  background: rgba(37, 211, 102, 0.08);
+}
+
+.action-link.action-whatsapp:hover {
+  background: rgba(37, 211, 102, 0.18);
+  border-color: rgba(37, 211, 102, 0.6);
+}
+
+.action-link.action-whatsapp svg {
+  fill: currentColor !important;
+  stroke: none !important;
 }
 
 /* Empty State */
