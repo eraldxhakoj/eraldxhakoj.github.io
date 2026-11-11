@@ -34,15 +34,14 @@ const fmtDate = (dStr) => {
   return `${d}/${m}/${y}`;
 };
 
-const getWhatsAppUrl = (phone, text = '') => {
+const getWhatsAppUrl = (phone) => {
   if (!phone) return '';
   let clean = phone.replace(/[^\d+]/g, '');
   if (clean.startsWith('+')) clean = clean.substring(1);
   if (clean.length === 10 && clean.startsWith('3')) {
     clean = '39' + clean;
   }
-  const query = text ? `?text=${encodeURIComponent(text)}` : '';
-  return `https://wa.me/${clean}${query}`;
+  return `https://wa.me/${clean}`;
 };
 
 class GeemApp {
@@ -482,7 +481,7 @@ class GeemApp {
                   ${ICONS.phone}
                   <span>Chiama</span>
                 </a>
-                <a href="${getWhatsAppUrl(client.phone, `Ciao ${client.name}, ti scrivo in merito al cantiere ${site.name}.`)}" target="_blank" rel="noopener" class="quick-whatsapp-link" title="Scrivi su WhatsApp al cliente">
+                <a href="${getWhatsAppUrl(client.phone)}" target="_blank" rel="noopener" class="quick-whatsapp-link" title="Scrivi su WhatsApp al cliente">
                   ${ICONS.whatsapp}
                   <span>WhatsApp</span>
                 </a>
@@ -1200,7 +1199,7 @@ class GeemApp {
         </div>
         <div style="display:flex; gap:6px; flex-wrap:wrap;">
           ${client.phone ? `<a href="tel:${client.phone}" class="action-link">${ICONS.phone} Chiama</a>` : ''}
-          ${client.phone ? `<a href="${getWhatsAppUrl(client.phone, `Ciao ${client.name}, ti scrivo in merito al cantiere ${site.name}.`)}" target="_blank" rel="noopener" class="action-link action-whatsapp">${ICONS.whatsapp} WhatsApp</a>` : ''}
+          ${client.phone ? `<a href="${getWhatsAppUrl(client.phone)}" target="_blank" rel="noopener" class="action-link action-whatsapp">${ICONS.whatsapp} WhatsApp</a>` : ''}
           ${site.address ? `<a href="https://maps.google.com/?q=${encodeURIComponent(site.address)}" target="_blank" rel="noopener" class="action-link">${ICONS.map} Mappa</a>` : ''}
         </div>
       </div>
@@ -1399,7 +1398,7 @@ class GeemApp {
           ${w.phone ? `
             <div style="display:flex; gap:6px; align-items:center;">
               <a href="tel:${w.phone}" class="action-link">${ICONS.phone} Chiama</a>
-              <a href="${getWhatsAppUrl(w.phone, `Ciao ${w.name}, ti scrivo per il cantiere.`)}" target="_blank" rel="noopener" class="action-link action-whatsapp">${ICONS.whatsapp} WhatsApp</a>
+              <a href="${getWhatsAppUrl(w.phone)}" target="_blank" rel="noopener" class="action-link action-whatsapp">${ICONS.whatsapp} WhatsApp</a>
             </div>
           ` : ''}
         </div>
@@ -1431,7 +1430,7 @@ class GeemApp {
         ${c.phone ? `
           <div class="item-card-body" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
             <a href="tel:${c.phone}" class="action-link">${ICONS.phone} Chiama</a>
-            <a href="${getWhatsAppUrl(c.phone, `Ciao ${c.name}, ti contatto per il cantiere.`)}" target="_blank" rel="noopener" class="action-link action-whatsapp">${ICONS.whatsapp} WhatsApp</a>
+            <a href="${getWhatsAppUrl(c.phone)}" target="_blank" rel="noopener" class="action-link action-whatsapp">${ICONS.whatsapp} WhatsApp</a>
           </div>
         ` : ''}
       </div>
