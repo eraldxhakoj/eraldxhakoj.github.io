@@ -2578,9 +2578,9 @@ body {
   background: linear-gradient(145deg, rgba(26, 34, 52, 0.85) 0%, rgba(18, 24, 38, 0.95) 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-md);
-  padding: 12px 14px;
+  padding: 14px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: space-between;
   gap: 12px;
   cursor: pointer;
@@ -2590,6 +2590,8 @@ body {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .person-card:hover {
@@ -2607,7 +2609,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex: 1;
+  width: 100%;
   min-width: 0;
 }
 
@@ -2672,24 +2674,34 @@ body {
 
 .person-card-actions {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+  margin-top: 2px;
 }
 
 .person-card-btn {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 6px 10px;
-  font-size: 0.74rem;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 0.8rem;
   font-weight: 700;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-sm);
   text-decoration: none;
   border: 1px solid transparent;
   transition: all 0.18s ease;
   white-space: nowrap;
   line-height: 1;
+  box-sizing: border-box;
+}
+
+.person-card-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
 }
 
 .person-card-btn-call {
