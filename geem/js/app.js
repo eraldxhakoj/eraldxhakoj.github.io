@@ -1932,12 +1932,6 @@ class GeemApp {
             </div>
             <div class="person-info">
               <div class="person-name" title="${person.name}">${person.name}</div>
-              <div class="person-badges">
-                <span class="item-badge badge-type-${person.type}">
-                  ${person.typeLabel || person.type}
-                </span>
-                ${!person.active ? '<span class="item-badge badge-red">Inattivo</span>' : ''}
-              </div>
             </div>
           </div>
 
@@ -2288,24 +2282,24 @@ class GeemApp {
       // Modifica persona esistente
       if (id.startsWith('w_')) {
         if (type === 'dipendente') {
-          store.updateWorker(id, { name, role: role || 'Operaio Edile', phone, hourlyRate: hourlyRate || 20, active, avatar });
+          store.updateWorker(id, { name, role: role || 'Operaio Edile', company, phone, email, hourlyRate: hourlyRate || 20, notes, active, avatar });
         } else {
           // Passaggio da lavoratore ad altra tipologia
           store.deleteWorker(id);
           if (type === 'cliente') {
-            store.addClient({ name, phone, notes: [notes, company].filter(Boolean).join(' - '), avatar });
+            store.addClient({ name, company, phone, email, notes, avatar });
           } else {
             store.addPerson({ name, type, role, company, phone, email, hourlyRate, notes, active, avatar });
           }
         }
       } else if (id.startsWith('c_')) {
         if (type === 'cliente') {
-          store.updateClient(id, { name, phone, notes, avatar });
+          store.updateClient(id, { name, company, phone, email, notes, avatar });
         } else {
           // Passaggio da cliente ad altra tipologia
           store.deleteClient(id);
           if (type === 'dipendente') {
-            store.addWorker({ name, role: role || 'Operaio Edile', phone, hourlyRate: hourlyRate || 20, active, avatar });
+            store.addWorker({ name, role: role || 'Operaio Edile', company, phone, email, hourlyRate: hourlyRate || 20, notes, active, avatar });
           } else {
             store.addPerson({ name, type, role, company, phone, email, hourlyRate, notes, active, avatar });
           }
@@ -2314,10 +2308,10 @@ class GeemApp {
         // ID generico persona (p_)
         if (type === 'dipendente') {
           store.deletePerson(id);
-          store.addWorker({ name, role: role || 'Operaio Edile', phone, hourlyRate: hourlyRate || 20, active, avatar });
+          store.addWorker({ name, role: role || 'Operaio Edile', company, phone, email, hourlyRate: hourlyRate || 20, notes, active, avatar });
         } else if (type === 'cliente') {
           store.deletePerson(id);
-          store.addClient({ name, phone, notes, avatar });
+          store.addClient({ name, company, phone, email, notes, avatar });
         } else {
           store.updatePerson(id, { name, type, role, company, phone, email, hourlyRate, notes, active, avatar });
         }
@@ -2326,10 +2320,10 @@ class GeemApp {
     } else {
       // Creazione nuova persona
       if (type === 'dipendente') {
-        store.addWorker({ name, role: role || 'Operaio Edile', phone, hourlyRate: hourlyRate || 20, active, avatar });
+        store.addWorker({ name, role: role || 'Operaio Edile', company, phone, email, hourlyRate: hourlyRate || 20, notes, active, avatar });
         this.showToast('Lavoratore aggiunto all\'organico', 'success');
       } else if (type === 'cliente') {
-        store.addClient({ name, phone, notes: [notes, company].filter(Boolean).join(' - '), avatar });
+        store.addClient({ name, company, phone, email, notes, avatar });
         this.showToast('Cliente aggiunto con successo', 'success');
       } else {
         store.addPerson({ name, type, role, company, phone, email, hourlyRate, notes, active, avatar });

@@ -565,8 +565,11 @@ class StateStore {
       name: (worker.name || '').trim(),
       avatar: worker.avatar || null,
       role: worker.role || 'Manovale Edile',
+      company: (worker.company || '').trim(),
       phone: (worker.phone || '').trim(),
+      email: (worker.email || '').trim(),
       hourlyRate: parseFloat(worker.hourlyRate) || 20.00,
+      notes: (worker.notes || '').trim(),
       active: worker.active !== undefined ? worker.active : true
     };
 
@@ -584,6 +587,9 @@ class StateStore {
       ...this.data.workers[index],
       ...updated,
       avatar: updated.avatar !== undefined ? updated.avatar : this.data.workers[index].avatar,
+      company: updated.company !== undefined ? (updated.company || '').trim() : (this.data.workers[index].company || ''),
+      email: updated.email !== undefined ? (updated.email || '').trim() : (this.data.workers[index].email || ''),
+      notes: updated.notes !== undefined ? (updated.notes || '').trim() : (this.data.workers[index].notes || ''),
       hourlyRate: parseFloat(updated.hourlyRate !== undefined ? updated.hourlyRate : this.data.workers[index].hourlyRate) || 0
     };
 
@@ -605,7 +611,9 @@ class StateStore {
       id: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       name: (client.name || '').trim(),
       avatar: client.avatar || null,
+      company: (client.company || '').trim(),
       phone: (client.phone || '').trim(),
+      email: (client.email || '').trim(),
       notes: (client.notes || '').trim()
     };
 
@@ -622,7 +630,10 @@ class StateStore {
     this.data.clients[index] = {
       ...this.data.clients[index],
       ...updated,
-      avatar: updated.avatar !== undefined ? updated.avatar : this.data.clients[index].avatar
+      avatar: updated.avatar !== undefined ? updated.avatar : this.data.clients[index].avatar,
+      company: updated.company !== undefined ? (updated.company || '').trim() : (this.data.clients[index].company || ''),
+      email: updated.email !== undefined ? (updated.email || '').trim() : (this.data.clients[index].email || ''),
+      notes: updated.notes !== undefined ? (updated.notes || '').trim() : (this.data.clients[index].notes || '')
     };
 
     this.notify('clients');
