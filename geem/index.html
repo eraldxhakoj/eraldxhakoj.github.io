@@ -21,7 +21,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/logo.png?v=7">
   <link rel="icon" type="image/png" href="assets/logo.png?v=7">
 
-  <link rel="stylesheet" href="css/styles.css?v=25">
+  <link rel="stylesheet" href="css/styles.css?v=26">
 </head>
 <body>
 
@@ -468,8 +468,11 @@
          ====================================================================== -->
     <section id="view-people" class="view-section">
       <div class="section-toolbar">
-        <div class="toolbar-title">
+        <div class="toolbar-title" onclick="app.toggleFilterPanel('people')" title="Tocca per mostrare/nascondere ricerca e filtri" style="cursor:pointer;">
           <h2>Persone</h2>
+          <span id="toggle-filter-people" class="title-filter-toggle" aria-label="Mostra/Nascondi filtri">
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
         </div>
         <div class="toolbar-actions">
           <button class="btn btn-primary" onclick="app.openPersonModal()">
@@ -479,8 +482,8 @@
         </div>
       </div>
 
-      <!-- Barra di ricerca e filtri categorie -->
-      <div class="people-toolbar-controls">
+      <!-- Barra di ricerca e filtri categorie (Pannello Collassabile) -->
+      <div id="filter-panel-people" class="people-toolbar-controls page-filter-panel hidden">
         <div class="search-input-wrap">
           <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input type="text" id="people-search-input" class="form-input search-input" placeholder="Cerca per nome, azienda, ruolo o telefono..." oninput="app.handlePeopleSearch(this.value)">
@@ -489,39 +492,30 @@
 
         <div class="filter-chips-scroll">
           <button type="button" class="filter-chip active" data-people-filter="all" onclick="app.setPeopleFilter('all')">
-            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             Tutti (<span id="people-count-all">0</span>)
           </button>
           <button type="button" class="filter-chip" data-people-filter="dipendente" onclick="app.setPeopleFilter('dipendente')">
-            <svg viewBox="0 0 24 24"><path d="M2 18h20M4 18l2-7h12l2 7M10 6a2 2 0 1 1 4 0v5h-4z"/></svg>
             Operai & Dipendenti (<span id="people-count-dipendente">0</span>)
           </button>
           <button type="button" class="filter-chip" data-people-filter="cliente" onclick="app.setPeopleFilter('cliente')">
-            <svg viewBox="0 0 24 24"><rect x="3" y="2" width="18" height="20" rx="2"/><line x1="9" y1="6" x2="15" y2="6"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/><line x1="9" y1="18" x2="15" y2="18"/></svg>
             Clienti (<span id="people-count-cliente">0</span>)
           </button>
           <button type="button" class="filter-chip" data-people-filter="tecnico" onclick="app.setPeopleFilter('tecnico')">
-            <svg viewBox="0 0 24 24"><path d="M2 22 22 2M13 3l8 8M9 7l4 4M5 11l4 4M3 15l4 4"/></svg>
             Geometri & Architetti (<span id="people-count-tecnico">0</span>)
           </button>
           <button type="button" class="filter-chip" data-people-filter="commercialista" onclick="app.setPeopleFilter('commercialista')">
-            <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
             Commercialisti & Fisco (<span id="people-count-commercialista">0</span>)
           </button>
           <button type="button" class="filter-chip" data-people-filter="fornitore" onclick="app.setPeopleFilter('fornitore')">
-            <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
             Fornitori Materiali (<span id="people-count-fornitore">0</span>)
           </button>
           <button type="button" class="filter-chip" data-people-filter="subappaltatore" onclick="app.setPeopleFilter('subappaltatore')">
-            <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
             Subappalti & Impianti (<span id="people-count-subappaltatore">0</span>)
           </button>
           <button type="button" class="filter-chip" data-people-filter="sicurezza" onclick="app.setPeopleFilter('sicurezza')">
-            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             Sicurezza & RSPP (<span id="people-count-sicurezza">0</span>)
           </button>
           <button type="button" class="filter-chip" data-people-filter="altro" onclick="app.setPeopleFilter('altro')">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
             Altro (<span id="people-count-altro">0</span>)
           </button>
         </div>
@@ -1089,6 +1083,6 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Core App Scripts (ES Modules) -->
-  <script type="module" src="js/app.js?v=25"></script>
+  <script type="module" src="js/app.js?v=26"></script>
 </body>
 </html>
