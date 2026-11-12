@@ -1328,7 +1328,10 @@ body {
 }
 
 .filter-chip {
-  padding: 5px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-full);
@@ -1337,12 +1340,28 @@ body {
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
+  line-height: 1.2;
+}
+
+.filter-chip svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .filter-chip.active {
   background: var(--primary);
   color: #0c111d;
   border-color: var(--primary);
+}
+
+.filter-chip.active svg {
+  stroke: #0c111d;
 }
 
 /* ==========================================================================
@@ -2455,6 +2474,38 @@ body {
   gap: 10px;
 }
 
+.filter-chips-scroll {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.filter-chip svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+  flex-shrink: 0;
+}
+
 .search-input-wrap {
   position: relative;
   display: flex;
@@ -2566,6 +2617,15 @@ body {
   letter-spacing: -0.02em;
 }
 
+.person-avatar svg {
+  width: 22px;
+  height: 22px;
+  stroke: #fff;
+  stroke-width: 2;
+  fill: none;
+  flex-shrink: 0;
+}
+
 .person-info {
   flex: 1;
   min-width: 0;
@@ -2587,6 +2647,17 @@ body {
   gap: 5px;
   flex-wrap: wrap;
   margin-top: 4px;
+}
+
+.person-badges .item-badge svg {
+  width: 12px;
+  height: 12px;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  fill: none;
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .person-card-actions-top {
