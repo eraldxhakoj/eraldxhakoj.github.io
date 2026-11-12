@@ -563,6 +563,7 @@ class StateStore {
     const newWorker = {
       id: 'w_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       name: (worker.name || '').trim(),
+      avatar: worker.avatar || null,
       role: worker.role || 'Manovale Edile',
       phone: (worker.phone || '').trim(),
       hourlyRate: parseFloat(worker.hourlyRate) || 20.00,
@@ -582,6 +583,7 @@ class StateStore {
     this.data.workers[index] = {
       ...this.data.workers[index],
       ...updated,
+      avatar: updated.avatar !== undefined ? updated.avatar : this.data.workers[index].avatar,
       hourlyRate: parseFloat(updated.hourlyRate !== undefined ? updated.hourlyRate : this.data.workers[index].hourlyRate) || 0
     };
 
@@ -602,6 +604,7 @@ class StateStore {
     const newClient = {
       id: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       name: (client.name || '').trim(),
+      avatar: client.avatar || null,
       phone: (client.phone || '').trim(),
       notes: (client.notes || '').trim()
     };
@@ -618,7 +621,8 @@ class StateStore {
 
     this.data.clients[index] = {
       ...this.data.clients[index],
-      ...updated
+      ...updated,
+      avatar: updated.avatar !== undefined ? updated.avatar : this.data.clients[index].avatar
     };
 
     this.notify('clients');
@@ -638,6 +642,7 @@ class StateStore {
     const newPerson = {
       id: 'p_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
       name: (person.name || '').trim(),
+      avatar: person.avatar || null,
       type: person.type || 'altro', // 'commercialista', 'tecnico', 'fornitore', 'subappaltatore', 'sicurezza', 'collaboratore', 'altro'
       role: (person.role || '').trim(),
       company: (person.company || '').trim(),
@@ -666,6 +671,7 @@ class StateStore {
     this.data.people[index] = {
       ...this.data.people[index],
       ...updated,
+      avatar: updated.avatar !== undefined ? updated.avatar : this.data.people[index].avatar,
       hourlyRate: updated.hourlyRate !== undefined 
         ? (updated.hourlyRate ? parseFloat(updated.hourlyRate) : null) 
         : this.data.people[index].hourlyRate
@@ -693,6 +699,7 @@ class StateStore {
       list.push({
         id: w.id,
         name: w.name,
+        avatar: w.avatar || null,
         type: w.type || 'dipendente',
         typeLabel: w.type === 'subappaltatore' ? 'Subappaltatore / Artigiano' : 'Dipendente / Operaio',
         role: w.role || 'Operaio Edile',
@@ -712,6 +719,7 @@ class StateStore {
       list.push({
         id: c.id,
         name: c.name,
+        avatar: c.avatar || null,
         type: 'cliente',
         typeLabel: 'Cliente Committente',
         role: 'Cliente',
@@ -741,6 +749,7 @@ class StateStore {
       list.push({
         id: p.id,
         name: p.name,
+        avatar: p.avatar || null,
         type: p.type || 'altro',
         typeLabel: typeLabels[p.type] || 'Professionista',
         role: p.role || '',

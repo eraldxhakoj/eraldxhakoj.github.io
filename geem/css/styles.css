@@ -2551,47 +2551,56 @@ body {
   color: #fff;
 }
 
+/* ==========================================================================
+   Persone Cards Grid & Stylish Card
+   ========================================================================== */
 .people-cards-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: 10px;
 }
 
 @media (min-width: 640px) {
   .people-cards-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 }
 
 @media (min-width: 1080px) {
   .people-cards-grid {
     grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
   }
 }
 
 .person-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  background: linear-gradient(145deg, rgba(26, 34, 52, 0.85) 0%, rgba(18, 24, 38, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-md);
-  padding: 14px 16px;
+  padding: 12px 14px;
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
-  transition: all 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .person-card:hover {
-  background: var(--bg-card-hover);
-  border-color: rgba(255, 255, 255, 0.16);
-  transform: translateY(-1px);
+  background: linear-gradient(145deg, rgba(32, 43, 66, 0.95) 0%, rgba(22, 30, 48, 0.98) 100%);
+  border-color: rgba(245, 158, 11, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(245, 158, 11, 0.15);
 }
 
-.person-card-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
+.person-card:active {
+  transform: scale(0.99);
 }
 
 .person-card-identity {
@@ -2603,8 +2612,8 @@ body {
 }
 
 .person-avatar {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius-full);
   display: flex;
   align-items: center;
@@ -2613,143 +2622,201 @@ body {
   font-weight: 800;
   color: #fff;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
   letter-spacing: -0.02em;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  position: relative;
+  background: var(--bg-card);
 }
 
-.person-avatar svg {
-  width: 22px;
-  height: 22px;
-  stroke: #fff;
-  stroke-width: 2;
-  fill: none;
-  flex-shrink: 0;
+.person-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .person-info {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
 .person-name {
-  font-size: 0.98rem;
+  font-size: 0.96rem;
   font-weight: 800;
-  color: #fff;
+  color: #ffffff;
   line-height: 1.25;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: -0.01em;
 }
 
 .person-badges {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   flex-wrap: wrap;
-  margin-top: 4px;
 }
 
-.person-badges .item-badge svg {
-  width: 12px;
-  height: 12px;
-  stroke: currentColor;
-  stroke-width: 2.2;
-  fill: none;
-  flex-shrink: 0;
-  display: inline-block;
-  vertical-align: middle;
+.person-badges .item-badge {
+  font-size: 0.68rem;
+  padding: 2px 7px;
+  font-weight: 700;
+  border-radius: var(--radius-full);
 }
 
-.person-card-actions-top {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-}
-
-.person-body {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
-.person-role-company {
+.person-card-actions {
   display: flex;
   align-items: center;
   gap: 6px;
-  flex-wrap: wrap;
-  font-weight: 600;
-  color: var(--text-main);
-  line-height: 1.3;
+  flex-shrink: 0;
 }
 
-.person-company-tag {
-  color: var(--text-dim);
-  font-weight: 500;
-}
-
-.person-meta-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  font-size: 0.76rem;
-}
-
-.person-meta-item {
+.person-card-btn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  color: var(--text-muted);
+  gap: 5px;
+  padding: 6px 10px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+  line-height: 1;
 }
 
-.person-meta-item svg {
+.person-card-btn-call {
+  background: rgba(56, 189, 248, 0.14);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.35);
+}
+
+.person-card-btn-call:hover {
+  background: rgba(56, 189, 248, 0.25);
+  border-color: #38bdf8;
+  color: #fff;
+}
+
+.person-card-btn-whatsapp {
+  background: rgba(37, 211, 102, 0.14);
+  color: #25d366;
+  border-color: rgba(37, 211, 102, 0.35);
+}
+
+.person-card-btn-whatsapp:hover {
+  background: rgba(37, 211, 102, 0.25);
+  border-color: #25d366;
+  color: #fff;
+}
+
+/* ==========================================================================
+   Modal Dettaglio Persona (Design Curato)
+   ========================================================================== */
+.person-detail-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+}
+
+.person-detail-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.person-detail-name {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.25;
+  margin-bottom: 4px;
+}
+
+.person-detail-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.person-detail-section-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.person-detail-section-title svg {
   width: 14px;
   height: 14px;
   stroke: var(--text-dim);
   stroke-width: 2;
   fill: none;
-  flex-shrink: 0;
 }
 
-.person-rate-tag {
-  background: rgba(245, 158, 11, 0.12);
-  color: var(--primary);
-  font-weight: 700;
-  padding: 2px 7px;
-  border-radius: var(--radius-sm);
-  font-size: 0.74rem;
+.person-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
 }
 
-.person-sites-tag {
-  background: rgba(56, 189, 248, 0.12);
-  color: var(--info);
-  font-weight: 700;
-  padding: 2px 7px;
-  border-radius: var(--radius-sm);
-  font-size: 0.74rem;
+@media (min-width: 500px) {
+  .person-detail-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
-.person-notes-box {
-  background: rgba(255, 255, 255, 0.025);
-  border-left: 2px solid var(--border-subtle);
-  padding: 6px 10px;
-  border-radius: var(--radius-sm);
-  font-size: 0.74rem;
-  color: var(--text-muted);
-  line-height: 1.4;
+.person-detail-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.person-detail-label {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+
+.person-detail-value {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-main);
   word-break: break-word;
 }
 
-.person-card-footer {
+.person-detail-actions {
   display: flex;
-  align-items: center;
   gap: 8px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
   flex-wrap: wrap;
+  margin-top: 10px;
 }
 
 /* Tipologia Badge Colors */

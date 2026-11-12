@@ -55,6 +55,8 @@ class GeemApp {
     this.editingSiteId = null;
     this.activeDetailSiteId = null;
     this.editingPersonId = null;
+    this.currentPersonAvatar = null;
+    this.activeDetailPersonId = null;
     this.peopleFilter = 'all';
     this.peopleSearchQuery = '';
 
@@ -1918,81 +1920,277 @@ class GeemApp {
     list.innerHTML = filtered.map(person => {
       const gradient = typeGradients[person.type] || typeGradients.altro;
       const initials = getInitials(person.name);
+      const avatarHtml = person.avatar 
+        ? `<img src="${person.avatar}" alt="${person.name}" class="person-avatar-img">`
+        : `<span>${initials}</span>`;
 
       return `
-        <div class="person-card">
-          <div>
-            <div class="person-card-top">
-              <div class="person-card-identity">
-                <div class="person-avatar" style="background:${gradient};" title="${person.typeLabel}">
-                  <span>${initials}</span>
-                </div>
-                <div class="person-info">
-                  <div class="person-name" title="${person.name}">${person.name}</div>
-                  <div class="person-badges">
-                    <span class="item-badge badge-type-${person.type}">
-                      ${person.typeLabel || person.type}
-                    </span>
-                    ${!person.active ? '<span class="item-badge badge-red">Inattivo</span>' : ''}
-                  </div>
-                </div>
-              </div>
-
-              <div class="person-card-actions-top">
-                <button type="button" class="btn-icon" onclick="app.openPersonModal('${person.id}')" title="Modifica anagrafica">
-                  ${ICONS.edit}
-                </button>
-                <button type="button" class="btn-icon" onclick="app.deletePersonById('${person.id}')" title="Elimina persona" style="color:var(--danger);">
-                  ${ICONS.delete}
-                </button>
-              </div>
+        <div class="person-card" onclick="app.openPersonDetailModal('${person.id}')" title="Clicca per visualizzare dettagli">
+          <div class="person-card-identity">
+            <div class="person-avatar" style="${!person.avatar ? `background:${gradient};` : ''}">
+              ${avatarHtml}
             </div>
-
-            <div class="person-body" style="margin-top:10px;">
-              ${(person.role || person.company) ? `
-                <div class="person-role-company">
-                  <span>${person.role || ''}</span>
-                  ${person.company ? `<span class="person-company-tag">• ${person.company}</span>` : ''}
-                </div>
-              ` : ''}
-
-              <div class="person-meta-row">
-                ${person.hourlyRate ? `
-                  <span class="person-rate-tag">Costo: ${fmtMoney(person.hourlyRate)}/h</span>
-                ` : ''}
-                ${person.sitesCount !== undefined && person.sitesCount > 0 ? `
-                  <span class="person-sites-tag">${person.sitesCount} cantieri associati</span>
-                ` : ''}
-                ${person.email ? `
-                  <a href="mailto:${person.email}" class="person-meta-item" title="Invia email">
-                    ${ICONS.doc} ${person.email}
-                  </a>
-                ` : ''}
+            <div class="person-info">
+              <div class="person-name" title="${person.name}">${person.name}</div>
+              <div class="person-badges">
+                <span class="item-badge badge-type-${person.type}">
+                  ${person.typeLabel || person.type}
+                </span>
+                ${!person.active ? '<span class="item-badge badge-red">Inattivo</span>' : ''}
               </div>
-
-              ${person.notes ? `
-                <div class="person-notes-box">
-                  ${person.notes}
-                </div>
-              ` : ''}
             </div>
           </div>
 
-          <div class="person-card-footer">
+          <div class="person-card-actions">
             ${person.phone ? `
-              <a href="tel:${person.phone}" class="action-link" style="color:var(--info); border-color:rgba(56,189,248,0.3);">
-                ${ICONS.phone} Chiama: ${person.phone}
+              <a href="tel:${person.phone}" class="person-card-btn person-card-btn-call" onclick="event.stopPropagation()" title="Chiama">
+                ${ICONS.phone} Chiama
               </a>
-              <a href="${getWhatsAppUrl(person.phone)}" target="_blank" rel="noopener" class="action-link action-whatsapp">
+              <a href="${getWhatsAppUrl(person.phone)}" target="_blank" rel="noopener" class="person-card-btn person-card-btn-whatsapp" onclick="event.stopPropagation()" title="Scrivi su WhatsApp">
                 ${ICONS.whatsapp} WhatsApp
               </a>
-            ` : `
-              <span style="font-size:0.75rem; color:var(--text-dim); font-style:italic;">Nessun recapito telefonico</span>
-            `}
+            ` : ''}
           </div>
         </div>
       `;
     }).join('');
+  }
+
+  // --- GESTIONE FOTO PROFILO PERSONA ---
+  async handlePersonPhotoUpload(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      this.showToast('Seleziona un file immagine valido', 'error');
+      return;
+    }
+
+    try {
+      // Comprimi e ridimensiona l'immagine (max 256x256 WebP/JPEG)
+      const compressedDataUrl = await this.resizeAndCompressImage(file, 256, 256, 0.85);
+      this.currentPersonAvatar = compressedDataUrl;
+      this.renderPersonPhotoPreview();
+      this.showToast('Foto profilo caricata', 'success');
+    } catch (err) {
+      console.error('Errore compressione foto:', err);
+      this.showToast('Impossibile elaborare l\'immagine', 'error');
+    }
+  }
+
+  removePersonPhoto() {
+    this.currentPersonAvatar = null;
+    const fileInput = document.getElementById('person-photo-input');
+    if (fileInput) fileInput.value = '';
+    this.renderPersonPhotoPreview();
+    this.showToast('Foto profilo rimossa', 'info');
+  }
+
+  renderPersonPhotoPreview() {
+    const preview = document.getElementById('person-photo-preview');
+    const removeBtn = document.getElementById('person-photo-remove-btn');
+    if (!preview) return;
+
+    if (this.currentPersonAvatar) {
+      preview.innerHTML = `<img src="${this.currentPersonAvatar}" class="person-avatar-img" alt="Anteprima">`;
+      preview.style.border = '2px solid var(--primary)';
+      if (removeBtn) removeBtn.style.display = 'inline-block';
+    } else {
+      preview.innerHTML = `<span>+</span>`;
+      preview.style.border = '1px dashed var(--border-subtle)';
+      if (removeBtn) removeBtn.style.display = 'none';
+    }
+  }
+
+  resizeAndCompressImage(file, maxWidth = 256, maxHeight = 256, quality = 0.85) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Supporta WebP se supportato, altrimenti fallback JPEG
+          let dataUrl = canvas.toDataURL('image/webp', quality);
+          if (!dataUrl || dataUrl.indexOf('image/webp') === -1) {
+            dataUrl = canvas.toDataURL('image/jpeg', quality);
+          }
+          resolve(dataUrl);
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // --- MODAL DETTAGLIO PERSONA ---
+  openPersonDetailModal(personId) {
+    if (!personId) return;
+    const allPeople = store.getAllPeople ? store.getAllPeople() : [];
+    const person = allPeople.find(p => p.id === personId);
+    if (!person) {
+      this.showToast('Persona non trovata', 'error');
+      return;
+    }
+
+    this.activeDetailPersonId = personId;
+
+    const modalTitle = document.getElementById('person-detail-title');
+    const modalSub = document.getElementById('person-detail-sub');
+    const editBtn = document.getElementById('person-detail-edit-btn');
+    const deleteBtn = document.getElementById('person-detail-delete-btn');
+    const quickActionBtn = document.getElementById('person-detail-quick-action');
+    const body = document.getElementById('person-detail-body');
+
+    if (modalTitle) modalTitle.textContent = person.name;
+    if (modalSub) modalSub.textContent = person.typeLabel || person.type;
+
+    const handleEdit = () => {
+      this.closeModal('modal-person-detail');
+      this.openPersonModal(personId);
+    };
+
+    const handleDelete = () => {
+      this.closeModal('modal-person-detail');
+      this.deletePersonById(personId);
+    };
+
+    if (editBtn) editBtn.onclick = handleEdit;
+    if (quickActionBtn) quickActionBtn.onclick = handleEdit;
+    if (deleteBtn) deleteBtn.onclick = handleDelete;
+
+    // Gradienti avatar initials
+    const typeGradients = {
+      dipendente: 'linear-gradient(135deg, #1d4ed8, #3b82f6)',
+      cliente: 'linear-gradient(135deg, #047857, #10b981)',
+      commercialista: 'linear-gradient(135deg, #6d28d9, #8b5cf6)',
+      tecnico: 'linear-gradient(135deg, #0f766e, #14b8a6)',
+      fornitore: 'linear-gradient(135deg, #c2410c, #f97316)',
+      subappaltatore: 'linear-gradient(135deg, #b45309, #f59e0b)',
+      sicurezza: 'linear-gradient(135deg, #be123c, #f43f5e)',
+      collaboratore: 'linear-gradient(135deg, #334155, #64748b)',
+      altro: 'linear-gradient(135deg, #334155, #64748b)'
+    };
+    const gradient = typeGradients[person.type] || typeGradients.altro;
+    const parts = (person.name || '').trim().split(/\s+/);
+    const initials = parts.length === 1 ? parts[0].substring(0, 2).toUpperCase() : (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+
+    const avatarHtml = person.avatar 
+      ? `<img src="${person.avatar}" alt="${person.name}" class="person-avatar-img">`
+      : `<span>${initials}</span>`;
+
+    if (body) {
+      body.innerHTML = `
+        <div class="person-detail-hero">
+          <div class="person-detail-avatar" style="${!person.avatar ? `background:${gradient};` : ''}">
+            ${avatarHtml}
+          </div>
+          <div style="flex:1; min-width:0;">
+            <div class="person-detail-name">${person.name}</div>
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:6px;">
+              <span class="item-badge badge-type-${person.type}">
+                ${person.typeLabel || person.type}
+              </span>
+              ${!person.active ? '<span class="item-badge badge-red">Inattivo</span>' : '<span class="item-badge badge-green">Attivo</span>'}
+            </div>
+            ${person.company ? `<div style="font-size:0.82rem; color:var(--text-muted); font-weight:600;">${person.company}</div>` : ''}
+          </div>
+        </div>
+
+        ${person.phone ? `
+          <div class="person-detail-section">
+            <div class="person-detail-section-title">
+              ${ICONS.phone} Contatto Telefonico Rapido
+            </div>
+            <div style="font-size:0.95rem; font-weight:700; color:#fff; margin-bottom:8px;">
+              ${person.phone}
+            </div>
+            <div class="person-detail-actions">
+              <a href="tel:${person.phone}" class="btn btn-secondary btn-sm" style="color:var(--info); border-color:rgba(56,189,248,0.4); text-decoration:none;">
+                ${ICONS.phone} Chiama
+              </a>
+              <a href="${getWhatsAppUrl(person.phone)}" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" style="color:#25d366; border-color:rgba(37,211,102,0.4); text-decoration:none;">
+                ${ICONS.whatsapp} WhatsApp
+              </a>
+            </div>
+          </div>
+        ` : ''}
+
+        <div class="person-detail-section">
+          <div class="person-detail-section-title">
+            ${ICONS.user} Dati Anagrafici & Profilo
+          </div>
+          <div class="person-detail-grid">
+            <div class="person-detail-field">
+              <span class="person-detail-label">Ruolo / Mansione</span>
+              <span class="person-detail-value">${person.role || '—'}</span>
+            </div>
+            <div class="person-detail-field">
+              <span class="person-detail-label">Azienda / Studio</span>
+              <span class="person-detail-value">${person.company || '—'}</span>
+            </div>
+            <div class="person-detail-field">
+              <span class="person-detail-label">Email</span>
+              <span class="person-detail-value">
+                ${person.email ? `<a href="mailto:${person.email}" style="color:var(--primary); text-decoration:none;">${person.email}</a>` : '—'}
+              </span>
+            </div>
+            <div class="person-detail-field">
+              <span class="person-detail-label">Costo Orario</span>
+              <span class="person-detail-value" style="color:var(--primary);">
+                ${person.hourlyRate ? `${fmtMoney(person.hourlyRate)} / ora` : '—'}
+              </span>
+            </div>
+            <div class="person-detail-field">
+              <span class="person-detail-label">Cantieri Assegnati / Associati</span>
+              <span class="person-detail-value">
+                ${person.sitesCount !== undefined && person.sitesCount > 0 ? `${person.sitesCount} cantieri` : 'Nessuno'}
+              </span>
+            </div>
+            <div class="person-detail-field">
+              <span class="person-detail-label">Stato Operativo</span>
+              <span class="person-detail-value">
+                ${person.active !== false ? 'Attivo' : 'Non Attivo / Archiviato'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        ${person.notes ? `
+          <div class="person-detail-section">
+            <div class="person-detail-section-title">
+              ${ICONS.note} Note & Dettagli
+            </div>
+            <div style="font-size:0.84rem; color:var(--text-muted); line-height:1.5; white-space:pre-wrap;">
+              ${person.notes}
+            </div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    this.openModal('modal-person-detail');
   }
 
   // --- MODAL PERSONE & ANAGRAFICHE ---
@@ -2016,6 +2214,7 @@ class GeemApp {
         document.getElementById('person-rate').value = p.hourlyRate || '';
         document.getElementById('person-notes').value = p.notes || '';
         document.getElementById('person-active').checked = p.active !== false;
+        this.currentPersonAvatar = p.avatar || null;
       }
     } else {
       title.textContent = 'Nuova Persona';
@@ -2023,8 +2222,10 @@ class GeemApp {
       const defaultType = (this.peopleFilter !== 'all') ? this.peopleFilter : 'dipendente';
       document.getElementById('person-type').value = defaultType;
       document.getElementById('person-active').checked = true;
+      this.currentPersonAvatar = null;
     }
 
+    this.renderPersonPhotoPreview();
     this.handlePersonTypeChange();
     this.openModal('modal-person');
   }
@@ -2081,56 +2282,57 @@ class GeemApp {
     }
 
     const id = this.editingPersonId;
+    const avatar = this.currentPersonAvatar;
 
     if (id) {
       // Modifica persona esistente
       if (id.startsWith('w_')) {
         if (type === 'dipendente') {
-          store.updateWorker(id, { name, role: role || 'Operaio Edile', phone, hourlyRate: hourlyRate || 20, active });
+          store.updateWorker(id, { name, role: role || 'Operaio Edile', phone, hourlyRate: hourlyRate || 20, active, avatar });
         } else {
           // Passaggio da lavoratore ad altra tipologia
           store.deleteWorker(id);
           if (type === 'cliente') {
-            store.addClient({ name, phone, notes: [notes, company].filter(Boolean).join(' - ') });
+            store.addClient({ name, phone, notes: [notes, company].filter(Boolean).join(' - '), avatar });
           } else {
-            store.addPerson({ name, type, role, company, phone, email, hourlyRate, notes, active });
+            store.addPerson({ name, type, role, company, phone, email, hourlyRate, notes, active, avatar });
           }
         }
       } else if (id.startsWith('c_')) {
         if (type === 'cliente') {
-          store.updateClient(id, { name, phone, notes });
+          store.updateClient(id, { name, phone, notes, avatar });
         } else {
           // Passaggio da cliente ad altra tipologia
           store.deleteClient(id);
           if (type === 'dipendente') {
-            store.addWorker({ name, role: role || 'Operaio Edile', phone, hourlyRate: hourlyRate || 20, active });
+            store.addWorker({ name, role: role || 'Operaio Edile', phone, hourlyRate: hourlyRate || 20, active, avatar });
           } else {
-            store.addPerson({ name, type, role, company, phone, email, hourlyRate, notes, active });
+            store.addPerson({ name, type, role, company, phone, email, hourlyRate, notes, active, avatar });
           }
         }
       } else {
         // ID generico persona (p_)
         if (type === 'dipendente') {
           store.deletePerson(id);
-          store.addWorker({ name, role: role || 'Operaio Edile', phone, hourlyRate: hourlyRate || 20, active });
+          store.addWorker({ name, role: role || 'Operaio Edile', phone, hourlyRate: hourlyRate || 20, active, avatar });
         } else if (type === 'cliente') {
           store.deletePerson(id);
-          store.addClient({ name, phone, notes });
+          store.addClient({ name, phone, notes, avatar });
         } else {
-          store.updatePerson(id, { name, type, role, company, phone, email, hourlyRate, notes, active });
+          store.updatePerson(id, { name, type, role, company, phone, email, hourlyRate, notes, active, avatar });
         }
       }
       this.showToast('Anagrafica aggiornata con successo', 'success');
     } else {
       // Creazione nuova persona
       if (type === 'dipendente') {
-        store.addWorker({ name, role: role || 'Operaio Edile', phone, hourlyRate: hourlyRate || 20, active });
+        store.addWorker({ name, role: role || 'Operaio Edile', phone, hourlyRate: hourlyRate || 20, active, avatar });
         this.showToast('Lavoratore aggiunto all\'organico', 'success');
       } else if (type === 'cliente') {
-        store.addClient({ name, phone, notes: [notes, company].filter(Boolean).join(' - ') });
+        store.addClient({ name, phone, notes: [notes, company].filter(Boolean).join(' - '), avatar });
         this.showToast('Cliente aggiunto con successo', 'success');
       } else {
-        store.addPerson({ name, type, role, company, phone, email, hourlyRate, notes, active });
+        store.addPerson({ name, type, role, company, phone, email, hourlyRate, notes, active, avatar });
         this.showToast('Nuova persona registrata in anagrafica', 'success');
       }
     }
