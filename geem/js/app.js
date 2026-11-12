@@ -54,6 +54,9 @@ class GeemApp {
     this.editingClientId = null;
     this.editingSiteId = null;
     this.activeDetailSiteId = null;
+    this.editingPersonId = null;
+    this.peopleFilter = 'all';
+    this.peopleSearchQuery = '';
 
     // Calendario per il registro ore
     this.selectedCalendarDate = new Date().toISOString().split('T')[0];
@@ -302,6 +305,7 @@ class GeemApp {
     this.renderAdminSites();
     this.renderAdminTypes();
     this.populateSelectDropdowns();
+    this.renderPeople();
   }
 
   renderSyncStatus() {
@@ -1794,6 +1798,376 @@ class GeemApp {
     if (confirm('Sei sicuro di voler eliminare questo cliente?')) {
       store.deleteClient(id);
       this.showToast('Cliente eliminato', 'info');
+    }
+  }
+
+  // ==========================================================================
+  // GESTIONE SEZIONE PERSONE & ANAGRAFICHE
+  // ==========================================================================
+  setPeopleFilter(filter) {
+    this.peopleFilter = filter;
+    document.querySelectorAll('[data-people-filter]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.peopleFilter === filter);
+    });
+    this.renderPeople();
+  }
+
+  handlePeopleSearch(query) {
+    this.peopleSearchQuery = (query || '').trim().toLowerCase();
+    const clearBtn = document.getElementById('people-search-clear');
+    if (clearBtn) {
+      clearBtn.style.display = this.peopleSearchQuery ? 'block' : 'none';
+    }
+    this.renderPeople();
+  }
+
+  clearPeopleSearch() {
+    this.peopleSearchQuery = '';
+    const input = document.getElementById('people-search-input');
+    const clearBtn = document.getElementById('people-search-clear');
+    if (input) input.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+    this.renderPeople();
+  }
+
+  renderPeople() {
+    const list = document.getElementById('people-cards-list');
+    if (!list) return;
+
+    const allPeople = store.getAllPeople ? store.getAllPeople() : [];
+
+    // Aggiornamento contatori per ciascuna tipologia/filtro
+    const counts = {
+      all: allPeople.length,
+      dipendente: allPeople.filter(p => p.type === 'dipendente' || p.source === 'worker').length,
+      cliente: allPeople.filter(p => p.type === 'cliente' || p.source === 'client').length,
+      tecnico: allPeople.filter(p => p.type === 'tecnico').length,
+      commercialista: allPeople.filter(p => p.type === 'commercialista').length,
+      fornitore: allPeople.filter(p => p.type === 'fornitore').length,
+      subappaltatore: allPeople.filter(p => p.type === 'subappaltatore').length,
+      sicurezza: allPeople.filter(p => p.type === 'sicurezza').length,
+      altro: allPeople.filter(p => p.type === 'altro' || p.type === 'collaboratore').length
+    };
+
+    for (const [key, count] of Object.entries(counts)) {
+      const el = document.getElementById(`people-count-${key}`);
+      if (el) el.textContent = count;
+    }
+
+    // Filtraggio per tipologia
+    let filtered = allPeople;
+    if (this.peopleFilter !== 'all') {
+      if (this.peopleFilter === 'altro') {
+        filtered = filtered.filter(p => p.type === 'altro' || p.type === 'collaboratore');
+      } else if (this.peopleFilter === 'dipendente') {
+        filtered = filtered.filter(p => p.type === 'dipendente' || p.source === 'worker');
+      } else if (this.peopleFilter === 'cliente') {
+        filtered = filtered.filter(p => p.type === 'cliente' || p.source === 'client');
+      } else {
+        filtered = filtered.filter(p => p.type === this.peopleFilter);
+      }
+    }
+
+    // Filtraggio per stringa di ricerca
+    if (this.peopleSearchQuery) {
+      const q = this.peopleSearchQuery;
+      filtered = filtered.filter(p => {
+        return (p.name && p.name.toLowerCase().includes(q)) ||
+               (p.role && p.role.toLowerCase().includes(q)) ||
+               (p.company && p.company.toLowerCase().includes(q)) ||
+               (p.phone && p.phone.toLowerCase().includes(q)) ||
+               (p.email && p.email.toLowerCase().includes(q)) ||
+               (p.notes && p.notes.toLowerCase().includes(q));
+      });
+    }
+
+    if (filtered.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state" style="grid-column: 1 / -1; padding: 44px 16px;">
+          <svg viewBox="0 0 24 24" style="width:44px; height:44px; stroke:var(--text-dim); fill:none; stroke-width:1.5; margin-bottom:10px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <h3 style="font-size:0.98rem; font-weight:700;">Nessuna persona trovata</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
+            ${this.peopleSearchQuery ? `Nessun risultato trovato per "${this.peopleSearchQuery}"` : 'Nessuna anagrafica presente in questa categoria.'}
+          </p>
+          <button class="btn btn-secondary btn-sm" onclick="app.openPersonModal()">+ Aggiungi Persona</button>
+        </div>
+      `;
+      return;
+    }
+
+    // Mappatura gradienti avatar
+    const typeGradients = {
+      dipendente: 'linear-gradient(135deg, #1d4ed8, #3b82f6)',
+      cliente: 'linear-gradient(135deg, #047857, #10b981)',
+      commercialista: 'linear-gradient(135deg, #6d28d9, #8b5cf6)',
+      tecnico: 'linear-gradient(135deg, #0f766e, #14b8a6)',
+      fornitore: 'linear-gradient(135deg, #c2410c, #f97316)',
+      subappaltatore: 'linear-gradient(135deg, #b45309, #f59e0b)',
+      sicurezza: 'linear-gradient(135deg, #be123c, #f43f5e)',
+      collaboratore: 'linear-gradient(135deg, #334155, #64748b)',
+      altro: 'linear-gradient(135deg, #334155, #64748b)'
+    };
+
+    const typeIcons = {
+      dipendente: '👷',
+      cliente: '🏢',
+      commercialista: '💼',
+      tecnico: '📐',
+      fornitore: '🚚',
+      subappaltatore: '🔨',
+      sicurezza: '🦺',
+      collaboratore: '🤝',
+      altro: '👤'
+    };
+
+    const getInitials = (name) => {
+      if (!name) return '??';
+      const parts = name.trim().split(/\s+/);
+      if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    };
+
+    list.innerHTML = filtered.map(person => {
+      const gradient = typeGradients[person.type] || typeGradients.altro;
+      const icon = typeIcons[person.type] || '👤';
+      const initials = getInitials(person.name);
+
+      return `
+        <div class="person-card">
+          <div>
+            <div class="person-card-top">
+              <div class="person-card-identity">
+                <div class="person-avatar" style="background:${gradient};" title="${person.typeLabel}">
+                  <span>${initials}</span>
+                </div>
+                <div class="person-info">
+                  <div class="person-name" title="${person.name}">${person.name}</div>
+                  <div class="person-badges">
+                    <span class="item-badge badge-type-${person.type}">
+                      ${icon} ${person.typeLabel || person.type}
+                    </span>
+                    ${!person.active ? '<span class="item-badge badge-red">Inattivo</span>' : ''}
+                  </div>
+                </div>
+              </div>
+
+              <div class="person-card-actions-top">
+                <button type="button" class="btn-icon" onclick="app.openPersonModal('${person.id}')" title="Modifica anagrafica">
+                  ${ICONS.edit}
+                </button>
+                <button type="button" class="btn-icon" onclick="app.deletePersonById('${person.id}')" title="Elimina persona" style="color:var(--danger);">
+                  ${ICONS.delete}
+                </button>
+              </div>
+            </div>
+
+            <div class="person-body" style="margin-top:10px;">
+              ${(person.role || person.company) ? `
+                <div class="person-role-company">
+                  <span>${person.role || ''}</span>
+                  ${person.company ? `<span class="person-company-tag">• ${person.company}</span>` : ''}
+                </div>
+              ` : ''}
+
+              <div class="person-meta-row">
+                ${person.hourlyRate ? `
+                  <span class="person-rate-tag">Costo: ${fmtMoney(person.hourlyRate)}/h</span>
+                ` : ''}
+                ${person.sitesCount !== undefined && person.sitesCount > 0 ? `
+                  <span class="person-sites-tag">${person.sitesCount} cantieri associati</span>
+                ` : ''}
+                ${person.email ? `
+                  <a href="mailto:${person.email}" class="person-meta-item" title="Invia email">
+                    ${ICONS.doc} ${person.email}
+                  </a>
+                ` : ''}
+              </div>
+
+              ${person.notes ? `
+                <div class="person-notes-box">
+                  ${person.notes}
+                </div>
+              ` : ''}
+            </div>
+          </div>
+
+          <div class="person-card-footer">
+            ${person.phone ? `
+              <a href="tel:${person.phone}" class="action-link" style="color:var(--info); border-color:rgba(56,189,248,0.3);">
+                ${ICONS.phone} Chiama: ${person.phone}
+              </a>
+              <a href="${getWhatsAppUrl(person.phone)}" target="_blank" rel="noopener" class="action-link action-whatsapp">
+                ${ICONS.whatsapp} WhatsApp
+              </a>
+            ` : `
+              <span style="font-size:0.75rem; color:var(--text-dim); font-style:italic;">Nessun recapito telefonico</span>
+            `}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // --- MODAL PERSONE & ANAGRAFICHE ---
+  openPersonModal(id = null) {
+    this.editingPersonId = id;
+    const title = document.getElementById('modal-person-title');
+    const form = document.getElementById('form-person');
+    if (!form) return;
+
+    if (id) {
+      title.textContent = 'Modifica Persona';
+      const allPeople = store.getAllPeople ? store.getAllPeople() : [];
+      const p = allPeople.find(item => item.id === id);
+      if (p) {
+        document.getElementById('person-type').value = p.type || 'dipendente';
+        document.getElementById('person-name').value = p.name || '';
+        document.getElementById('person-role').value = p.role || '';
+        document.getElementById('person-company').value = p.company || '';
+        document.getElementById('person-phone').value = p.phone || '';
+        document.getElementById('person-email').value = p.email || '';
+        document.getElementById('person-rate').value = p.hourlyRate || '';
+        document.getElementById('person-notes').value = p.notes || '';
+        document.getElementById('person-active').checked = p.active !== false;
+      }
+    } else {
+      title.textContent = 'Nuova Persona';
+      form.reset();
+      const defaultType = (this.peopleFilter !== 'all') ? this.peopleFilter : 'dipendente';
+      document.getElementById('person-type').value = defaultType;
+      document.getElementById('person-active').checked = true;
+    }
+
+    this.handlePersonTypeChange();
+    this.openModal('modal-person');
+  }
+
+  handlePersonTypeChange() {
+    const typeSelect = document.getElementById('person-type');
+    if (!typeSelect) return;
+    const type = typeSelect.value;
+    const rateGroup = document.getElementById('person-rate-group');
+    const roleInput = document.getElementById('person-role');
+    const companyInput = document.getElementById('person-company');
+
+    // Mostra tariffa oraria solo per ruoli operativi
+    if (rateGroup) {
+      rateGroup.style.display = (type === 'dipendente' || type === 'subappaltatore' || type === 'tecnico') ? 'block' : 'none';
+    }
+
+    if (roleInput) {
+      if (type === 'dipendente') roleInput.placeholder = 'Es. Capocantiere, Muratore, Manovale';
+      else if (type === 'cliente') roleInput.placeholder = 'Es. Committente, Proprietario, Amministratore';
+      else if (type === 'commercialista') roleInput.placeholder = 'Es. Dottore Commercialista, Buste Paga';
+      else if (type === 'tecnico') roleInput.placeholder = 'Es. Geometra, Architetto, Strutturista, DL';
+      else if (type === 'subappaltatore') roleInput.placeholder = 'Es. Idraulico, Elettricista, Cartongessi';
+      else if (type === 'fornitore') roleInput.placeholder = 'Es. Magazzino Edile, Calcestruzzo, Noleggi';
+      else if (type === 'sicurezza') roleInput.placeholder = 'Es. RSPP, Coordinatore Sicurezza CSP/CSE';
+      else roleInput.placeholder = 'Es. Mansione o Ruolo';
+    }
+
+    if (companyInput) {
+      if (type === 'commercialista') companyInput.placeholder = 'Es. Studio Tributario Associato';
+      else if (type === 'tecnico') companyInput.placeholder = 'Es. Studio Tecnico Architettura';
+      else if (type === 'fornitore') companyInput.placeholder = 'Es. EdilMarket Forniture Srl';
+      else if (type === 'subappaltatore') companyInput.placeholder = 'Es. Termoidraulica Rossi Snc';
+      else companyInput.placeholder = 'Es. Ragione Sociale o Ditta';
+    }
+  }
+
+  handlePersonSubmit(e) {
+    e.preventDefault();
+    const type = document.getElementById('person-type').value;
+    const name = document.getElementById('person-name').value.trim();
+    const role = document.getElementById('person-role').value.trim();
+    const company = document.getElementById('person-company').value.trim();
+    const phone = document.getElementById('person-phone').value.trim();
+    const email = document.getElementById('person-email').value.trim();
+    const rateVal = document.getElementById('person-rate').value;
+    const hourlyRate = rateVal ? parseFloat(rateVal) : null;
+    const notes = document.getElementById('person-notes').value.trim();
+    const active = document.getElementById('person-active').checked;
+
+    if (!name) {
+      this.showToast('Inserisci il nome o la ragione sociale', 'error');
+      return;
+    }
+
+    const id = this.editingPersonId;
+
+    if (id) {
+      // Modifica persona esistente
+      if (id.startsWith('w_')) {
+        if (type === 'dipendente') {
+          store.updateWorker(id, { name, role: role || 'Operaio Edile', phone, hourlyRate: hourlyRate || 20, active });
+        } else {
+          // Passaggio da lavoratore ad altra tipologia
+          store.deleteWorker(id);
+          if (type === 'cliente') {
+            store.addClient({ name, phone, notes: [notes, company].filter(Boolean).join(' - ') });
+          } else {
+            store.addPerson({ name, type, role, company, phone, email, hourlyRate, notes, active });
+          }
+        }
+      } else if (id.startsWith('c_')) {
+        if (type === 'cliente') {
+          store.updateClient(id, { name, phone, notes });
+        } else {
+          // Passaggio da cliente ad altra tipologia
+          store.deleteClient(id);
+          if (type === 'dipendente') {
+            store.addWorker({ name, role: role || 'Operaio Edile', phone, hourlyRate: hourlyRate || 20, active });
+          } else {
+            store.addPerson({ name, type, role, company, phone, email, hourlyRate, notes, active });
+          }
+        }
+      } else {
+        // ID generico persona (p_)
+        if (type === 'dipendente') {
+          store.deletePerson(id);
+          store.addWorker({ name, role: role || 'Operaio Edile', phone, hourlyRate: hourlyRate || 20, active });
+        } else if (type === 'cliente') {
+          store.deletePerson(id);
+          store.addClient({ name, phone, notes });
+        } else {
+          store.updatePerson(id, { name, type, role, company, phone, email, hourlyRate, notes, active });
+        }
+      }
+      this.showToast('Anagrafica aggiornata con successo', 'success');
+    } else {
+      // Creazione nuova persona
+      if (type === 'dipendente') {
+        store.addWorker({ name, role: role || 'Operaio Edile', phone, hourlyRate: hourlyRate || 20, active });
+        this.showToast('Lavoratore aggiunto all\'organico', 'success');
+      } else if (type === 'cliente') {
+        store.addClient({ name, phone, notes: [notes, company].filter(Boolean).join(' - ') });
+        this.showToast('Cliente aggiunto con successo', 'success');
+      } else {
+        store.addPerson({ name, type, role, company, phone, email, hourlyRate, notes, active });
+        this.showToast('Nuova persona registrata in anagrafica', 'success');
+      }
+    }
+
+    this.closeModal('modal-person');
+    this.renderPeople();
+  }
+
+  deletePersonById(id) {
+    if (!id) return;
+    const allPeople = store.getAllPeople ? store.getAllPeople() : [];
+    const person = allPeople.find(p => p.id === id);
+    const name = person ? person.name : 'questa persona';
+
+    if (confirm(`Sei sicuro di voler eliminare "${name}" dall'anagrafica?`)) {
+      if (id.startsWith('w_')) {
+        store.deleteWorker(id);
+      } else if (id.startsWith('c_')) {
+        store.deleteClient(id);
+      } else {
+        store.deletePerson(id);
+      }
+      this.showToast('Persona rimossa dall\'anagrafica', 'info');
+      this.renderPeople();
     }
   }
 

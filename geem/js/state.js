@@ -73,6 +73,76 @@ export const INITIAL_CLIENTS = [
   }
 ];
 
+export const INITIAL_PEOPLE = [
+  {
+    id: 'p_1',
+    name: 'Dott. Roberto Marchesi',
+    type: 'commercialista',
+    role: 'Commercialista & Fiscale',
+    company: 'Studio Marchesi & Associati',
+    phone: '+39 02 4567890',
+    email: 'marchesi.studio@legalmail.it',
+    notes: 'Bilanci ditta, F24 e consulenza tributaria',
+    active: true
+  },
+  {
+    id: 'p_2',
+    name: 'Ing. Elena Sala',
+    type: 'tecnico',
+    role: 'Ingegnere Strutturista',
+    company: 'Studio Tecnico Sala',
+    phone: '+39 338 1122334',
+    email: 'elena.sala@ingegneri.it',
+    notes: 'Calcoli strutturali e deposito sismico genio civile',
+    active: true
+  },
+  {
+    id: 'p_3',
+    name: 'Arch. Marco Villa',
+    type: 'tecnico',
+    role: 'Architetto & Direttore Lavori',
+    company: 'Villa Architettura',
+    phone: '+39 347 5566778',
+    email: 'marco.villa@architetti.it',
+    notes: 'Progettazione e pratiche edilizie (CILA, SCIA, Permesso Costruire)',
+    active: true
+  },
+  {
+    id: 'p_4',
+    name: 'Edil Forniture Brianza S.r.l.',
+    type: 'fornitore',
+    role: 'Magazzino Edile & Noleggi',
+    company: 'Edil Forniture Brianza',
+    phone: '+39 039 987654',
+    email: 'ordini@edilforniturebrianza.it',
+    notes: 'Fornitura inerti, legname, ponteggi e noleggio gru',
+    active: true
+  },
+  {
+    id: 'p_5',
+    name: 'Termoidraulica Ghezzi',
+    type: 'subappaltatore',
+    role: 'Impianti Idraulici & Clima',
+    company: 'Ghezzi Impianti Snc',
+    phone: '+39 345 8899001',
+    email: 'info@ghezzi-termoidraulica.it',
+    hourlyRate: 35.00,
+    notes: 'Certificazioni conformità impianti e linee gas',
+    active: true
+  },
+  {
+    id: 'p_6',
+    name: 'Geom. Fabio Colombo',
+    type: 'sicurezza',
+    role: 'RSPP & Coordinatore Sicurezza',
+    company: 'Safety Edilizia S.a.s.',
+    phone: '+39 339 6677889',
+    email: 'sicurezza@colombogeom.it',
+    notes: 'Redazione PSC/POS e verifiche periodiche sicurezza in cantiere',
+    active: true
+  }
+];
+
 export const INITIAL_SITES = [
   {
     id: 's_1',
@@ -189,7 +259,8 @@ class StateStore {
       clients: JSON.parse(JSON.stringify(INITIAL_CLIENTS)),
       sites: JSON.parse(JSON.stringify(INITIAL_SITES)),
       timesheets: JSON.parse(JSON.stringify(INITIAL_TIMESHEETS)),
-      expenses: JSON.parse(JSON.stringify(INITIAL_EXPENSES))
+      expenses: JSON.parse(JSON.stringify(INITIAL_EXPENSES)),
+      people: JSON.parse(JSON.stringify(INITIAL_PEOPLE))
     };
 
     this.initFromLocal();
@@ -228,6 +299,10 @@ class StateStore {
       if (typeof console !== 'undefined' && console.warn) {
         console.warn('Errore lettura localStorage:', e);
       }
+    }
+
+    if (!Array.isArray(this.data.people)) {
+      this.data.people = JSON.parse(JSON.stringify(INITIAL_PEOPLE));
     }
   }
 
@@ -329,7 +404,8 @@ class StateStore {
       clients: JSON.parse(JSON.stringify(INITIAL_CLIENTS)),
       sites: JSON.parse(JSON.stringify(INITIAL_SITES)),
       timesheets: JSON.parse(JSON.stringify(INITIAL_TIMESHEETS)),
-      expenses: JSON.parse(JSON.stringify(INITIAL_EXPENSES))
+      expenses: JSON.parse(JSON.stringify(INITIAL_EXPENSES)),
+      people: JSON.parse(JSON.stringify(INITIAL_PEOPLE))
     };
     if (this.mode === 'demo' && typeof localStorage !== 'undefined') {
       localStorage.setItem('geem_demo_db', JSON.stringify(this.data));
@@ -353,14 +429,15 @@ class StateStore {
           clients: data.clients || this.data.clients,
           sites: data.sites || this.data.sites,
           timesheets: data.timesheets || this.data.timesheets,
-          expenses: data.expenses || this.data.expenses
+          expenses: data.expenses || this.data.expenses,
+          people: data.people || this.data.people || []
         };
         await this.githubClient.initDatabase(initialToPush);
         // Rileggi
         const reload = await this.githubClient.fetchAll();
-        this.data = reload.data;
+        this.data = { ...reload.data, people: reload.data.people || [] };
       } else {
-        this.data = data;
+        this.data = { ...data, people: data.people || [] };
       }
 
       // Salva copia cache in locale per ricaricamenti istantanei
@@ -554,6 +631,130 @@ class StateStore {
     this.notify('clients');
     this.syncKeyToGitHub('clients', `Eliminazione cliente ${id}`);
     return true;
+  }
+
+  // ===== GESTIONE PERSONE & ANAGRAFICHE COMPLETE =====
+  addPerson(person) {
+    const newPerson = {
+      id: 'p_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      name: (person.name || '').trim(),
+      type: person.type || 'altro', // 'commercialista', 'tecnico', 'fornitore', 'subappaltatore', 'sicurezza', 'collaboratore', 'altro'
+      role: (person.role || '').trim(),
+      company: (person.company || '').trim(),
+      phone: (person.phone || '').trim(),
+      email: (person.email || '').trim(),
+      hourlyRate: person.hourlyRate ? (parseFloat(person.hourlyRate) || null) : null,
+      notes: (person.notes || '').trim(),
+      active: person.active !== undefined ? person.active : true,
+      createdAt: new Date().toISOString()
+    };
+
+    if (!Array.isArray(this.data.people)) {
+      this.data.people = [];
+    }
+    this.data.people.push(newPerson);
+    this.notify('people');
+    this.syncKeyToGitHub('people', `Aggiunta persona: ${newPerson.name} (${newPerson.type})`);
+    return newPerson;
+  }
+
+  updatePerson(id, updated) {
+    if (!Array.isArray(this.data.people)) this.data.people = [];
+    const index = this.data.people.findIndex(p => p.id === id);
+    if (index === -1) return false;
+
+    this.data.people[index] = {
+      ...this.data.people[index],
+      ...updated,
+      hourlyRate: updated.hourlyRate !== undefined 
+        ? (updated.hourlyRate ? parseFloat(updated.hourlyRate) : null) 
+        : this.data.people[index].hourlyRate
+    };
+
+    this.notify('people');
+    this.syncKeyToGitHub('people', `Modifica anagrafica persona ${id}`);
+    return true;
+  }
+
+  deletePerson(id) {
+    if (!Array.isArray(this.data.people)) this.data.people = [];
+    this.data.people = this.data.people.filter(p => p.id !== id);
+    this.notify('people');
+    this.syncKeyToGitHub('people', `Eliminazione persona ${id}`);
+    return true;
+  }
+
+  // Restituisce l'elenco unificato di TUTTE le persone (lavoratori + clienti + professionisti)
+  getAllPeople() {
+    const list = [];
+
+    // 1. Lavoratori e Operai
+    (this.data.workers || []).forEach(w => {
+      list.push({
+        id: w.id,
+        name: w.name,
+        type: w.type || 'dipendente',
+        typeLabel: w.type === 'subappaltatore' ? 'Subappaltatore / Artigiano' : 'Dipendente / Operaio',
+        role: w.role || 'Operaio Edile',
+        company: w.company || '',
+        phone: w.phone || '',
+        email: w.email || '',
+        hourlyRate: w.hourlyRate || null,
+        notes: w.notes || '',
+        active: w.active !== undefined ? w.active : true,
+        source: 'worker'
+      });
+    });
+
+    // 2. Clienti (Committenti)
+    (this.data.clients || []).forEach(c => {
+      const sitesCount = (this.data.sites || []).filter(s => s.clientId === c.id).length;
+      list.push({
+        id: c.id,
+        name: c.name,
+        type: 'cliente',
+        typeLabel: 'Cliente Committente',
+        role: 'Cliente',
+        company: c.company || '',
+        phone: c.phone || '',
+        email: c.email || '',
+        hourlyRate: null,
+        notes: c.notes || '',
+        active: true,
+        sitesCount: sitesCount,
+        source: 'client'
+      });
+    });
+
+    // 3. Altri contatti e professionisti della filiera edile
+    const typeLabels = {
+      commercialista: 'Commercialista & Fisco',
+      tecnico: 'Geometra / Architetto / DL',
+      fornitore: 'Fornitore Materiali',
+      subappaltatore: 'Subappaltatore / Artigiano',
+      sicurezza: 'Sicurezza Cantiere / RSPP',
+      collaboratore: 'Collaboratore Esterno',
+      altro: 'Altro Professionista'
+    };
+
+    (this.data.people || []).forEach(p => {
+      list.push({
+        id: p.id,
+        name: p.name,
+        type: p.type || 'altro',
+        typeLabel: typeLabels[p.type] || 'Professionista',
+        role: p.role || '',
+        company: p.company || '',
+        phone: p.phone || '',
+        email: p.email || '',
+        hourlyRate: p.hourlyRate || null,
+        notes: p.notes || '',
+        active: p.active !== undefined ? p.active : true,
+        source: 'person'
+      });
+    });
+
+    return list;
   }
 
   // ===== GESTIONE CANTIERI =====

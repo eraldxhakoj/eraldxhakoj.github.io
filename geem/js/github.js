@@ -202,7 +202,8 @@ export class GitHubStorage {
       clients: 'data/clients.json',
       sites: 'data/sites.json',
       timesheets: 'data/timesheets.json',
-      expenses: 'data/expenses.json'
+      expenses: 'data/expenses.json',
+      people: 'data/people.json'
     };
 
     const results = {};
@@ -226,7 +227,8 @@ export class GitHubStorage {
       clients: 'data/clients.json',
       sites: 'data/sites.json',
       timesheets: 'data/timesheets.json',
-      expenses: 'data/expenses.json'
+      expenses: 'data/expenses.json',
+      people: 'data/people.json'
     };
 
     const data = {};

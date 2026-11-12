@@ -21,7 +21,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/logo.png?v=7">
   <link rel="icon" type="image/png" href="assets/logo.png?v=7">
 
-  <link rel="stylesheet" href="css/styles.css?v=23">
+  <link rel="stylesheet" href="css/styles.css?v=24">
 </head>
 <body>
 
@@ -464,20 +464,63 @@
     </section>
 
     <!-- ======================================================================
-         VIEW 5: PERSONE (ANAGRAFICA & CONTATTI)
+         VIEW 5: PERSONE (ANAGRAFICHE, CONTATTI & PROFESSIONISTI)
          ====================================================================== -->
     <section id="view-people" class="view-section">
       <div class="section-toolbar">
         <div class="toolbar-title">
-          <h2>Persone</h2>
-          <p>Operai, collaboratori e clienti</p>
+          <h2>Persone & Anagrafiche</h2>
+          <p>Operai, clienti, commercialisti, tecnici e fornitori</p>
+        </div>
+        <div class="toolbar-actions">
+          <button class="btn btn-primary" onclick="app.openPersonModal()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Nuova Persona
+          </button>
         </div>
       </div>
-      <div class="empty-state" style="padding: 48px 16px;">
-        <svg viewBox="0 0 24 24" style="width:48px; height:48px; stroke:var(--text-dim); fill:none; stroke-width:1.5; margin-bottom:12px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <h3>Sezione Persone</h3>
-        <p>In arrivo nel prossimo passaggio per una gestione centralizzata del personale e dei contatti.</p>
+
+      <!-- Barra di ricerca e filtri categorie -->
+      <div class="people-toolbar-controls">
+        <div class="search-input-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="people-search-input" class="form-input search-input" placeholder="Cerca per nome, azienda, ruolo o telefono..." oninput="app.handlePeopleSearch(this.value)">
+          <button id="people-search-clear" class="search-clear-btn" style="display:none;" onclick="app.clearPeopleSearch()" title="Cancella ricerca">&times;</button>
+        </div>
+
+        <div class="filter-chips-scroll">
+          <button type="button" class="filter-chip active" data-people-filter="all" onclick="app.setPeopleFilter('all')">
+            Tutti (<span id="people-count-all">0</span>)
+          </button>
+          <button type="button" class="filter-chip" data-people-filter="dipendente" onclick="app.setPeopleFilter('dipendente')">
+            👷 Operai & Dipendenti (<span id="people-count-dipendente">0</span>)
+          </button>
+          <button type="button" class="filter-chip" data-people-filter="cliente" onclick="app.setPeopleFilter('cliente')">
+            🏢 Clienti (<span id="people-count-cliente">0</span>)
+          </button>
+          <button type="button" class="filter-chip" data-people-filter="tecnico" onclick="app.setPeopleFilter('tecnico')">
+            📐 Geometri & Architetti (<span id="people-count-tecnico">0</span>)
+          </button>
+          <button type="button" class="filter-chip" data-people-filter="commercialista" onclick="app.setPeopleFilter('commercialista')">
+            💼 Commercialisti & Fisco (<span id="people-count-commercialista">0</span>)
+          </button>
+          <button type="button" class="filter-chip" data-people-filter="fornitore" onclick="app.setPeopleFilter('fornitore')">
+            🚚 Fornitori Materiali (<span id="people-count-fornitore">0</span>)
+          </button>
+          <button type="button" class="filter-chip" data-people-filter="subappaltatore" onclick="app.setPeopleFilter('subappaltatore')">
+            🔨 Subappalti & Impianti (<span id="people-count-subappaltatore">0</span>)
+          </button>
+          <button type="button" class="filter-chip" data-people-filter="sicurezza" onclick="app.setPeopleFilter('sicurezza')">
+            🦺 Sicurezza & RSPP (<span id="people-count-sicurezza">0</span>)
+          </button>
+          <button type="button" class="filter-chip" data-people-filter="altro" onclick="app.setPeopleFilter('altro')">
+            👤 Altro (<span id="people-count-altro">0</span>)
+          </button>
+        </div>
       </div>
+
+      <!-- Griglia Card Persone -->
+      <div id="people-cards-list" class="people-cards-grid"></div>
     </section>
 
     <!-- ======================================================================
@@ -690,6 +733,82 @@
         <div class="form-actions">
           <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-client')">Annulla</button>
           <button type="submit" class="btn btn-primary">Salva Cliente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: PERSONA & ANAGRAFICA -->
+  <div id="modal-person" class="modal-backdrop">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 id="modal-person-title">Nuova Persona</h3>
+        <button class="btn-icon" onclick="app.closeModal('modal-person')">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form id="form-person" onsubmit="app.handlePersonSubmit(event)">
+        <div class="form-group">
+          <label class="form-label" for="person-type">Tipologia Persona *</label>
+          <select id="person-type" class="form-select" onchange="app.handlePersonTypeChange()" required>
+            <option value="dipendente">👷 Dipendente / Operaio Cantiere</option>
+            <option value="cliente">🏢 Cliente (Committente)</option>
+            <option value="commercialista">💼 Commercialista / Fisco / Buste Paga</option>
+            <option value="tecnico">📐 Geometra / Architetto / Ingegnere (DL)</option>
+            <option value="subappaltatore">🔨 Subappaltatore / Artigiano (Impianti)</option>
+            <option value="fornitore">🚚 Fornitore Materiali / Magazzino</option>
+            <option value="sicurezza">🦺 Sicurezza Cantiere / RSPP</option>
+            <option value="collaboratore">🤝 Collaboratore Esterno</option>
+            <option value="altro">👤 Altro Contatto</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="person-name">Nome e Cognome / Ragione Sociale *</label>
+          <input type="text" id="person-name" class="form-input" placeholder="Es. Marco Rossi o EdilMarket Srl" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="person-role">Ruolo / Mansione</label>
+            <input type="text" id="person-role" class="form-input" placeholder="Es. Muratore Specializzato, DL...">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="person-company">Azienda / Studio</label>
+            <input type="text" id="person-company" class="form-input" placeholder="Es. Studio Fiscale, Ditta Snc...">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="person-phone">Telefono / WhatsApp</label>
+            <input type="tel" id="person-phone" class="form-input" placeholder="Es. +39 340 1234567">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="person-email">Email</label>
+            <input type="email" id="person-email" class="form-input" placeholder="Es. studio@example.it">
+          </div>
+        </div>
+
+        <div id="person-rate-group" class="form-group">
+          <label class="form-label" for="person-rate">Costo Orario Standard (€/h)</label>
+          <input type="number" id="person-rate" class="form-input" step="0.5" min="0" placeholder="Es. 22.50">
+          <span style="font-size:0.72rem; color:var(--text-dim); margin-top:2px; display:block;">Utilizzato per il conteggio orario nei cantieri</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="person-notes">Note & Dettagli</label>
+          <textarea id="person-notes" class="form-textarea" placeholder="Partita IVA, accordi tariffari, recapiti aggiuntivi o certificazioni..."></textarea>
+        </div>
+
+        <div id="person-active-group" class="form-group" style="display:flex; align-items:center; gap:8px; margin-top:6px;">
+          <input type="checkbox" id="person-active" style="width:18px; height:18px; accent-color:var(--primary);" checked>
+          <label for="person-active" style="font-size:0.86rem; font-weight:600; cursor:pointer;">Persona / Contatto Attivo</label>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-person')">Annulla</button>
+          <button type="submit" class="btn btn-primary">Salva Persona</button>
         </div>
       </form>
     </div>
@@ -962,6 +1081,6 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Core App Scripts (ES Modules) -->
-  <script type="module" src="js/app.js?v=23"></script>
+  <script type="module" src="js/app.js?v=24"></script>
 </body>
 </html>
