@@ -21,7 +21,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/logo.png?v=7">
   <link rel="icon" type="image/png" href="assets/logo.png?v=7">
 
-  <link rel="stylesheet" href="css/styles.css?v=28">
+  <link rel="stylesheet" href="css/styles.css?v=29">
 </head>
 <body>
 
@@ -54,8 +54,11 @@
       </button>
     </nav>
 
-    <!-- Header Actions (Pulsante Sidebar Drawer in alto a destra) -->
+    <!-- Header Actions (Pulsante Privacy Dati Economici & Pulsante Sidebar Drawer) -->
     <div class="header-actions">
+      <button id="header-privacy-btn" class="btn-icon" title="Nascondi o mostra importi economici" onclick="app.toggleEconomicPrivacy()" aria-label="Privacy importi economici">
+        <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
       <button id="header-sidebar-btn" class="btn-icon" title="Menu e Sezioni" onclick="app.toggleSidebar()" aria-label="Apri menu laterale">
         <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
@@ -1140,6 +1143,6 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Core App Scripts (ES Modules) -->
-  <script type="module" src="js/app.js?v=28"></script>
+  <script type="module" src="js/app.js?v=29"></script>
 </body>
 </html>
