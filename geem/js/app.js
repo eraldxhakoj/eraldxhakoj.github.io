@@ -1252,15 +1252,18 @@ class GeemApp {
     const subEl = document.getElementById('site-detail-sub');
     const bodyEl = document.getElementById('site-detail-body');
     const editBtn = document.getElementById('site-detail-edit-btn');
+    const quickActionBtn = document.getElementById('site-detail-quick-action');
 
     if (titleEl) titleEl.textContent = `${site.code} - ${site.name}`;
     if (subEl) subEl.textContent = `Cliente: ${client.name}`;
-    if (editBtn) {
-      editBtn.onclick = () => {
-        this.closeModal('modal-site-detail');
-        this.openSiteModal(site.id);
-      };
-    }
+
+    const handleEditSite = () => {
+      this.closeModal('modal-site-detail');
+      this.openSiteModal(site.id);
+    };
+
+    if (editBtn) editBtn.onclick = handleEditSite;
+    if (quickActionBtn) quickActionBtn.onclick = handleEditSite;
 
     const statusBadges = {
       'in_corso': '<span class="item-badge badge-green">In Corso</span>',
