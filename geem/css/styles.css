@@ -2558,6 +2558,60 @@ body {
 }
 
 /* ==========================================================================
+   Filtri & Ordinamento Cantieri
+   ========================================================================== */
+.sites-filter-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sites-filter-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 640px) {
+  .sites-filter-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 900px) {
+  .sites-filter-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.sites-filter-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sites-filter-col label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+}
+
+.sites-filter-reset-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 8px;
+  margin-top: 2px;
+}
+
+/* ==========================================================================
    Persone Cards Grid & Stylish Card
    ========================================================================== */
 .people-cards-grid {

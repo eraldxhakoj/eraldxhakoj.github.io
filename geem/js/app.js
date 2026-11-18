@@ -77,8 +77,33 @@ class GeemApp {
       timesheetSite: 'all',
       expenseSite: 'all',
       expenseCategory: 'all',
-      siteStatus: 'all'
+      siteStatus: 'all',
+      siteSort: 'status_startdate',
+      siteSearch: '',
+      siteClient: 'all',
+      siteFinancial: 'all',
+      siteBudget: 'all'
     };
+
+    // Ripristino filtri e ordinamento cantieri da localStorage
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const savedSitesFilters = localStorage.getItem('geem_sites_filters');
+        if (savedSitesFilters) {
+          const parsed = JSON.parse(savedSitesFilters);
+          if (parsed && typeof parsed === 'object') {
+            this.filters.siteStatus = parsed.siteStatus || 'all';
+            this.filters.siteSort = parsed.siteSort || 'status_startdate';
+            this.filters.siteSearch = parsed.siteSearch || '';
+            this.filters.siteClient = parsed.siteClient || 'all';
+            this.filters.siteFinancial = parsed.siteFinancial || 'all';
+            this.filters.siteBudget = parsed.siteBudget || 'all';
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Errore lettura filtri cantieri da localStorage:', e);
+    }
 
     // Filtro Periodo Finanziario Dashboard ('year' | 'month' | 'last_month' | 'active' | 'all')
     try {
@@ -289,8 +314,134 @@ class GeemApp {
   }
 
   filterSiteStatus(status) {
-    this.filters.siteStatus = status;
+    this.setSiteStatusFilter(status);
+  }
+
+  saveSitesFilters() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const payload = {
+          siteStatus: this.filters.siteStatus,
+          siteSort: this.filters.siteSort,
+          siteSearch: this.filters.siteSearch,
+          siteClient: this.filters.siteClient,
+          siteFinancial: this.filters.siteFinancial,
+          siteBudget: this.filters.siteBudget
+        };
+        localStorage.setItem('geem_sites_filters', JSON.stringify(payload));
+      }
+    } catch (e) {
+      console.warn('Errore salvataggio filtri cantieri in localStorage:', e);
+    }
+  }
+
+  setSiteStatusFilter(status) {
+    this.filters.siteStatus = status || 'all';
+    this.saveSitesFilters();
     this.renderSites();
+  }
+
+  setSiteSort(sortValue) {
+    this.filters.siteSort = sortValue || 'status_startdate';
+    this.saveSitesFilters();
+    this.renderSites();
+  }
+
+  setSiteClientFilter(clientId) {
+    this.filters.siteClient = clientId || 'all';
+    this.saveSitesFilters();
+    this.renderSites();
+  }
+
+  setSiteFinancialFilter(financialValue) {
+    this.filters.siteFinancial = financialValue || 'all';
+    this.saveSitesFilters();
+    this.renderSites();
+  }
+
+  setSiteBudgetFilter(budgetValue) {
+    this.filters.siteBudget = budgetValue || 'all';
+    this.saveSitesFilters();
+    this.renderSites();
+  }
+
+  handleSiteSearch(query) {
+    this.filters.siteSearch = (query || '').trim();
+    const clearBtn = document.getElementById('site-search-clear');
+    if (clearBtn) {
+      clearBtn.style.display = this.filters.siteSearch ? 'block' : 'none';
+    }
+    this.saveSitesFilters();
+    this.renderSites();
+  }
+
+  clearSiteSearch() {
+    this.filters.siteSearch = '';
+    const input = document.getElementById('site-search-input');
+    const clearBtn = document.getElementById('site-search-clear');
+    if (input) input.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+    this.saveSitesFilters();
+    this.renderSites();
+  }
+
+  resetSiteFilters() {
+    this.filters.siteStatus = 'all';
+    this.filters.siteSort = 'status_startdate';
+    this.filters.siteSearch = '';
+    this.filters.siteClient = 'all';
+    this.filters.siteFinancial = 'all';
+    this.filters.siteBudget = 'all';
+
+    const searchInput = document.getElementById('site-search-input');
+    const clearBtn = document.getElementById('site-search-clear');
+    if (searchInput) searchInput.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+
+    this.saveSitesFilters();
+    this.renderSites();
+    this.showToast('Filtri cantieri ripristinati', 'info');
+  }
+
+  syncSiteFiltersUI() {
+    // Sincronizza chip stato
+    document.querySelectorAll('[data-site-status]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.siteStatus === this.filters.siteStatus);
+    });
+
+    // Sincronizza select ordinamento
+    const sortSelect = document.getElementById('filter-site-sort');
+    if (sortSelect && sortSelect.value !== this.filters.siteSort) {
+      sortSelect.value = this.filters.siteSort;
+    }
+
+    // Sincronizza select cliente
+    const clientSelect = document.getElementById('filter-site-client');
+    if (clientSelect && clientSelect.value !== this.filters.siteClient) {
+      clientSelect.value = this.filters.siteClient;
+    }
+
+    // Sincronizza select stato pagamenti
+    const finSelect = document.getElementById('filter-site-financial');
+    if (finSelect && finSelect.value !== this.filters.siteFinancial) {
+      finSelect.value = this.filters.siteFinancial;
+    }
+
+    // Sincronizza select budget
+    const budgetSelect = document.getElementById('filter-site-budget');
+    if (budgetSelect && budgetSelect.value !== this.filters.siteBudget) {
+      budgetSelect.value = this.filters.siteBudget;
+    }
+
+    // Sincronizza input ricerca
+    const searchInput = document.getElementById('site-search-input');
+    const clearBtn = document.getElementById('site-search-clear');
+    if (searchInput && searchInput.value !== this.filters.siteSearch) {
+      searchInput.value = this.filters.siteSearch;
+    }
+    if (clearBtn) {
+      clearBtn.style.display = this.filters.siteSearch ? 'block' : 'none';
+    }
   }
 
   switchAdminSubTab(subTabId) {
@@ -706,6 +857,14 @@ class GeemApp {
       filterExpSite.innerHTML = '<option value="all">Tutti i Cantieri e Spese Generali</option><option value="generale">Solo Spese Generali</option>' +
         sites.map(s => `<option value="${s.id}">${s.code} - ${s.name}</option>`).join('');
       if (current) filterExpSite.value = current;
+    }
+
+    const filterSiteClient = document.getElementById('filter-site-client');
+    if (filterSiteClient) {
+      const current = this.filters.siteClient || 'all';
+      filterSiteClient.innerHTML = '<option value="all">Tutti i clienti</option>' +
+        clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+      filterSiteClient.value = current;
     }
   }
 
@@ -1161,25 +1320,205 @@ class GeemApp {
     const list = document.getElementById('sites-list');
     if (!list) return;
 
-    let sites = [...store.data.sites];
+    this.syncSiteFiltersUI();
+
+    const allSites = store.data.sites || [];
+
+    // Aggiorna contatori per chip di stato
+    const countAll = allSites.length;
+    const countInCorso = allSites.filter(s => s.status === 'in_corso').length;
+    const countSospeso = allSites.filter(s => s.status === 'sospeso').length;
+    const countCompletato = allSites.filter(s => s.status === 'completato').length;
+
+    const elCountAll = document.getElementById('site-count-all');
+    const elCountInCorso = document.getElementById('site-count-in_corso');
+    const elCountSospeso = document.getElementById('site-count-sospeso');
+    const elCountCompletato = document.getElementById('site-count-completato');
+
+    if (elCountAll) elCountAll.textContent = countAll;
+    if (elCountInCorso) elCountInCorso.textContent = countInCorso;
+    if (elCountSospeso) elCountSospeso.textContent = countSospeso;
+    if (elCountCompletato) elCountCompletato.textContent = countCompletato;
+
+    // 1. FILTRAGGIO
+    let sites = [...allSites];
+
+    // Filtro per stato
     if (this.filters.siteStatus && this.filters.siteStatus !== 'all') {
       sites = sites.filter(s => s.status === this.filters.siteStatus);
     }
 
+    // Filtro per cliente
+    if (this.filters.siteClient && this.filters.siteClient !== 'all') {
+      sites = sites.filter(s => s.clientId === this.filters.siteClient);
+    }
+
+    // Filtro per stringa di ricerca (codice, nome, indirizzo, note, nome cliente)
+    if (this.filters.siteSearch) {
+      const q = this.filters.siteSearch.toLowerCase();
+      sites = sites.filter(s => {
+        const client = store.data.clients.find(c => c.id === s.clientId);
+        const clientName = client ? client.name.toLowerCase() : '';
+        return (s.code && s.code.toLowerCase().includes(q)) ||
+               (s.name && s.name.toLowerCase().includes(q)) ||
+               (s.address && s.address.toLowerCase().includes(q)) ||
+               (s.notes && s.notes.toLowerCase().includes(q)) ||
+               clientName.includes(q);
+      });
+    }
+
+    // Filtro per stato pagamenti
+    if (this.filters.siteFinancial && this.filters.siteFinancial !== 'all') {
+      sites = sites.filter(s => {
+        const cost = store.getSiteCost(s.id);
+        const payments = Array.isArray(s.payments) ? s.payments : [];
+        if (this.filters.siteFinancial === 'has_balance') {
+          return cost.quoteAmount > 0 && cost.balanceRemaining > 0;
+        } else if (this.filters.siteFinancial === 'fully_paid') {
+          return cost.quoteAmount > 0 && cost.balanceRemaining <= 0;
+        } else if (this.filters.siteFinancial === 'no_payments') {
+          return payments.length === 0 || cost.paymentsTotal === 0;
+        }
+        return true;
+      });
+    }
+
+    // Filtro per budget e rischio
+    if (this.filters.siteBudget && this.filters.siteBudget !== 'all') {
+      sites = sites.filter(s => {
+        const cost = store.getSiteCost(s.id);
+        const hasAttachments = Array.isArray(s.attachments) && s.attachments.length > 0;
+        if (this.filters.siteBudget === 'loss') {
+          return cost.quoteAmount > 0 && cost.profit < 0;
+        } else if (this.filters.siteBudget === 'at_risk') {
+          return cost.quoteAmount > 0 && (cost.profit < 0 || (cost.costBudgetUsage !== null && cost.costBudgetUsage >= 85));
+        } else if (this.filters.siteBudget === 'profitable') {
+          return cost.quoteAmount > 0 && cost.profit >= 0 && (cost.costBudgetUsage === null || cost.costBudgetUsage < 85);
+        } else if (this.filters.siteBudget === 'has_attachments') {
+          return hasAttachments;
+        }
+        return true;
+      });
+    }
+
+    // Aggiorna indicatore conteggio cantieri mostrati
+    const displayedCountEl = document.getElementById('sites-displayed-count');
+    if (displayedCountEl) displayedCountEl.textContent = sites.length;
+
     if (sites.length === 0) {
+      const hasActiveFilters = (this.filters.siteStatus !== 'all') ||
+                               (this.filters.siteClient !== 'all') ||
+                               (this.filters.siteFinancial !== 'all') ||
+                               (this.filters.siteBudget !== 'all') ||
+                               Boolean(this.filters.siteSearch);
+
       list.innerHTML = `
         <div class="empty-state">
           <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l8-4v18M13 11l6 3v7M9 9h1M9 13h1M9 17h1"/></svg>
-          <h3>Nessun cantiere presente</h3>
-          <p>Aggiungi il tuo primo cantiere nella sezione Admin.</p>
-          <button class="btn btn-primary" onclick="app.openSiteModal()">
-            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Aggiungi Cantiere
-          </button>
+          <h3>${hasActiveFilters ? 'Nessun cantiere corrisponde ai filtri' : 'Nessun cantiere presente'}</h3>
+          <p>${hasActiveFilters ? 'Prova a modificare o azzerare i criteri di ricerca e filtro.' : 'Aggiungi il tuo primo cantiere nella sezione Admin o cliccando sul pulsante in alto.'}</p>
+          ${hasActiveFilters ? `
+            <button class="btn btn-secondary btn-sm" onclick="app.resetSiteFilters()">
+              Ripristina tutti i filtri
+            </button>
+          ` : `
+            <button class="btn btn-primary" onclick="app.openSiteModal()">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Aggiungi Cantiere
+            </button>
+          `}
         </div>
       `;
       return;
     }
+
+    // 2. ORDINAMENTO
+    // Ordine di priorità per lo stato (1. In corso, 2. Sospeso, 3. Completato)
+    const statusOrder = {
+      'in_corso': 1,
+      'sospeso': 2,
+      'completato': 3
+    };
+
+    const sortMode = this.filters.siteSort || 'status_startdate';
+
+    sites.sort((a, b) => {
+      if (sortMode === 'status_startdate') {
+        const orderA = statusOrder[a.status] || 99;
+        const orderB = statusOrder[b.status] || 99;
+        if (orderA !== orderB) return orderA - orderB;
+
+        // Se lo stato è uguale, ordina per data di inizio (dal più recente, con date vuote in coda)
+        const dateA = a.startDate || '';
+        const dateB = b.startDate || '';
+        if (dateA && dateB) return dateB.localeCompare(dateA);
+        if (dateA && !dateB) return -1;
+        if (!dateA && dateB) return 1;
+        return (a.name || '').localeCompare(b.name || '');
+      }
+
+      if (sortMode === 'startdate_desc') {
+        const dateA = a.startDate || '';
+        const dateB = b.startDate || '';
+        if (dateA && dateB) return dateB.localeCompare(dateA);
+        if (dateA && !dateB) return -1;
+        if (!dateA && dateB) return 1;
+        return (a.name || '').localeCompare(b.name || '');
+      }
+
+      if (sortMode === 'startdate_asc') {
+        const dateA = a.startDate || '';
+        const dateB = b.startDate || '';
+        if (dateA && dateB) return dateA.localeCompare(dateB);
+        if (dateA && !dateB) return -1;
+        if (!dateA && dateB) return 1;
+        return (a.name || '').localeCompare(b.name || '');
+      }
+
+      if (sortMode === 'name_asc') {
+        return (a.name || '').localeCompare(b.name || '');
+      }
+
+      if (sortMode === 'name_desc') {
+        return (b.name || '').localeCompare(a.name || '');
+      }
+
+      if (sortMode === 'code_asc') {
+        return (a.code || '').localeCompare(b.code || '');
+      }
+
+      if (sortMode === 'quote_desc') {
+        const qA = parseFloat(a.quoteAmount) || 0;
+        const qB = parseFloat(b.quoteAmount) || 0;
+        return qB - qA;
+      }
+
+      if (sortMode === 'quote_asc') {
+        const qA = parseFloat(a.quoteAmount) || 0;
+        const qB = parseFloat(b.quoteAmount) || 0;
+        return qA - qB;
+      }
+
+      if (sortMode === 'cost_desc') {
+        const costA = store.getSiteCost(a.id).totalCost || 0;
+        const costB = store.getSiteCost(b.id).totalCost || 0;
+        return costB - costA;
+      }
+
+      if (sortMode === 'balance_desc') {
+        const balA = store.getSiteCost(a.id).balanceRemaining || 0;
+        const balB = store.getSiteCost(b.id).balanceRemaining || 0;
+        return balB - balA;
+      }
+
+      if (sortMode === 'profit_asc') {
+        const profA = store.getSiteCost(a.id).profit || 0;
+        const profB = store.getSiteCost(b.id).profit || 0;
+        return profA - profB;
+      }
+
+      return 0;
+    });
 
     list.innerHTML = sites.map(site => {
       const client = store.data.clients.find(c => c.id === site.clientId) || { name: 'Cliente N/D', phone: '' };
@@ -1201,6 +1540,10 @@ class GeemApp {
             : `<span class="item-badge badge-red" style="font-size:0.7rem;">${cost.profitMargin}% perdita</span>`)
         : '';
 
+      const dateBadge = site.startDate 
+        ? `<span class="sub-icon" style="font-size:0.74rem; color:var(--text-dim);">${ICONS.calendar} Dal ${fmtDate(site.startDate)}</span>`
+        : '';
+
       return `
         <div class="site-card-compact" onclick="app.openSiteDetailModal('${site.id}')">
           <div class="site-card-compact-head">
@@ -1219,6 +1562,7 @@ class GeemApp {
           <div class="site-card-compact-sub">
             <span class="sub-icon">${ICONS.user} ${client.name}</span>
             ${site.address ? `<span class="sub-icon">${ICONS.map} ${site.address}</span>` : ''}
+            ${dateBadge}
           </div>
 
           <div class="site-card-compact-footer">

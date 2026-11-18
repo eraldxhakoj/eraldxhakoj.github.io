@@ -21,7 +21,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/logo.png?v=7">
   <link rel="icon" type="image/png" href="assets/logo.png?v=7">
 
-  <link rel="stylesheet" href="css/styles.css?v=30">
+  <link rel="stylesheet" href="css/styles.css?v=31">
 </head>
 <body>
 
@@ -312,16 +312,89 @@
         </div>
       </div>
 
-      <!-- Filtro Cantieri (Predisposto per future espansioni) -->
-      <div id="filter-panel-sites" class="page-filter-panel hidden" style="margin-bottom:12px;">
-        <div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:var(--radius-sm); padding:10px; font-size:0.8rem; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center;">
-          <span>Filtro stato cantieri:</span>
-          <select id="filter-site-status" class="form-select" style="min-height:32px; padding:2px 8px; font-size:0.78rem; width:auto;" onchange="app.filterSiteStatus(this.value)">
-            <option value="all">Tutti gli stati</option>
-            <option value="in_corso">Solo In Corso</option>
-            <option value="sospeso">Solo Sospesi</option>
-            <option value="completato">Solo Completati</option>
-          </select>
+      <!-- Filtri & Ordinamento Cantieri (Pannello Collassabile) -->
+      <div id="filter-panel-sites" class="page-filter-panel hidden" style="margin-bottom:14px;">
+        <div class="sites-filter-box">
+          <!-- Barra Ricerca Cantiere -->
+          <div class="search-input-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="site-search-input" class="form-input search-input" placeholder="Cerca cantiere per codice, nome, indirizzo, note o cliente..." oninput="app.handleSiteSearch(this.value)">
+            <button id="site-search-clear" class="search-clear-btn" style="display:none;" onclick="app.clearSiteSearch()" title="Cancella ricerca">&times;</button>
+          </div>
+
+          <!-- Chip Stato Cantiere -->
+          <div class="filter-chips-scroll">
+            <button type="button" class="filter-chip active" data-site-status="all" onclick="app.setSiteStatusFilter('all')">
+              Tutti (<span id="site-count-all">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-site-status="in_corso" onclick="app.setSiteStatusFilter('in_corso')">
+              In Corso (<span id="site-count-in_corso">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-site-status="sospeso" onclick="app.setSiteStatusFilter('sospeso')">
+              Sospesi (<span id="site-count-sospeso">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-site-status="completato" onclick="app.setSiteStatusFilter('completato')">
+              Completati (<span id="site-count-completato">0</span>)
+            </button>
+          </div>
+
+          <!-- Griglia Selettori: Ordinamento e Filtri Avanzati -->
+          <div class="sites-filter-grid">
+            <div class="sites-filter-col">
+              <label for="filter-site-sort">Ordina per</label>
+              <select id="filter-site-sort" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setSiteSort(this.value)">
+                <option value="status_startdate">Predefinito (Stato + Data Inizio)</option>
+                <option value="startdate_desc">Data Inizio (dal più recente)</option>
+                <option value="startdate_asc">Data Inizio (dal meno recente)</option>
+                <option value="name_asc">Nome Cantiere (A - Z)</option>
+                <option value="name_desc">Nome Cantiere (Z - A)</option>
+                <option value="code_asc">Codice (CANT-01...)</option>
+                <option value="quote_desc">Preventivo (€ più alto)</option>
+                <option value="quote_asc">Preventivo (€ più basso)</option>
+                <option value="cost_desc">Costi sostenuti (€ maggiori)</option>
+                <option value="balance_desc">Saldo da incassare (€ maggiore)</option>
+                <option value="profit_asc">Margine più a rischio / perdita</option>
+              </select>
+            </div>
+
+            <div class="sites-filter-col">
+              <label for="filter-site-client">Cliente</label>
+              <select id="filter-site-client" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setSiteClientFilter(this.value)">
+                <option value="all">Tutti i clienti</option>
+              </select>
+            </div>
+
+            <div class="sites-filter-col">
+              <label for="filter-site-financial">Stato Pagamenti</label>
+              <select id="filter-site-financial" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setSiteFinancialFilter(this.value)">
+                <option value="all">Tutti i saldi</option>
+                <option value="has_balance">Solo con saldo da incassare</option>
+                <option value="fully_paid">Solo saldati al 100%</option>
+                <option value="no_payments">Senza alcun acconto ricevuto</option>
+              </select>
+            </div>
+
+            <div class="sites-filter-col">
+              <label for="filter-site-budget">Budget & Rischio</label>
+              <select id="filter-site-budget" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setSiteBudgetFilter(this.value)">
+                <option value="all">Tutti i margini</option>
+                <option value="loss">In perdita (costi > preventivo)</option>
+                <option value="at_risk">A rischio (85%+ speso)</option>
+                <option value="profitable">In utile / budget regolare</option>
+                <option value="has_attachments">Con documenti allegati</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Barra di ripristino filtri -->
+          <div class="sites-filter-reset-wrap">
+            <span id="sites-filter-active-count" style="font-size:0.75rem; color:var(--text-muted);">
+              Mostrati: <strong id="sites-displayed-count" style="color:#fff;">0</strong> cantieri
+            </span>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="app.resetSiteFilters()" style="min-height:28px; padding:0 8px; font-size:0.75rem;">
+              Ripristina filtri
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1143,6 +1216,6 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Core App Scripts (ES Modules) -->
-  <script type="module" src="js/app.js?v=30"></script>
+  <script type="module" src="js/app.js?v=31"></script>
 </body>
 </html>
