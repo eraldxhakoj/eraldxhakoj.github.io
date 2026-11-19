@@ -3832,7 +3832,7 @@ body {
   justify-content: space-between;
   align-items: flex-start;
   padding-bottom: 18px;
-  border-bottom: 2px solid #0284c7;
+  border-bottom: 2px solid #0f172a;
   margin-bottom: 18px;
 }
 
@@ -3877,7 +3877,7 @@ body {
 .print-doc-type-title {
   font-size: 0.85rem;
   font-weight: 900;
-  color: #0284c7;
+  color: #0f172a;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 4px;
@@ -3933,8 +3933,8 @@ body {
 }
 
 .print-quote-subject {
-  background: #f0f9ff;
-  border-left: 4px solid #0284c7;
+  background: #f8fafc;
+  border-left: 4px solid #0f172a;
   padding: 8px 12px;
   margin-bottom: 18px;
   border-radius: 0 4px 4px 0;
@@ -3945,7 +3945,7 @@ body {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #0369a1;
+  color: #475569;
 }
 
 .print-quote-subject-title {
@@ -4032,8 +4032,8 @@ body {
 }
 
 .print-summary-grand-total {
-  background: #f0f9ff;
-  border-top: 2px solid #0284c7;
+  background: #f8fafc;
+  border-top: 2px solid #0f172a;
   padding: 8px 12px;
   display: flex;
   justify-content: space-between;
@@ -4043,7 +4043,7 @@ body {
 .print-summary-grand-label {
   font-size: 0.85rem;
   font-weight: 800;
-  color: #0369a1;
+  color: #0f172a;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }

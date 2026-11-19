@@ -5443,7 +5443,7 @@ class GeemApp {
             <strong>${fmtDocMoney(totals.subtotal)}</strong>
           </div>
           ${totals.discountAmount > 0 ? `
-            <div class="print-summary-row" style="color:#0284c7;">
+            <div class="print-summary-row" style="color:#0f172a;">
               <span>Sconto Commerciale (${totals.discountPercent}%)</span>
               <strong>- ${fmtDocMoney(totals.discountAmount)}</strong>
             </div>
@@ -5464,7 +5464,7 @@ class GeemApp {
       </div>
 
       <div class="print-terms-box">
-        <div style="font-weight:800; margin-bottom:4px; text-transform:uppercase; font-size:0.72rem; letter-spacing:0.04em; color:#0284c7;">
+        <div style="font-weight:800; margin-bottom:4px; text-transform:uppercase; font-size:0.72rem; letter-spacing:0.04em; color:#0f172a;">
           Condizioni Economiche & Note Tecnico-Contrattuali
         </div>
         ${quote.paymentTerms ? `<div>&bull; <strong>Condizioni di Pagamento:</strong> ${escapeHTML(quote.paymentTerms)}</div>` : ''}
