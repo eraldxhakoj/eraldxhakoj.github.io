@@ -814,6 +814,7 @@ class GeemApp {
     this.renderAdminClients();
     this.renderAdminSites();
     this.renderAdminTypes();
+    this.renderCompanyProfile();
     this.populateSelectDropdowns();
     this.renderPeople();
     this.renderPlaces();
@@ -2792,6 +2793,166 @@ class GeemApp {
         </span>
       `).join('');
     }
+  }
+
+  // --- RENDERING PROFILO DITTA & LOGO ---
+  renderCompanyProfile() {
+    const company = (store && typeof store.getCompany === 'function') ? store.getCompany() : {};
+
+    const setVal = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.value = val || '';
+    };
+
+    setVal('company-name', company.name);
+    setVal('company-short-name', company.shortName);
+    setVal('company-logo-url', company.logoUrl);
+    setVal('company-vat', company.vatNumber);
+    setVal('company-cf', company.fiscalCode);
+    setVal('company-rea', company.rea);
+    setVal('company-address', company.address);
+    setVal('company-phone', company.phone);
+    setVal('company-email', company.email);
+    setVal('company-pec', company.pec);
+    setVal('company-website', company.website);
+    setVal('company-iban', company.iban);
+    setVal('company-bank-name', company.bankName);
+    setVal('company-insurance', company.insurance);
+    setVal('company-quote-footer', company.quoteFooterNote);
+
+    const logoPreview = document.getElementById('company-logo-preview');
+    if (logoPreview) {
+      logoPreview.src = company.logoUrl || 'assets/logo.png?v=7';
+    }
+
+    this.updateLetterheadLivePreview();
+  }
+
+  updateLetterheadLivePreview() {
+    const previewBox = document.getElementById('company-letterhead-live-preview');
+    if (!previewBox) return;
+
+    const company = (store && typeof store.getCompany === 'function') ? store.getCompany() : {};
+    const logoSrc = company.logoUrl || 'assets/logo.png?v=7';
+    const compName = escapeHTML(company.name || 'Impresa Edile');
+    const compAddr = escapeHTML(company.address || 'Sede da definire');
+    const vatStr = company.vatNumber ? `P.IVA: ${escapeHTML(company.vatNumber)}` : '';
+    const cfStr = company.fiscalCode ? ` &bull; C.F.: ${escapeHTML(company.fiscalCode)}` : '';
+    const phoneStr = company.phone ? ` &bull; Tel: ${escapeHTML(company.phone)}` : '';
+    const emailStr = company.email ? `Email: ${escapeHTML(company.email)}` : '';
+    const pecStr = company.pec ? ` &bull; PEC: ${escapeHTML(company.pec)}` : '';
+    const webStr = company.website ? ` &bull; ${escapeHTML(company.website)}` : '';
+    const ibanStr = company.iban ? `<div style="margin-top:6px; font-size:0.75rem; color:#0284c7; font-weight:600;">IBAN: ${escapeHTML(company.iban)}${company.bankName ? ` (${escapeHTML(company.bankName)})` : ''}</div>` : '';
+
+    previewBox.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; border-bottom:2px solid #0284c7; padding-bottom:14px;">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <img src="${escapeHTML(logoSrc)}" alt="${compName}" style="max-height:56px; max-width:130px; object-fit:contain;" onerror="this.style.display='none'">
+          <div>
+            <div style="font-size:1.15rem; font-weight:800; color:#0f172a; letter-spacing:-0.02em;">${compName}</div>
+            <div style="font-size:0.75rem; color:#475569; margin-top:2px; line-height:1.4;">
+              ${compAddr}<br>
+              ${vatStr}${cfStr}${phoneStr}<br>
+              ${emailStr}${pecStr}${webStr}
+            </div>
+            ${ibanStr}
+          </div>
+        </div>
+        <div style="text-align:right; font-size:0.72rem; color:#64748b; line-height:1.4;">
+          <span style="display:inline-block; padding:3px 8px; background:#e0f2fe; color:#0369a1; border-radius:4px; font-weight:700; text-transform:uppercase; font-size:0.65rem; margin-bottom:4px;">Intestazione Ufficiale</span>
+          <div>Documentazione di Cantiere & Contabilità</div>
+          <div>Conforme D.Lgs 81/08</div>
+        </div>
+      </div>
+    `;
+  }
+
+  handleCompanyLogoUpload(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      this.showToast('Seleziona un file immagine valido (PNG, JPG, SVG, WebP)', 'error');
+      return;
+    }
+
+    if (typeof resizeAndCompressImage === 'function') {
+      resizeAndCompressImage(file, 400, 400, 0.9).then(dataUrl => {
+        const logoUrlInput = document.getElementById('company-logo-url');
+        const logoPreview = document.getElementById('company-logo-preview');
+        if (logoUrlInput) logoUrlInput.value = dataUrl;
+        if (logoPreview) logoPreview.src = dataUrl;
+        this.updateLetterheadLivePreview();
+        this.showToast('Nuovo logo caricato (clicca Salva per confermare)', 'info');
+      }).catch(err => {
+        console.error('Errore compressione logo:', err);
+        this.showToast('Errore nel caricamento del logo', 'error');
+      });
+    } else {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target.result;
+        const logoUrlInput = document.getElementById('company-logo-url');
+        const logoPreview = document.getElementById('company-logo-preview');
+        if (logoUrlInput) logoUrlInput.value = dataUrl;
+        if (logoPreview) logoPreview.src = dataUrl;
+        this.updateLetterheadLivePreview();
+        this.showToast('Nuovo logo caricato (clicca Salva per confermare)', 'info');
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  resetCompanyLogo() {
+    const defaultLogo = 'assets/logo.png?v=7';
+    const logoUrlInput = document.getElementById('company-logo-url');
+    const logoPreview = document.getElementById('company-logo-preview');
+    if (logoUrlInput) logoUrlInput.value = defaultLogo;
+    if (logoPreview) logoPreview.src = defaultLogo;
+    this.updateLetterheadLivePreview();
+    this.showToast('Logo reimpostato al default', 'info');
+  }
+
+  onCompanyLogoUrlInput(val) {
+    const logoPreview = document.getElementById('company-logo-preview');
+    if (logoPreview) {
+      logoPreview.src = val || 'assets/logo.png?v=7';
+    }
+    this.updateLetterheadLivePreview();
+  }
+
+  saveCompanyProfile(e) {
+    if (e && e.preventDefault) e.preventDefault();
+
+    const getVal = (id) => {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : '';
+    };
+
+    const updated = {
+      name: getVal('company-name') || 'GEEM Costruzioni & Restauri S.r.l.',
+      shortName: getVal('company-short-name') || 'GEEM Edilizia',
+      logoUrl: getVal('company-logo-url') || 'assets/logo.png?v=7',
+      vatNumber: getVal('company-vat'),
+      fiscalCode: getVal('company-cf'),
+      rea: getVal('company-rea'),
+      address: getVal('company-address'),
+      phone: getVal('company-phone'),
+      email: getVal('company-email'),
+      pec: getVal('company-pec'),
+      website: getVal('company-website'),
+      iban: getVal('company-iban'),
+      bankName: getVal('company-bank-name'),
+      insurance: getVal('company-insurance'),
+      quoteFooterNote: getVal('company-quote-footer')
+    };
+
+    if (store && typeof store.updateCompany === 'function') {
+      store.updateCompany(updated);
+    }
+
+    this.renderCompanyProfile();
+    this.showToast('Intestazione aziendale e Logo salvati con successo!', 'success');
   }
 
   // ==========================================================================
@@ -5113,6 +5274,23 @@ class GeemApp {
   generateQuotePrintHTML(quote) {
     const totals = calcQuoteTotals(quote);
     const sections = quote.sections || [];
+    const company = (store && typeof store.getCompany === 'function') ? store.getCompany() : {
+      name: 'GEEM Costruzioni & Restauri S.r.l.',
+      shortName: 'GEEM Edilizia',
+      logoUrl: 'assets/logo.png?v=7',
+      vatNumber: '09876543210',
+      fiscalCode: '09876543210',
+      rea: 'MB-1234567',
+      address: 'Via delle Industrie 18, 20900 Monza (MB)',
+      phone: '+39 039 123456',
+      email: 'info@geemedilizia.it',
+      pec: 'geemcostruzioni@pec.it',
+      website: 'www.geemedilizia.it',
+      iban: '',
+      bankName: '',
+      insurance: 'Polizza R.C. Cantieri e Oneri per la Sicurezza a norma D.Lgs 81/08',
+      quoteFooterNote: 'Documento Informatico Vettoriale generato dal Gestionale Cantieri Edili'
+    };
 
     const vatDescription = quote.vatRate === 10 
       ? 'IVA al 10% (Ristrutturazione Edilizia agevolata ex L. 449/97)'
@@ -5172,16 +5350,28 @@ class GeemApp {
       `;
     });
 
+    const logoSrc = company.logoUrl || 'assets/logo.png?v=7';
+    const compName = escapeHTML(company.name || 'Impresa Edile');
+    const compAddr = escapeHTML(company.address || '');
+    const compVat = company.vatNumber ? `P.IVA: ${escapeHTML(company.vatNumber)}` : '';
+    const compCf = (company.fiscalCode && company.fiscalCode !== company.vatNumber) ? ` &bull; C.F.: ${escapeHTML(company.fiscalCode)}` : '';
+    const compPhone = company.phone ? ` &bull; Tel: ${escapeHTML(company.phone)}` : '';
+    const compEmail = company.email ? `Email: ${escapeHTML(company.email)}` : '';
+    const compPec = company.pec ? ` &bull; PEC: ${escapeHTML(company.pec)}` : '';
+    const compWeb = company.website ? ` &bull; ${escapeHTML(company.website)}` : '';
+    const compRea = company.rea ? ` &bull; REA: ${escapeHTML(company.rea)}` : '';
+    const compIban = company.iban ? `<div>&bull; <strong>Coordinate Bancarie (IBAN):</strong> ${escapeHTML(company.iban)}${company.bankName ? ` (${escapeHTML(company.bankName)})` : ''} - <em>Idoneo per bonifico parlante detrazioni fiscali</em></div>` : '';
+
     return `
       <div class="print-doc-header">
         <div class="print-brand-left">
-          <img src="assets/logo.png?v=7" alt="GEEM Edilizia" class="print-brand-logo">
+          <img src="${escapeHTML(logoSrc)}" alt="${compName}" class="print-brand-logo" onerror="this.style.display='none'">
           <div>
-            <div class="print-company-name">GEEM Costruzioni & Restauri</div>
+            <div class="print-company-name">${compName}</div>
             <div class="print-company-sub">
-              Sede Operativa: Via delle Industrie 18, Monza (MB)<br>
-              P.IVA & C.F.: 09876543210 &bull; Tel: +39 039 123456<br>
-              Email: info@geemedilizia.it &bull; PEC: geemcostruzioni@pec.it
+              ${compAddr ? `${compAddr}<br>` : ''}
+              ${compVat}${compCf}${compPhone}<br>
+              ${compEmail}${compPec}${compWeb}
             </div>
           </div>
         </div>
@@ -5197,9 +5387,9 @@ class GeemApp {
       <div class="print-grid-parties">
         <div class="print-party-card">
           <div class="print-party-label">Impresa Esecutrice</div>
-          <div class="print-party-name">GEEM Costruzioni & Restauri S.r.l.</div>
-          <div class="print-party-detail">Iscr. C.C.I.A.A. Monza Brianza - REA MB-1234567</div>
-          <div class="print-party-detail">Polizza R.C. Cantieri e Oneri per la Sicurezza a norma D.Lgs 81/08</div>
+          <div class="print-party-name">${compName}</div>
+          <div class="print-party-detail">${compAddr || 'Sede operativa ditta'}${compRea}</div>
+          ${company.insurance ? `<div class="print-party-detail">${escapeHTML(company.insurance)}</div>` : ''}
         </div>
 
         <div class="print-party-card">
@@ -5265,16 +5455,17 @@ class GeemApp {
           Condizioni Economiche & Note Tecnico-Contrattuali
         </div>
         ${quote.paymentTerms ? `<div>&bull; <strong>Condizioni di Pagamento:</strong> ${escapeHTML(quote.paymentTerms)}</div>` : ''}
+        ${compIban}
         ${quote.estimatedDays ? `<div>&bull; <strong>Tempi di Esecuzione Previsti:</strong> ${escapeHTML(quote.estimatedDays)} dall'inizio effettivo lavori</div>` : ''}
         ${quote.notes ? `<div>&bull; <strong>Note & Esclusioni:</strong> ${escapeHTML(quote.notes)}</div>` : ''}
         <div style="margin-top:4px; font-size:0.7rem; color:#64748b;">
-          I prezzi sopra indicati restano validi per 30 giorni dalla data di emissione. Le opere saranno realizzate secondo le regole dell'arte e le vigenti normative di sicurezza.
+          ${company.quoteFooterNote ? escapeHTML(company.quoteFooterNote) : "I prezzi sopra indicati restano validi per 30 giorni dalla data di emissione. Le opere saranno realizzate secondo le regole dell'arte e le vigenti normative di sicurezza."}
         </div>
       </div>
 
       <div class="print-signatures-grid">
         <div class="print-sig-col">
-          <div class="print-sig-label">Per GEEM Costruzioni & Restauri</div>
+          <div class="print-sig-label">Per ${compName}</div>
           <div class="print-sig-sub">Firma e Timbro Impresa Esecutrice</div>
           <div style="height:35px;"></div>
         </div>
@@ -5286,7 +5477,7 @@ class GeemApp {
       </div>
 
       <div class="print-footer-legal">
-        <span>GEEM Gestionale Cantieri Edili &bull; Documento Informatico Vettoriale</span>
+        <span>${escapeHTML(company.shortName || compName)} &bull; Documento Informatico Vettoriale</span>
         <span>${escapeHTML(quote.number || 'PREV')} - Pagina 1 di 1</span>
       </div>
     `;
@@ -5922,6 +6113,18 @@ class GeemApp {
     const formAuth = document.getElementById('form-auth');
     if (formAuth) formAuth.addEventListener('submit', (e) => this.handleLogin(e));
 
+    const formCompany = document.getElementById('form-company-profile');
+    if (formCompany) formCompany.addEventListener('submit', (e) => this.saveCompanyProfile(e));
+
+    const inputCompanyLogo = document.getElementById('company-logo-file');
+    if (inputCompanyLogo) inputCompanyLogo.addEventListener('change', (e) => this.handleCompanyLogoUpload(e));
+
+    const btnCompanyLogoReset = document.getElementById('btn-reset-company-logo');
+    if (btnCompanyLogoReset) btnCompanyLogoReset.addEventListener('click', () => this.resetCompanyLogo());
+
+    const inputCompanyLogoUrl = document.getElementById('company-logo-url');
+    if (inputCompanyLogoUrl) inputCompanyLogoUrl.addEventListener('input', (e) => this.onCompanyLogoUrlInput(e.target.value));
+
     const btnLogout = document.getElementById('btn-logout');
     if (btnLogout) btnLogout.addEventListener('click', () => this.handleLogout());
 
@@ -5950,13 +6153,18 @@ class GeemApp {
   }
 }
 
-window.app = new GeemApp();
-if (typeof document !== 'undefined') {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
+if (typeof window !== 'undefined') {
+  window.app = new GeemApp();
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        window.app.init();
+      });
+    } else {
       window.app.init();
-    });
-  } else {
-    window.app.init();
+    }
   }
 }
+
+export { GeemApp };
+

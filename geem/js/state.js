@@ -5,7 +5,26 @@
 import { GitHubStorage } from './github.js';
 
 // Dati iniziali di fabbrica / Demo
+export const INITIAL_COMPANY = {
+  name: 'GEEM Costruzioni & Restauri S.r.l.',
+  shortName: 'GEEM',
+  logoUrl: 'assets/logo.png?v=7',
+  vatNumber: '09876543210',
+  fiscalCode: '09876543210',
+  rea: 'MB-1234567',
+  address: 'Via delle Industrie 18, Monza (MB)',
+  phone: '+39 039 123456',
+  email: 'info@geemedilizia.it',
+  pec: 'geemcostruzioni@pec.it',
+  website: 'www.geemedilizia.it',
+  iban: 'IT60X0542811101000000123456',
+  bankName: 'Banca Intesa Sanpaolo',
+  insurance: 'Polizza R.C. Cantieri e Oneri per la Sicurezza a norma D.Lgs 81/08',
+  quoteFooterNote: 'Documento informatico conforme per accettazione d\'ordine'
+};
+
 export const INITIAL_CONFIG = {
+  company: JSON.parse(JSON.stringify(INITIAL_COMPANY)),
   workerRoles: [
     'Capocantiere',
     'Muratore Specializzato',
@@ -616,6 +635,13 @@ class StateStore {
     }
     if (!Array.isArray(this.data.quotes)) {
       this.data.quotes = JSON.parse(JSON.stringify(INITIAL_QUOTES));
+    }
+    if (!this.data.config) {
+      this.data.config = JSON.parse(JSON.stringify(INITIAL_CONFIG));
+    } else if (!this.data.config.company) {
+      this.data.config.company = JSON.parse(JSON.stringify(INITIAL_COMPANY));
+    } else {
+      this.data.config.company = { ...INITIAL_COMPANY, ...this.data.config.company };
     }
   }
 
@@ -1363,6 +1389,27 @@ class StateStore {
     this.notify('sites');
     this.syncKeyToGitHub('sites', `Eliminazione cantiere ${id}`);
     return true;
+  }
+
+  // ===== GESTIONE PROFILO AZIENDA & CARTA INTESTATA =====
+  getCompany() {
+    if (!this.data.config) this.data.config = {};
+    if (!this.data.config.company) {
+      this.data.config.company = JSON.parse(JSON.stringify(INITIAL_COMPANY));
+    }
+    return this.data.config.company;
+  }
+
+  updateCompany(updated) {
+    if (!this.data.config) this.data.config = {};
+    const current = this.getCompany();
+    this.data.config.company = {
+      ...current,
+      ...updated
+    };
+    this.notify('config');
+    this.syncKeyToGitHub('config', `Aggiornamento intestazione aziendale: ${this.data.config.company.name}`);
+    return this.data.config.company;
   }
 
   // ===== GESTIONE TIPOLOGIE / CONFIG =====

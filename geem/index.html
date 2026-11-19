@@ -530,7 +530,11 @@
 
       <!-- Sub Navigation Admin -->
       <div class="admin-tabs">
-        <button class="admin-tab active" data-subtab="workers">
+        <button class="admin-tab active" data-subtab="company">
+          <svg viewBox="0 0 24 24"><path d="M3 21h18M9 8h1M9 12h1M9 16h1M14 8h1M14 12h1M14 16h1M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>
+          Dati Ditta & Logo
+        </button>
+        <button class="admin-tab" data-subtab="workers">
           <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           Lavoratori
         </button>
@@ -552,8 +556,160 @@
         </button>
       </div>
 
+      <!-- SubView: Dati Ditta, Intestazione & Logo Aziendale -->
+      <div id="admin-company" class="admin-subview">
+        <form id="form-company-profile" onsubmit="event.preventDefault(); app.saveCompanyProfile();">
+          <!-- Logo & Brand Header Box -->
+          <div class="auth-box" style="margin-top:0; margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+              <div>
+                <h3 style="font-size:1.05rem; font-weight:800; color:#fff; margin-bottom:4px;">
+                  Logo & Marchio Impresa
+                </h3>
+                <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">
+                  Il logo verrà visualizzato nella carta intestata dei preventivi, nell'esportazione PDF e nel menu dell'applicazione.
+                </p>
+              </div>
+            </div>
+
+            <div class="company-logo-section">
+              <div class="company-logo-preview-box">
+                <img id="company-logo-preview" src="assets/logo.png?v=7" alt="Logo Impresa" class="company-logo-img">
+              </div>
+              <div class="company-logo-actions">
+                <input type="file" id="company-logo-file-input" accept="image/*" style="display:none;" onchange="app.handleCompanyLogoUpload(event)">
+                <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('company-logo-file-input').click()">
+                  <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Carica Nuovo Logo
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="app.resetCompanyLogo()">
+                  Ripristina Predefinito
+                </button>
+                <div style="width:100%; margin-top:6px;">
+                  <label class="form-label" for="company-logo-url" style="font-size:0.75rem;">Oppure inserisci URL immagine logo:</label>
+                  <input type="text" id="company-logo-url" class="form-input" style="font-size:0.82rem;" placeholder="https://... o assets/logo.png" oninput="app.onCompanyLogoUrlInput(this.value)">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dati Anagrafici & Fiscali Ditta -->
+          <div class="auth-box" style="margin-top:0; margin-bottom:16px;">
+            <h3 style="font-size:1rem; font-weight:800; color:#fff; margin-bottom:12px;">
+              Dati Anagrafici, Legali & Fiscali
+            </h3>
+
+            <div class="form-row">
+              <div class="form-group" style="flex:2;">
+                <label class="form-label" for="company-name">Ragione Sociale Completa (Denominazione Legale)</label>
+                <input type="text" id="company-name" class="form-input" placeholder="Es. Edilizia Rossi S.r.l. o Impresa Edile Bianchi" required oninput="app.updateLetterheadLivePreview()">
+              </div>
+              <div class="form-group" style="flex:1;">
+                <label class="form-label" for="company-short-name">Nome Breve / Sigla Marchio</label>
+                <input type="text" id="company-short-name" class="form-input" placeholder="Es. EDIL ROSSI" oninput="app.updateLetterheadLivePreview()">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="company-vat">Partita IVA</label>
+                <input type="text" id="company-vat" class="form-input" placeholder="Es. 01234567890" oninput="app.updateLetterheadLivePreview()">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="company-fiscal">Codice Fiscale</label>
+                <input type="text" id="company-fiscal" class="form-input" placeholder="Es. 01234567890 o RSSMRA80..." oninput="app.updateLetterheadLivePreview()">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="company-rea">N° REA / Registro Imprese</label>
+                <input type="text" id="company-rea" class="form-input" placeholder="Es. MI-1234567" oninput="app.updateLetterheadLivePreview()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Sede & Recapiti -->
+          <div class="auth-box" style="margin-top:0; margin-bottom:16px;">
+            <h3 style="font-size:1rem; font-weight:800; color:#fff; margin-bottom:12px;">
+              Sede Operativa & Contatti Aziendali
+            </h3>
+
+            <div class="form-group">
+              <label class="form-label" for="company-address">Indirizzo Sede (Via, N°, CAP, Città, Prov.)</label>
+              <input type="text" id="company-address" class="form-input" placeholder="Es. Via Roma 45, 20121 Milano (MI)" required oninput="app.updateLetterheadLivePreview()">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="company-phone">Telefono / Cellulare Ditta</label>
+                <input type="tel" id="company-phone" class="form-input" placeholder="Es. +39 02 1234567" oninput="app.updateLetterheadLivePreview()">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="company-email">Email Amministrativa</label>
+                <input type="email" id="company-email" class="form-input" placeholder="Es. info@ediliziarossi.it" oninput="app.updateLetterheadLivePreview()">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="company-pec">Posta Certificata PEC</label>
+                <input type="email" id="company-pec" class="form-input" placeholder="Es. edilsrl@pec.it" oninput="app.updateLetterheadLivePreview()">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="company-website">Sito Web (Opzionale)</label>
+                <input type="text" id="company-website" class="form-input" placeholder="Es. www.ediliziarossi.it" oninput="app.updateLetterheadLivePreview()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Coordinate Bancarie, Assicurazione & Note Stampa -->
+          <div class="auth-box" style="margin-top:0; margin-bottom:16px;">
+            <h3 style="font-size:1rem; font-weight:800; color:#fff; margin-bottom:12px;">
+              Dati Bancari per Pagamenti & Note di Polizza
+            </h3>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="company-bank">Istituto di Credito (Banca d'Appoggio)</label>
+                <input type="text" id="company-bank" class="form-input" placeholder="Es. Intesa Sanpaolo / Unicredit">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="company-iban">IBAN Aziendale (per bonifici bancari e detrazioni fiscali)</label>
+                <input type="text" id="company-iban" class="form-input" placeholder="IT00X0000000000000000000000">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="company-insurance">Polizza R.C. / Certificazione Sicurezza Cantieri</label>
+              <input type="text" id="company-insurance" class="form-input" placeholder="Es. Polizza R.C. Impresa Edile Generali n. 9876543 - Oneri Sicurezza D.Lgs 81/08">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="company-footer-note">Dicitura a piè di pagina sui preventivi</label>
+              <input type="text" id="company-footer-note" class="form-input" placeholder="Es. Documento contabile informatico redatto a norma di legge">
+            </div>
+          </div>
+
+          <!-- Anteprima Live Carta Intestata Apple Style -->
+          <div class="auth-box" style="margin-top:0; margin-bottom:20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <h3 style="font-size:0.95rem; font-weight:800; color:#38bdf8;">
+                👁️ Anteprima Live Carta Intestata (Come appare sui tuoi Preventivi e PDF)
+              </h3>
+              <span style="font-size:0.72rem; color:var(--text-dim);">Aggiornamento in tempo reale</span>
+            </div>
+            <div class="company-letterhead-live-card" id="company-letterhead-live-preview"></div>
+          </div>
+
+          <div class="form-actions" style="margin-top:14px;">
+            <button type="submit" class="btn btn-primary" style="padding:10px 24px; font-weight:800;">
+              <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Salva Dati Ditta & Intestazione
+            </button>
+          </div>
+        </form>
+      </div>
+
       <!-- SubView: Lavoratori -->
-      <div id="admin-workers" class="admin-subview">
+      <div id="admin-workers" class="admin-subview" style="display:none;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
           <h3 style="font-size:1rem; font-weight:700;">Elenco Lavoratori</h3>
           <button class="btn btn-secondary btn-sm" onclick="app.openWorkerModal()">
@@ -1920,6 +2076,6 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Core App Scripts (ES Modules) -->
-  <script type="module" src="js/app.js?v=38"></script>
+  <script type="module" src="js/app.js?v=39"></script>
 </body>
 </html>
