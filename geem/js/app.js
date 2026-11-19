@@ -2801,7 +2801,7 @@ class GeemApp {
 
     const setVal = (id, val) => {
       const el = document.getElementById(id);
-      if (el) el.value = val || '';
+      if (el) el.value = val !== undefined && val !== null ? val : '';
     };
 
     setVal('company-name', company.name);
@@ -2822,7 +2822,13 @@ class GeemApp {
 
     const logoPreview = document.getElementById('company-logo-preview');
     if (logoPreview) {
-      logoPreview.src = company.logoUrl || 'assets/logo.png?v=7';
+      if (company.logoUrl && company.logoUrl.trim()) {
+        logoPreview.src = company.logoUrl.trim();
+        logoPreview.style.opacity = '1';
+      } else {
+        logoPreview.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+        logoPreview.style.opacity = '0.5';
+      }
     }
 
     this.updateLetterheadLivePreview();
@@ -2912,9 +2918,18 @@ class GeemApp {
     const logoUrlInput = document.getElementById('company-logo-url');
     const logoPreview = document.getElementById('company-logo-preview');
     if (logoUrlInput) logoUrlInput.value = '';
-    if (logoPreview) logoPreview.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+    if (logoPreview) {
+      logoPreview.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+      logoPreview.style.opacity = '0.5';
+    }
+
+    // Aggiorna e salva immediatamente nello store
+    if (store && typeof store.updateCompany === 'function') {
+      store.updateCompany({ logoUrl: '' });
+    }
+
     this.updateLetterheadLivePreview();
-    this.showToast('Logo aziendale rimosso (Nessun logo)', 'info');
+    this.showToast('Logo aziendale rimosso con successo', 'info');
   }
 
   resetCompanyLogo() {
@@ -2946,7 +2961,7 @@ class GeemApp {
     const updated = {
       name: getVal('company-name') || 'GEEM Costruzioni & Restauri S.r.l.',
       shortName: getVal('company-short-name') || 'GEEM Edilizia',
-      logoUrl: getVal('company-logo-url') || 'assets/logo.png?v=7',
+      logoUrl: getVal('company-logo-url'), // può essere stringa vuota per indicare nessun logo
       vatNumber: getVal('company-vat'),
       fiscalCode: getVal('company-cf'),
       rea: getVal('company-rea'),
@@ -2966,7 +2981,7 @@ class GeemApp {
     }
 
     this.renderCompanyProfile();
-    this.showToast('Intestazione aziendale e Logo salvati con successo!', 'success');
+    this.showToast('Intestazione aziendale salvata con successo!', 'success');
   }
 
   // ==========================================================================
@@ -5308,7 +5323,7 @@ class GeemApp {
     const company = (store && typeof store.getCompany === 'function') ? store.getCompany() : {
       name: 'GEEM Costruzioni & Restauri S.r.l.',
       shortName: 'GEEM Edilizia',
-      logoUrl: 'assets/logo.png?v=7',
+      logoUrl: '',
       vatNumber: '09876543210',
       fiscalCode: '09876543210',
       rea: 'MB-1234567',
