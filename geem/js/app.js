@@ -65,7 +65,31 @@ class GeemApp {
     this.currentPersonAvatar = null;
     this.activeDetailPersonId = null;
     this.peopleFilter = 'all';
+    this.peopleSort = 'name_asc';
     this.peopleSearchQuery = '';
+    this.peopleContactInfo = 'all';
+    this.peopleStatus = 'all';
+    this.peopleCompany = 'all';
+
+    // Ripristino filtri e ordinamento contatti da localStorage
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const savedPeopleFilters = localStorage.getItem('geem_people_filters');
+        if (savedPeopleFilters) {
+          const parsed = JSON.parse(savedPeopleFilters);
+          if (parsed && typeof parsed === 'object') {
+            this.peopleFilter = parsed.peopleFilter || 'all';
+            this.peopleSort = parsed.peopleSort || 'name_asc';
+            this.peopleSearchQuery = parsed.peopleSearchQuery || '';
+            this.peopleContactInfo = parsed.peopleContactInfo || 'all';
+            this.peopleStatus = parsed.peopleStatus || 'all';
+            this.peopleCompany = parsed.peopleCompany || 'all';
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Errore lettura filtri contatti da localStorage:', e);
+    }
 
     // Calendario per il registro ore
     this.selectedCalendarDate = new Date().toISOString().split('T')[0];
@@ -2196,22 +2220,63 @@ class GeemApp {
   }
 
   // ==========================================================================
-  // GESTIONE SEZIONE PERSONE & ANAGRAFICHE
+  // GESTIONE SEZIONE CONTATTI & ANAGRAFICHE
   // ==========================================================================
+  savePeopleFilters() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const payload = {
+          peopleFilter: this.peopleFilter,
+          peopleSort: this.peopleSort,
+          peopleSearchQuery: this.peopleSearchQuery,
+          peopleContactInfo: this.peopleContactInfo,
+          peopleStatus: this.peopleStatus,
+          peopleCompany: this.peopleCompany
+        };
+        localStorage.setItem('geem_people_filters', JSON.stringify(payload));
+      }
+    } catch (e) {
+      console.warn('Errore salvataggio filtri contatti in localStorage:', e);
+    }
+  }
+
   setPeopleFilter(filter) {
-    this.peopleFilter = filter;
-    document.querySelectorAll('[data-people-filter]').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.peopleFilter === filter);
-    });
+    this.peopleFilter = filter || 'all';
+    this.savePeopleFilters();
+    this.renderPeople();
+  }
+
+  setPeopleSort(sortValue) {
+    this.peopleSort = sortValue || 'name_asc';
+    this.savePeopleFilters();
+    this.renderPeople();
+  }
+
+  setPeopleContactInfoFilter(val) {
+    this.peopleContactInfo = val || 'all';
+    this.savePeopleFilters();
+    this.renderPeople();
+  }
+
+  setPeopleStatusFilter(val) {
+    this.peopleStatus = val || 'all';
+    this.savePeopleFilters();
+    this.renderPeople();
+  }
+
+  setPeopleCompanyFilter(val) {
+    this.peopleCompany = val || 'all';
+    this.savePeopleFilters();
     this.renderPeople();
   }
 
   handlePeopleSearch(query) {
-    this.peopleSearchQuery = (query || '').trim().toLowerCase();
+    this.peopleSearchQuery = (query || '').trim();
     const clearBtn = document.getElementById('people-search-clear');
     if (clearBtn) {
       clearBtn.style.display = this.peopleSearchQuery ? 'block' : 'none';
     }
+    this.savePeopleFilters();
     this.renderPeople();
   }
 
@@ -2221,14 +2286,90 @@ class GeemApp {
     const clearBtn = document.getElementById('people-search-clear');
     if (input) input.value = '';
     if (clearBtn) clearBtn.style.display = 'none';
+    this.savePeopleFilters();
     this.renderPeople();
+  }
+
+  resetPeopleFilters() {
+    this.peopleFilter = 'all';
+    this.peopleSort = 'name_asc';
+    this.peopleSearchQuery = '';
+    this.peopleContactInfo = 'all';
+    this.peopleStatus = 'all';
+    this.peopleCompany = 'all';
+
+    const searchInput = document.getElementById('people-search-input');
+    const clearBtn = document.getElementById('people-search-clear');
+    if (searchInput) searchInput.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+
+    this.savePeopleFilters();
+    this.renderPeople();
+    this.showToast('Filtri contatti ripristinati', 'info');
+  }
+
+  syncPeopleFiltersUI() {
+    // Sincronizza chip categoria
+    document.querySelectorAll('[data-people-filter]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.peopleFilter === this.peopleFilter);
+    });
+
+    // Sincronizza input di ricerca
+    const searchInput = document.getElementById('people-search-input');
+    if (searchInput && searchInput.value !== this.peopleSearchQuery) {
+      searchInput.value = this.peopleSearchQuery || '';
+    }
+    const clearBtn = document.getElementById('people-search-clear');
+    if (clearBtn) {
+      clearBtn.style.display = this.peopleSearchQuery ? 'block' : 'none';
+    }
+
+    // Sincronizza dropdown ordinamento
+    const sortSelect = document.getElementById('filter-people-sort');
+    if (sortSelect && sortSelect.value !== this.peopleSort) {
+      sortSelect.value = this.peopleSort;
+    }
+
+    // Sincronizza dropdown recapiti
+    const contactInfoSelect = document.getElementById('filter-people-contact-info');
+    if (contactInfoSelect && contactInfoSelect.value !== this.peopleContactInfo) {
+      contactInfoSelect.value = this.peopleContactInfo;
+    }
+
+    // Sincronizza dropdown stato
+    const statusSelect = document.getElementById('filter-people-status');
+    if (statusSelect && statusSelect.value !== this.peopleStatus) {
+      statusSelect.value = this.peopleStatus;
+    }
+
+    // Sincronizza dropdown azienda
+    const companySelect = document.getElementById('filter-people-company');
+    if (companySelect && companySelect.value !== this.peopleCompany) {
+      companySelect.value = this.peopleCompany;
+    }
   }
 
   renderPeople() {
     const list = document.getElementById('people-cards-list');
     if (!list) return;
 
+    this.syncPeopleFiltersUI();
+
     const allPeople = store.getAllPeople ? store.getAllPeople() : [];
+
+    // Precalcolo cantieri assegnati/associati per ciascun contatto
+    const sites = store.data.sites || [];
+    const timesheets = store.data.timesheets || [];
+    allPeople.forEach(p => {
+      if (p.source === 'client') {
+        p._computedSitesCount = sites.filter(s => s.clientId === p.id).length;
+      } else if (p.source === 'worker') {
+        const workerSiteIds = new Set(timesheets.filter(t => t.workerId === p.id).map(t => t.siteId));
+        p._computedSitesCount = workerSiteIds.size;
+      } else {
+        p._computedSitesCount = p.sitesCount || 0;
+      }
+    });
 
     // Aggiornamento contatori per ciascuna tipologia/filtro
     const counts = {
@@ -2248,7 +2389,7 @@ class GeemApp {
       if (el) el.textContent = count;
     }
 
-    // Filtraggio per tipologia
+    // 1. Filtraggio per tipologia
     let filtered = allPeople;
     if (this.peopleFilter !== 'all') {
       if (this.peopleFilter === 'altro') {
@@ -2262,9 +2403,9 @@ class GeemApp {
       }
     }
 
-    // Filtraggio per stringa di ricerca
+    // 2. Filtraggio per stringa di ricerca
     if (this.peopleSearchQuery) {
-      const q = this.peopleSearchQuery;
+      const q = this.peopleSearchQuery.toLowerCase();
       filtered = filtered.filter(p => {
         return (p.name && p.name.toLowerCase().includes(q)) ||
                (p.role && p.role.toLowerCase().includes(q)) ||
@@ -2275,15 +2416,89 @@ class GeemApp {
       });
     }
 
+    // 3. Filtro Recapiti & Comunicazione
+    if (this.peopleContactInfo === 'has_phone') {
+      filtered = filtered.filter(p => Boolean(p.phone && p.phone.trim()));
+    } else if (this.peopleContactInfo === 'has_email') {
+      filtered = filtered.filter(p => Boolean(p.email && p.email.trim()));
+    } else if (this.peopleContactInfo === 'no_phone') {
+      filtered = filtered.filter(p => !p.phone || !p.phone.trim());
+    }
+
+    // 4. Filtro Stato Operativo
+    if (this.peopleStatus === 'active') {
+      filtered = filtered.filter(p => p.active !== false);
+    } else if (this.peopleStatus === 'inactive') {
+      filtered = filtered.filter(p => p.active === false);
+    }
+
+    // 5. Filtro Azienda / Ditta
+    if (this.peopleCompany === 'has_company') {
+      filtered = filtered.filter(p => Boolean(p.company && p.company.trim()));
+    } else if (this.peopleCompany === 'no_company') {
+      filtered = filtered.filter(p => !p.company || !p.company.trim());
+    }
+
+    // 6. Ordinamento
+    const sort = this.peopleSort || 'name_asc';
+    filtered.sort((a, b) => {
+      if (sort === 'name_desc') {
+        return (b.name || '').localeCompare(a.name || '', 'it', { sensitivity: 'base' });
+      }
+      if (sort === 'company_asc') {
+        const compA = (a.company || '').trim();
+        const compB = (b.company || '').trim();
+        if (compA && !compB) return -1;
+        if (!compA && compB) return 1;
+        const compDiff = compA.localeCompare(compB, 'it', { sensitivity: 'base' });
+        if (compDiff !== 0) return compDiff;
+        return (a.name || '').localeCompare(b.name || '', 'it', { sensitivity: 'base' });
+      }
+      if (sort === 'type_asc') {
+        const typeA = a.typeLabel || a.type || '';
+        const typeB = b.typeLabel || b.type || '';
+        const typeDiff = typeA.localeCompare(typeB, 'it', { sensitivity: 'base' });
+        if (typeDiff !== 0) return typeDiff;
+        return (a.name || '').localeCompare(b.name || '', 'it', { sensitivity: 'base' });
+      }
+      if (sort === 'rate_desc') {
+        const rateA = a.hourlyRate != null ? a.hourlyRate : -1;
+        const rateB = b.hourlyRate != null ? b.hourlyRate : -1;
+        if (rateB !== rateA) return rateB - rateA;
+        return (a.name || '').localeCompare(b.name || '', 'it', { sensitivity: 'base' });
+      }
+      if (sort === 'rate_asc') {
+        const rateA = a.hourlyRate != null ? a.hourlyRate : 999999;
+        const rateB = b.hourlyRate != null ? b.hourlyRate : 999999;
+        if (rateA !== rateB) return rateA - rateB;
+        return (a.name || '').localeCompare(b.name || '', 'it', { sensitivity: 'base' });
+      }
+      if (sort === 'sites_desc') {
+        const sitesA = a._computedSitesCount || 0;
+        const sitesB = b._computedSitesCount || 0;
+        if (sitesB !== sitesA) return sitesB - sitesA;
+        return (a.name || '').localeCompare(b.name || '', 'it', { sensitivity: 'base' });
+      }
+      // Predefinito: name_asc
+      return (a.name || '').localeCompare(b.name || '', 'it', { sensitivity: 'base' });
+    });
+
+    // Aggiornamento indicatore mostrati
+    const displayedCountEl = document.getElementById('people-displayed-count');
+    if (displayedCountEl) displayedCountEl.textContent = filtered.length;
+
     if (filtered.length === 0) {
       list.innerHTML = `
         <div class="empty-state" style="grid-column: 1 / -1; padding: 44px 16px;">
           <svg viewBox="0 0 24 24" style="width:44px; height:44px; stroke:var(--text-dim); fill:none; stroke-width:1.5; margin-bottom:10px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <h3 style="font-size:0.98rem; font-weight:700;">Nessuna persona trovata</h3>
+          <h3 style="font-size:0.98rem; font-weight:700;">Nessun contatto trovato</h3>
           <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
-            ${this.peopleSearchQuery ? `Nessun risultato trovato per "${this.peopleSearchQuery}"` : 'Nessuna anagrafica presente in questa categoria.'}
+            ${this.peopleSearchQuery ? `Nessun risultato trovato per "${this.peopleSearchQuery}"` : 'Nessun contatto corrisponde ai filtri selezionati.'}
           </p>
-          <button class="btn btn-secondary btn-sm" onclick="app.openPersonModal()">+ Aggiungi Persona</button>
+          <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+            <button class="btn btn-secondary btn-sm" onclick="app.resetPeopleFilters()">Ripristina filtri</button>
+            <button class="btn btn-primary btn-sm" onclick="app.openPersonModal()">+ Nuovo Contatto</button>
+          </div>
         </div>
       `;
       return;
@@ -2579,7 +2794,7 @@ class GeemApp {
     this.openModal('modal-person-detail');
   }
 
-  // --- MODAL PERSONE & ANAGRAFICHE ---
+  // --- MODAL CONTATTI & ANAGRAFICHE ---
   openPersonModal(id = null) {
     this.editingPersonId = id;
     const title = document.getElementById('modal-person-title');
@@ -2587,7 +2802,7 @@ class GeemApp {
     if (!form) return;
 
     if (id) {
-      title.textContent = 'Modifica Persona';
+      title.textContent = 'Modifica Contatto';
       const allPeople = store.getAllPeople ? store.getAllPeople() : [];
       const p = allPeople.find(item => item.id === id);
       if (p) {
@@ -2603,7 +2818,7 @@ class GeemApp {
         this.currentPersonAvatar = p.avatar || null;
       }
     } else {
-      title.textContent = 'Nuova Persona';
+      title.textContent = 'Nuovo Contatto';
       form.reset();
       const defaultType = (this.peopleFilter !== 'all') ? this.peopleFilter : 'dipendente';
       document.getElementById('person-type').value = defaultType;
@@ -2708,7 +2923,7 @@ class GeemApp {
           store.updatePerson(id, { name, type, role, company, phone, email, hourlyRate, notes, active, avatar });
         }
       }
-      this.showToast('Anagrafica aggiornata con successo', 'success');
+      this.showToast('Contatto aggiornato con successo', 'success');
     } else {
       // Creazione nuova persona
       if (type === 'dipendente') {
@@ -2719,7 +2934,7 @@ class GeemApp {
         this.showToast('Cliente aggiunto con successo', 'success');
       } else {
         store.addPerson({ name, type, role, company, phone, email, hourlyRate, notes, active, avatar });
-        this.showToast('Nuova persona registrata in anagrafica', 'success');
+        this.showToast('Nuovo contatto registrato con successo', 'success');
       }
     }
 
@@ -2731,9 +2946,9 @@ class GeemApp {
     if (!id) return;
     const allPeople = store.getAllPeople ? store.getAllPeople() : [];
     const person = allPeople.find(p => p.id === id);
-    const name = person ? person.name : 'questa persona';
+    const name = person ? person.name : 'questo contatto';
 
-    if (confirm(`Sei sicuro di voler eliminare "${name}" dall'anagrafica?`)) {
+    if (confirm(`Sei sicuro di voler eliminare "${name}" dai contatti?`)) {
       if (id.startsWith('w_')) {
         store.deleteWorker(id);
       } else if (id.startsWith('c_')) {
@@ -2741,7 +2956,7 @@ class GeemApp {
       } else {
         store.deletePerson(id);
       }
-      this.showToast('Persona rimossa dall\'anagrafica', 'info');
+      this.showToast('Contatto rimosso con successo', 'info');
       this.renderPeople();
     }
   }

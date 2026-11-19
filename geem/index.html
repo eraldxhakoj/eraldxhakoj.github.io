@@ -21,7 +21,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/logo.png?v=7">
   <link rel="icon" type="image/png" href="assets/logo.png?v=7">
 
-  <link rel="stylesheet" href="css/styles.css?v=31">
+  <link rel="stylesheet" href="css/styles.css?v=32">
 </head>
 <body>
 
@@ -540,12 +540,12 @@
     </section>
 
     <!-- ======================================================================
-         VIEW 5: PERSONE
+         VIEW 5: CONTATTI
          ====================================================================== -->
     <section id="view-people" class="view-section">
       <div class="section-toolbar">
         <div class="toolbar-title" onclick="app.toggleFilterPanel('people')" title="Tocca per mostrare/nascondere ricerca e filtri" style="cursor:pointer;">
-          <h2>Persone</h2>
+          <h2>Contatti</h2>
           <span id="toggle-filter-people" class="title-filter-toggle" aria-label="Mostra/Nascondi filtri">
             <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
           </span>
@@ -553,51 +553,109 @@
         <div class="toolbar-actions">
           <button class="btn btn-primary" onclick="app.openPersonModal()">
             <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Nuova Persona
+            Nuovo Contatto
           </button>
         </div>
       </div>
 
-      <!-- Barra di ricerca e filtri categorie (Pannello Collassabile) -->
-      <div id="filter-panel-people" class="people-toolbar-controls page-filter-panel hidden">
-        <div class="search-input-wrap">
-          <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="people-search-input" class="form-input search-input" placeholder="Cerca per nome, azienda, ruolo o telefono..." oninput="app.handlePeopleSearch(this.value)">
-          <button id="people-search-clear" class="search-clear-btn" style="display:none;" onclick="app.clearPeopleSearch()" title="Cancella ricerca">&times;</button>
-        </div>
+      <!-- Barra di ricerca e filtri contatti (Pannello Collassabile) -->
+      <div id="filter-panel-people" class="page-filter-panel hidden" style="margin-bottom:14px;">
+        <div class="sites-filter-box">
+          <!-- Barra Ricerca Contatto -->
+          <div class="search-input-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="people-search-input" class="form-input search-input" placeholder="Cerca contatto per nome, azienda, ruolo, telefono o email..." oninput="app.handlePeopleSearch(this.value)">
+            <button id="people-search-clear" class="search-clear-btn" style="display:none;" onclick="app.clearPeopleSearch()" title="Cancella ricerca">&times;</button>
+          </div>
 
-        <div class="filter-chips-scroll">
-          <button type="button" class="filter-chip active" data-people-filter="all" onclick="app.setPeopleFilter('all')">
-            Tutti (<span id="people-count-all">0</span>)
-          </button>
-          <button type="button" class="filter-chip" data-people-filter="dipendente" onclick="app.setPeopleFilter('dipendente')">
-            Operai & Dipendenti (<span id="people-count-dipendente">0</span>)
-          </button>
-          <button type="button" class="filter-chip" data-people-filter="cliente" onclick="app.setPeopleFilter('cliente')">
-            Clienti (<span id="people-count-cliente">0</span>)
-          </button>
-          <button type="button" class="filter-chip" data-people-filter="tecnico" onclick="app.setPeopleFilter('tecnico')">
-            Geometri & Architetti (<span id="people-count-tecnico">0</span>)
-          </button>
-          <button type="button" class="filter-chip" data-people-filter="commercialista" onclick="app.setPeopleFilter('commercialista')">
-            Commercialisti & Fisco (<span id="people-count-commercialista">0</span>)
-          </button>
-          <button type="button" class="filter-chip" data-people-filter="fornitore" onclick="app.setPeopleFilter('fornitore')">
-            Fornitori Materiali (<span id="people-count-fornitore">0</span>)
-          </button>
-          <button type="button" class="filter-chip" data-people-filter="subappaltatore" onclick="app.setPeopleFilter('subappaltatore')">
-            Subappalti & Impianti (<span id="people-count-subappaltatore">0</span>)
-          </button>
-          <button type="button" class="filter-chip" data-people-filter="sicurezza" onclick="app.setPeopleFilter('sicurezza')">
-            Sicurezza & RSPP (<span id="people-count-sicurezza">0</span>)
-          </button>
-          <button type="button" class="filter-chip" data-people-filter="altro" onclick="app.setPeopleFilter('altro')">
-            Altro (<span id="people-count-altro">0</span>)
-          </button>
+          <!-- Chip Categoria / Tipologia Contatto -->
+          <div class="filter-chips-scroll">
+            <button type="button" class="filter-chip active" data-people-filter="all" onclick="app.setPeopleFilter('all')">
+              Tutti (<span id="people-count-all">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-people-filter="dipendente" onclick="app.setPeopleFilter('dipendente')">
+              Operai & Dipendenti (<span id="people-count-dipendente">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-people-filter="cliente" onclick="app.setPeopleFilter('cliente')">
+              Clienti (<span id="people-count-cliente">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-people-filter="tecnico" onclick="app.setPeopleFilter('tecnico')">
+              Geometri & Architetti (<span id="people-count-tecnico">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-people-filter="commercialista" onclick="app.setPeopleFilter('commercialista')">
+              Commercialisti & Fisco (<span id="people-count-commercialista">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-people-filter="fornitore" onclick="app.setPeopleFilter('fornitore')">
+              Fornitori Materiali (<span id="people-count-fornitore">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-people-filter="subappaltatore" onclick="app.setPeopleFilter('subappaltatore')">
+              Subappalti & Impianti (<span id="people-count-subappaltatore">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-people-filter="sicurezza" onclick="app.setPeopleFilter('sicurezza')">
+              Sicurezza & RSPP (<span id="people-count-sicurezza">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-people-filter="altro" onclick="app.setPeopleFilter('altro')">
+              Altro (<span id="people-count-altro">0</span>)
+            </button>
+          </div>
+
+          <!-- Griglia Selettori: Ordinamento e Filtri Avanzati Contatti -->
+          <div class="sites-filter-grid">
+            <div class="sites-filter-col">
+              <label for="filter-people-sort">Ordina per</label>
+              <select id="filter-people-sort" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setPeopleSort(this.value)">
+                <option value="name_asc">Predefinito (Nome A - Z)</option>
+                <option value="name_desc">Nome (Z - A)</option>
+                <option value="company_asc">Azienda / Studio (A - Z)</option>
+                <option value="type_asc">Tipologia / Categoria</option>
+                <option value="rate_desc">Costo Orario (€ più alto)</option>
+                <option value="rate_asc">Costo Orario (€ più basso)</option>
+                <option value="sites_desc">Cantieri Assegnati (maggiori)</option>
+              </select>
+            </div>
+
+            <div class="sites-filter-col">
+              <label for="filter-people-contact-info">Recapiti & Comunicazione</label>
+              <select id="filter-people-contact-info" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setPeopleContactInfoFilter(this.value)">
+                <option value="all">Tutti i contatti</option>
+                <option value="has_phone">Solo con telefono (Chiama/WhatsApp)</option>
+                <option value="has_email">Solo con indirizzo email</option>
+                <option value="no_phone">Senza recapito telefonico</option>
+              </select>
+            </div>
+
+            <div class="sites-filter-col">
+              <label for="filter-people-status">Stato Operativo</label>
+              <select id="filter-people-status" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setPeopleStatusFilter(this.value)">
+                <option value="all">Tutti gli stati</option>
+                <option value="active">Solo contatti attivi</option>
+                <option value="inactive">Solo inattivi / archiviati</option>
+              </select>
+            </div>
+
+            <div class="sites-filter-col">
+              <label for="filter-people-company">Azienda / Ditta</label>
+              <select id="filter-people-company" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setPeopleCompanyFilter(this.value)">
+                <option value="all">Tutte le aziende / ditte</option>
+                <option value="has_company">Solo con azienda/studio indicato</option>
+                <option value="no_company">Senza azienda indicata</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Barra di ripristino filtri -->
+          <div class="sites-filter-reset-wrap">
+            <span id="people-filter-active-count" style="font-size:0.75rem; color:var(--text-muted);">
+              Mostrati: <strong id="people-displayed-count" style="color:#fff;">0</strong> contatti
+            </span>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="app.resetPeopleFilters()" style="min-height:28px; padding:0 8px; font-size:0.75rem;">
+              Ripristina filtri
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Griglia Card Persone -->
+      <!-- Griglia Card Contatti -->
       <div id="people-cards-list" class="people-cards-grid"></div>
     </section>
 
@@ -820,14 +878,14 @@
   <div id="modal-person" class="modal-backdrop">
     <div class="modal-sheet">
       <div class="modal-header">
-        <h3 id="modal-person-title">Nuova Persona</h3>
+        <h3 id="modal-person-title">Nuovo Contatto</h3>
         <button class="btn-icon" onclick="app.closeModal('modal-person')">
           <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
       <form id="form-person" onsubmit="app.handlePersonSubmit(event)">
         <div class="form-group">
-          <label class="form-label" for="person-type">Tipologia Persona *</label>
+          <label class="form-label" for="person-type">Tipologia Contatto *</label>
           <select id="person-type" class="form-select" onchange="app.handlePersonTypeChange()" required>
             <option value="dipendente">Dipendente / Operaio Cantiere</option>
             <option value="cliente">Cliente (Committente)</option>
@@ -908,25 +966,25 @@
 
         <div class="form-actions">
           <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-person')">Annulla</button>
-          <button type="submit" class="btn btn-primary">Salva Persona</button>
+          <button type="submit" class="btn btn-primary">Salva Contatto</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: DETTAGLIO PERSONA -->
+  <!-- MODAL: DETTAGLIO CONTATTO -->
   <div id="modal-person-detail" class="modal-backdrop">
     <div class="modal-sheet" style="max-height:92vh; display:flex; flex-direction:column;">
       <div class="modal-header">
         <div style="overflow:hidden;">
-          <h3 id="person-detail-title" style="margin:0; font-size:1.15rem; font-weight:800; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">Dettaglio Persona</h3>
+          <h3 id="person-detail-title" style="margin:0; font-size:1.15rem; font-weight:800; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">Dettaglio Contatto</h3>
           <div id="person-detail-sub" style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;"></div>
         </div>
         <div style="display:flex; align-items:center; gap:6px;">
-          <button id="person-detail-edit-btn" class="btn-icon" title="Modifica Persona">
+          <button id="person-detail-edit-btn" class="btn-icon" title="Modifica Contatto">
             <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </button>
-          <button id="person-detail-delete-btn" class="btn-icon" title="Elimina Persona" style="color:var(--danger);">
+          <button id="person-detail-delete-btn" class="btn-icon" title="Elimina Contatto" style="color:var(--danger);">
             <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
           </button>
           <button class="btn-icon" onclick="app.closeModal('modal-person-detail')">
@@ -1194,7 +1252,7 @@
       <nav class="sidebar-nav">
         <button type="button" class="sidebar-link" data-sidebar-tab="people" onclick="app.switchTab('people'); app.closeSidebar();">
           <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <span>Persone</span>
+          <span>Contatti</span>
         </button>
 
         <button type="button" class="sidebar-link" data-sidebar-tab="places" onclick="app.switchTab('places'); app.closeSidebar();">
@@ -1216,6 +1274,6 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Core App Scripts (ES Modules) -->
-  <script type="module" src="js/app.js?v=31"></script>
+  <script type="module" src="js/app.js?v=32"></script>
 </body>
 </html>
