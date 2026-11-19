@@ -21,7 +21,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/logo.png?v=7">
   <link rel="icon" type="image/png" href="assets/logo.png?v=7">
 
-  <link rel="stylesheet" href="css/styles.css?v=34">
+  <link rel="stylesheet" href="css/styles.css?v=35">
 </head>
 <body>
 
@@ -781,16 +781,112 @@
          ====================================================================== -->
     <section id="view-places" class="view-section">
       <div class="section-toolbar">
-        <div class="toolbar-title">
+        <div class="toolbar-title" onclick="app.toggleFilterPanel('places')" title="Tocca per mostrare/nascondere ricerca e filtri" style="cursor:pointer;">
           <h2>Luoghi</h2>
-          <p>Indirizzi, magazzini e punti logistici</p>
+          <span id="toggle-filter-places" class="title-filter-toggle" aria-label="Mostra/Nascondi filtri">
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </div>
+        <div class="toolbar-actions">
+          <button class="btn btn-primary" onclick="app.openPlaceModal()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Nuovo Luogo
+          </button>
         </div>
       </div>
-      <div class="empty-state" style="padding: 48px 16px;">
-        <svg viewBox="0 0 24 24" style="width:48px; height:48px; stroke:var(--text-dim); fill:none; stroke-width:1.5; margin-bottom:12px;"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-        <h3>Sezione Luoghi</h3>
-        <p>In arrivo nel prossimo passaggio per la gestione dei depositi e della logistica cantieri.</p>
+
+      <!-- Barra di ricerca e filtri luoghi (Pannello Collassabile) -->
+      <div id="filter-panel-places" class="page-filter-panel hidden" style="margin-bottom:14px;">
+        <div class="sites-filter-box">
+          <!-- Barra Ricerca Luogo -->
+          <div class="search-input-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="places-search-input" class="form-input search-input" placeholder="Cerca luogo per nome, indirizzo, orari o note..." oninput="app.handlePlaceSearch(this.value)">
+            <button id="places-search-clear" class="search-clear-btn" style="display:none;" onclick="app.clearPlaceSearch()" title="Cancella ricerca">&times;</button>
+          </div>
+
+          <!-- Chip Categoria / Tipologia Luogo -->
+          <div class="filter-chips-scroll">
+            <button type="button" class="filter-chip active" data-place-filter="all" onclick="app.setPlaceFilter('all')">
+              Tutti (<span id="places-count-all">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-place-filter="cantiere" onclick="app.setPlaceFilter('cantiere')">
+              Cantieri (<span id="places-count-cantiere">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-place-filter="discarica" onclick="app.setPlaceFilter('discarica')">
+              Discariche & Inerti (<span id="places-count-discarica">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-place-filter="deposito" onclick="app.setPlaceFilter('deposito')">
+              Depositi & Mezzi (<span id="places-count-deposito">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-place-filter="fornitore" onclick="app.setPlaceFilter('fornitore')">
+              Fornitori & Noleggi (<span id="places-count-fornitore">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-place-filter="studio" onclick="app.setPlaceFilter('studio')">
+              Studi Tecnici (<span id="places-count-studio">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-place-filter="ufficio" onclick="app.setPlaceFilter('ufficio')">
+              Uffici & Sedi (<span id="places-count-ufficio">0</span>)
+            </button>
+            <button type="button" class="filter-chip" data-place-filter="altro" onclick="app.setPlaceFilter('altro')">
+              Altro (<span id="places-count-altro">0</span>)
+            </button>
+          </div>
+
+          <!-- Griglia Selettori: Ordinamento e Filtri Avanzati Luoghi -->
+          <div class="sites-filter-grid">
+            <div class="sites-filter-col">
+              <label for="filter-places-sort">Ordina per</label>
+              <select id="filter-places-sort" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setPlaceSort(this.value)">
+                <option value="name_asc">Predefinito (Nome A - Z)</option>
+                <option value="name_desc">Nome (Z - A)</option>
+                <option value="type_asc">Tipologia / Categoria</option>
+                <option value="address_asc">Indirizzo / Città (A - Z)</option>
+              </select>
+            </div>
+
+            <div class="sites-filter-col">
+              <label for="filter-places-source">Origine Luogo</label>
+              <select id="filter-places-source" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setPlaceSourceFilter(this.value)">
+                <option value="all">Tutti (Cantieri + Altri)</option>
+                <option value="cantieri">Solo Cantieri Edili</option>
+                <option value="custom">Solo Luoghi e Depositi</option>
+              </select>
+            </div>
+
+            <div class="sites-filter-col">
+              <label for="filter-places-status">Stato Operativo</label>
+              <select id="filter-places-status" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setPlaceStatusFilter(this.value)">
+                <option value="all">Tutti gli stati</option>
+                <option value="active">Solo attivi / cantieri in corso</option>
+                <option value="inactive">Solo conclusi / inattivi</option>
+              </select>
+            </div>
+
+            <div class="sites-filter-col">
+              <label for="filter-places-contact">Recapito Telefonico</label>
+              <select id="filter-places-contact" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setPlaceContactFilter(this.value)">
+                <option value="all">Tutti</option>
+                <option value="has_phone">Con numero di telefono</option>
+                <option value="no_phone">Senza numero di telefono</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Barra di ripristino filtri -->
+          <div class="sites-filter-reset-wrap">
+            <span id="places-filter-active-count" style="font-size:0.75rem; color:var(--text-muted);">
+              Mostrati: <strong id="places-displayed-count" style="color:#fff;">0</strong> luoghi
+            </span>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="app.resetPlaceFilters()" style="min-height:28px; padding:0 8px; font-size:0.75rem;">
+              Ripristina filtri
+            </button>
+          </div>
+        </div>
       </div>
+
+      <!-- Griglia Card Luoghi -->
+      <div id="places-cards-list" class="places-cards-grid"></div>
     </section>
 
   </main>
@@ -1124,6 +1220,102 @@
     </div>
   </div>
 
+  <!-- MODAL: LUOGO (DEPOSITI, DISCARICHE, FORNITORI, STUDI) -->
+  <div id="modal-place" class="modal-backdrop">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 id="modal-place-title">Nuovo Luogo</h3>
+        <button class="btn-icon" onclick="app.closeModal('modal-place')">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form id="form-place" onsubmit="app.handlePlaceSubmit(event)">
+        <div class="form-group">
+          <label class="form-label" for="place-type">Tipologia Luogo *</label>
+          <select id="place-type" class="form-select" required>
+            <option value="discarica">Discarica / Smaltimento Inerti</option>
+            <option value="deposito">Deposito & Magazzino Mezzi / Attrezzature</option>
+            <option value="fornitore">Fornitore Materiali / Magazzino Edile</option>
+            <option value="studio">Studio Tecnico / Geometra / Ing.</option>
+            <option value="ufficio">Sede Operativa / Ufficio Amministrativo</option>
+            <option value="altro">Altro Punto di Interesse</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="place-name">Nome del Luogo / Ditta / Impianto *</label>
+          <input type="text" id="place-name" class="form-input" placeholder="Es. Discarica Inerti Varedo o Magazzino Centrale" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="place-address">Indirizzo Completo (per navigatore GPS) *</label>
+          <input type="text" id="place-address" class="form-input" placeholder="Es. Via delle Industrie 12, Monza" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="place-phone">Telefono / Recapito</label>
+            <input type="tel" id="place-phone" class="form-input" placeholder="Es. +39 039 123456">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="place-hours">Orari di Apertura / Scarico</label>
+            <input type="text" id="place-hours" class="form-input" placeholder="Es. Lun-Ven 07:00-18:00, Sab 07:00-12:00">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="place-notes">Note & Dettagli Logistici</label>
+          <textarea id="place-notes" class="form-textarea" placeholder="Indicazioni per camionisti, formulario FIR richiesto, codici cancello o referenti..."></textarea>
+        </div>
+
+        <div class="form-group" style="display:flex; align-items:center; gap:8px; margin-top:6px;">
+          <input type="checkbox" id="place-active" style="width:18px; height:18px; accent-color:var(--primary);" checked>
+          <label for="place-active" style="font-size:0.86rem; font-weight:600; cursor:pointer;">Luogo / Punto Attivo</label>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-place')">Annulla</button>
+          <button type="submit" class="btn btn-primary">Salva Luogo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: DETTAGLIO LUOGO -->
+  <div id="modal-place-detail" class="modal-backdrop">
+    <div class="modal-sheet" style="max-height:92vh; display:flex; flex-direction:column;">
+      <div class="modal-header">
+        <div style="overflow:hidden;">
+          <h3 id="place-detail-title" style="margin:0; font-size:1.15rem; font-weight:800; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">Dettaglio Luogo</h3>
+          <div id="place-detail-sub" style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;"></div>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <button id="place-detail-edit-btn" class="btn-icon" title="Modifica Luogo">
+            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button id="place-detail-delete-btn" class="btn-icon" title="Elimina Luogo" style="color:var(--danger);">
+            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          </button>
+          <button class="btn-icon" onclick="app.closeModal('modal-place-detail')">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="place-detail-body" style="overflow-y:auto; padding-right:2px; flex:1;">
+        <!-- Contenuto dinamico renderizzato da GeemApp -->
+      </div>
+
+      <div class="form-actions" style="margin-top:14px; padding-top:10px; border-top:1px solid var(--border-subtle);">
+        <button type="button" class="btn btn-secondary" onclick="app.closeModal('modal-place-detail')">Chiudi</button>
+        <button type="button" id="place-detail-quick-action" class="btn btn-primary">
+          <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Modifica
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: CANTIERE -->
   <div id="modal-site" class="modal-backdrop">
     <div class="modal-sheet">
@@ -1391,6 +1583,6 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Core App Scripts (ES Modules) -->
-  <script type="module" src="js/app.js?v=34"></script>
+  <script type="module" src="js/app.js?v=35"></script>
 </body>
 </html>

@@ -25,7 +25,29 @@ const ICONS = {
   alert: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
   eye: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`,
   eyeOff: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`,
-  whatsapp: `<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="fill:currentColor; stroke:none; flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>`
+  whatsapp: `<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="fill:currentColor; stroke:none; flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>`,
+  navigation: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>`
+};
+
+export const PLACE_GRADIENTS = {
+  cantiere: 'linear-gradient(135deg, #f59e0b, #d97706)',
+  discarica: 'linear-gradient(135deg, #10b981, #047857)',
+  deposito: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+  fornitore: 'linear-gradient(135deg, #f97316, #c2410c)',
+  studio: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
+  ufficio: 'linear-gradient(135deg, #14b8a6, #0f766e)',
+  altro: 'linear-gradient(135deg, #64748b, #334155)'
+};
+
+export const PLACE_ICONS = {
+  cantiere: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M13 11l6 3v7M9 9h1M9 13h1M9 17h1"/></svg>`,
+  discarica: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`,
+  deposito: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`,
+  fornitore: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>`,
+  studio: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>`,
+  ufficio: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="22" x2="9" y2="22.01"/><line x1="15" y1="22" x2="15" y2="22.01"/><line x1="9" y1="6" x2="9.01" y2="6"/><line x1="15" y1="6" x2="15.01" y2="6"/><line x1="9" y1="10" x2="9.01" y2="10"/><line x1="15" y1="10" x2="15.01" y2="10"/><line x1="9" y1="14" x2="9.01" y2="14"/><line x1="15" y1="14" x2="15.01" y2="14"/><line x1="9" y1="18" x2="9.01" y2="18"/><line x1="15" y1="18" x2="15.01" y2="18"/></svg>`,
+  altro: `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>`
+};
 };
 
 // Utilità di formattazione
@@ -174,6 +196,34 @@ class GeemApp {
       }
     } catch (e) {
       console.warn('Errore lettura filtri cantieri da localStorage:', e);
+    }
+
+    // Filtri e ordinamento scheda Luoghi
+    this.placeFilter = 'all'; // 'all', 'cantiere', 'discarica', 'deposito', 'fornitore', 'studio', 'ufficio', 'altro'
+    this.placeSort = 'name_asc'; // 'name_asc', 'name_desc', 'type_asc', 'address_asc'
+    this.placeSource = 'all'; // 'all', 'cantieri', 'custom'
+    this.placeStatus = 'all'; // 'all', 'active', 'inactive'
+    this.placeContact = 'all'; // 'all', 'has_phone', 'no_phone'
+    this.placeSearchQuery = '';
+    this.editingPlaceId = null;
+
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const savedPlacesFilters = localStorage.getItem('geem_places_filters');
+        if (savedPlacesFilters) {
+          const parsed = JSON.parse(savedPlacesFilters);
+          if (parsed && typeof parsed === 'object') {
+            this.placeFilter = parsed.placeFilter || 'all';
+            this.placeSort = parsed.placeSort || 'name_asc';
+            this.placeSource = parsed.placeSource || 'all';
+            this.placeStatus = parsed.placeStatus || 'all';
+            this.placeContact = parsed.placeContact || 'all';
+            this.placeSearchQuery = parsed.placeSearchQuery || '';
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Errore lettura filtri luoghi da localStorage:', e);
     }
 
     // Filtro Periodo Finanziario Dashboard ('year' | 'month' | 'last_month' | 'active' | 'all')
@@ -545,6 +595,7 @@ class GeemApp {
     this.renderAdminTypes();
     this.populateSelectDropdowns();
     this.renderPeople();
+    this.renderPlaces();
   }
 
   renderSyncStatus() {
@@ -3515,6 +3566,581 @@ class GeemApp {
       }
       this.showToast('Contatto rimosso con successo', 'info');
       this.renderPeople();
+    }
+  }
+
+  // ==========================================================================
+  // FILTRI, ORDINAMENTO & GESTIONE SCHEDA LUOGHI
+  // ==========================================================================
+  savePlaceFilters() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('geem_places_filters', JSON.stringify({
+          placeFilter: this.placeFilter,
+          placeSort: this.placeSort,
+          placeSource: this.placeSource,
+          placeStatus: this.placeStatus,
+          placeContact: this.placeContact,
+          placeSearchQuery: this.placeSearchQuery
+        }));
+      }
+    } catch (e) {
+      console.warn('Errore salvataggio filtri luoghi:', e);
+    }
+  }
+
+  setPlaceFilter(filter) {
+    this.placeFilter = filter || 'all';
+    this.savePlaceFilters();
+    this.renderPlaces();
+  }
+
+  setPlaceSort(sortValue) {
+    this.placeSort = sortValue || 'name_asc';
+    this.savePlaceFilters();
+    this.renderPlaces();
+  }
+
+  setPlaceSourceFilter(val) {
+    this.placeSource = val || 'all';
+    this.savePlaceFilters();
+    this.renderPlaces();
+  }
+
+  setPlaceStatusFilter(val) {
+    this.placeStatus = val || 'all';
+    this.savePlaceFilters();
+    this.renderPlaces();
+  }
+
+  setPlaceContactFilter(val) {
+    this.placeContact = val || 'all';
+    this.savePlaceFilters();
+    this.renderPlaces();
+  }
+
+  handlePlaceSearch(query) {
+    this.placeSearchQuery = (query || '').trim();
+    const clearBtn = document.getElementById('places-search-clear');
+    if (clearBtn) {
+      clearBtn.style.display = this.placeSearchQuery ? 'block' : 'none';
+    }
+    this.savePlaceFilters();
+    this.renderPlaces();
+  }
+
+  clearPlaceSearch() {
+    this.placeSearchQuery = '';
+    const input = document.getElementById('places-search-input');
+    const clearBtn = document.getElementById('places-search-clear');
+    if (input) input.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+    this.savePlaceFilters();
+    this.renderPlaces();
+  }
+
+  resetPlaceFilters() {
+    this.placeFilter = 'all';
+    this.placeSort = 'name_asc';
+    this.placeSource = 'all';
+    this.placeStatus = 'all';
+    this.placeContact = 'all';
+    this.placeSearchQuery = '';
+
+    const searchInput = document.getElementById('places-search-input');
+    const clearBtn = document.getElementById('places-search-clear');
+    if (searchInput) searchInput.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+
+    this.savePlaceFilters();
+    this.renderPlaces();
+    this.showToast('Filtri luoghi ripristinati', 'info');
+  }
+
+  syncPlaceFiltersUI() {
+    // Sincronizza chip categoria
+    document.querySelectorAll('.filter-chip[data-place-filter]').forEach(chip => {
+      chip.classList.toggle('active', chip.dataset.placeFilter === this.placeFilter);
+    });
+
+    // Sincronizza select ordinamento
+    const sortSelect = document.getElementById('filter-places-sort');
+    if (sortSelect && sortSelect.value !== this.placeSort) {
+      sortSelect.value = this.placeSort;
+    }
+
+    // Sincronizza select origine
+    const sourceSelect = document.getElementById('filter-places-source');
+    if (sourceSelect && sourceSelect.value !== this.placeSource) {
+      sourceSelect.value = this.placeSource;
+    }
+
+    // Sincronizza select stato
+    const statusSelect = document.getElementById('filter-places-status');
+    if (statusSelect && statusSelect.value !== this.placeStatus) {
+      statusSelect.value = this.placeStatus;
+    }
+
+    // Sincronizza select recapito telefonico
+    const contactSelect = document.getElementById('filter-places-contact');
+    if (contactSelect && contactSelect.value !== this.placeContact) {
+      contactSelect.value = this.placeContact;
+    }
+
+    // Sincronizza input ricerca
+    const searchInput = document.getElementById('places-search-input');
+    const clearBtn = document.getElementById('places-search-clear');
+    if (searchInput && searchInput.value !== this.placeSearchQuery) {
+      searchInput.value = this.placeSearchQuery;
+    }
+    if (clearBtn) {
+      clearBtn.style.display = this.placeSearchQuery ? 'block' : 'none';
+    }
+  }
+
+  // --- NAVIGAZIONE & INDICAZIONI MAPPE MULTI-PIATTAFORMA ---
+  getDirectionsUrl(address) {
+    if (!address || !address.trim()) return '#';
+    const clean = address.trim();
+    const encoded = encodeURIComponent(clean);
+    const ua = (typeof navigator !== 'undefined' && (navigator.userAgent || navigator.vendor || window.opera)) || '';
+    const isAndroid = /Android/i.test(ua);
+    const isIOS = /iPhone|iPad|iPod/i.test(ua) || (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 1 && /Macintosh/i.test(ua) && (typeof screen !== 'undefined' && screen.width <= 1024));
+
+    if (isAndroid) {
+      // Android: geo:0,0?q= apre l'app chooser di sistema o l'app preferita (Google Maps, Waze, Petal Maps, ecc.)
+      return `geo:0,0?q=${encoded}`;
+    } else if (isIOS) {
+      // iOS: Apple Maps nativo
+      return `https://maps.apple.com/?daddr=${encoded}&dirflg=d`;
+    } else {
+      // Desktop / PC: Google Maps in una nuova scheda del browser
+      return `https://www.google.com/maps/dir/?api=1&destination=${encoded}`;
+    }
+  }
+
+  handleDirectionsClick(event, address) {
+    if (event) {
+      event.stopPropagation();
+    }
+    const clean = (address || '').trim();
+    if (!clean) {
+      if (event) event.preventDefault();
+      this.showToast('Nessun indirizzo specificato per questo luogo', 'warning');
+      return;
+    }
+
+    const ua = (typeof navigator !== 'undefined' && (navigator.userAgent || navigator.vendor || window.opera)) || '';
+    const isAndroid = /Android/i.test(ua);
+    const isIOS = /iPhone|iPad|iPod/i.test(ua) || (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 1 && /Macintosh/i.test(ua) && (typeof screen !== 'undefined' && screen.width <= 1024));
+    const encoded = encodeURIComponent(clean);
+
+    if (isAndroid) {
+      // Su smartphone Android: avvia intent geo: per far scegliere l'app di navigazione desiderata
+      if (event) event.preventDefault();
+      window.location.href = `geo:0,0?q=${encoded}`;
+    } else if (isIOS) {
+      // Su iPhone/iPad: apre direttamente Apple Maps per navigazione
+      if (event) event.preventDefault();
+      window.open(`https://maps.apple.com/?daddr=${encoded}&dirflg=d`, '_blank');
+    } else {
+      // Su PC / Desktop: apre Google Maps con calcolo percorso in nuova scheda
+      if (event) event.preventDefault();
+      window.open(`https://www.google.com/maps/dir/?api=1&destination=${encoded}`, '_blank', 'noopener,noreferrer');
+    }
+  }
+
+  // --- RENDER CARD LUOGHI ---
+  renderPlaces() {
+    const list = document.getElementById('places-cards-list');
+    if (!list) return;
+
+    this.syncPlaceFiltersUI();
+
+    const allPlaces = store.getAllPlaces ? store.getAllPlaces() : [];
+
+    // Aggiornamento contatori per ciascuna tipologia/filtro
+    const counts = {
+      all: allPlaces.length,
+      cantiere: allPlaces.filter(p => p.type === 'cantiere').length,
+      discarica: allPlaces.filter(p => p.type === 'discarica').length,
+      deposito: allPlaces.filter(p => p.type === 'deposito').length,
+      fornitore: allPlaces.filter(p => p.type === 'fornitore').length,
+      studio: allPlaces.filter(p => p.type === 'studio').length,
+      ufficio: allPlaces.filter(p => p.type === 'ufficio').length,
+      altro: allPlaces.filter(p => p.type === 'altro').length
+    };
+
+    for (const [key, count] of Object.entries(counts)) {
+      const el = document.getElementById(`places-count-${key}`);
+      if (el) el.textContent = count;
+    }
+
+    // 1. Filtraggio per tipologia
+    let filtered = allPlaces;
+    if (this.placeFilter !== 'all') {
+      filtered = filtered.filter(p => p.type === this.placeFilter);
+    }
+
+    // 2. Filtraggio per stringa di ricerca
+    if (this.placeSearchQuery) {
+      const q = this.placeSearchQuery.toLowerCase();
+      filtered = filtered.filter(p => {
+        return (p.name && p.name.toLowerCase().includes(q)) ||
+               (p.address && p.address.toLowerCase().includes(q)) ||
+               (p.typeLabel && p.typeLabel.toLowerCase().includes(q)) ||
+               (p.phone && p.phone.toLowerCase().includes(q)) ||
+               (p.notes && p.notes.toLowerCase().includes(q)) ||
+               (p.hours && p.hours.toLowerCase().includes(q));
+      });
+    }
+
+    // 3. Filtro Origine Luogo
+    if (this.placeSource === 'cantieri') {
+      filtered = filtered.filter(p => p.source === 'site');
+    } else if (this.placeSource === 'custom') {
+      filtered = filtered.filter(p => p.source === 'place');
+    }
+
+    // 4. Filtro Stato Operativo
+    if (this.placeStatus === 'active') {
+      filtered = filtered.filter(p => p.active !== false);
+    } else if (this.placeStatus === 'inactive') {
+      filtered = filtered.filter(p => p.active === false);
+    }
+
+    // 5. Filtro Recapito Telefonico
+    if (this.placeContact === 'has_phone') {
+      filtered = filtered.filter(p => Boolean(p.phone && p.phone.trim()));
+    } else if (this.placeContact === 'no_phone') {
+      filtered = filtered.filter(p => !p.phone || !p.phone.trim());
+    }
+
+    // 6. Ordinamento
+    const sort = this.placeSort || 'name_asc';
+    filtered.sort((a, b) => {
+      if (sort === 'name_desc') {
+        return (b.name || '').localeCompare(a.name || '', 'it', { sensitivity: 'base' });
+      }
+      if (sort === 'type_asc') {
+        const typeA = a.typeLabel || a.type || '';
+        const typeB = b.typeLabel || b.type || '';
+        const typeDiff = typeA.localeCompare(typeB, 'it', { sensitivity: 'base' });
+        if (typeDiff !== 0) return typeDiff;
+        return (a.name || '').localeCompare(b.name || '', 'it', { sensitivity: 'base' });
+      }
+      if (sort === 'address_asc') {
+        const addrA = (a.address || '').trim();
+        const addrB = (b.address || '').trim();
+        if (addrA && !addrB) return -1;
+        if (!addrA && addrB) return 1;
+        const addrDiff = addrA.localeCompare(addrB, 'it', { sensitivity: 'base' });
+        if (addrDiff !== 0) return addrDiff;
+        return (a.name || '').localeCompare(b.name || '', 'it', { sensitivity: 'base' });
+      }
+      // Predefinito: name_asc
+      return (a.name || '').localeCompare(b.name || '', 'it', { sensitivity: 'base' });
+    });
+
+    // Aggiornamento indicatore mostrati
+    const displayedCountEl = document.getElementById('places-displayed-count');
+    if (displayedCountEl) displayedCountEl.textContent = filtered.length;
+
+    if (filtered.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state" style="grid-column: 1 / -1; padding: 44px 16px;">
+          <svg viewBox="0 0 24 24" style="width:44px; height:44px; stroke:var(--text-dim); fill:none; stroke-width:1.5; margin-bottom:10px;"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+          <h3 style="font-size:0.98rem; font-weight:700;">Nessun luogo trovato</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
+            ${this.placeSearchQuery ? `Nessun risultato trovato per "${this.placeSearchQuery}"` : 'Nessun luogo corrisponde ai filtri selezionati.'}
+          </p>
+          <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+            <button class="btn btn-secondary btn-sm" onclick="app.resetPlaceFilters()">Ripristina filtri</button>
+            <button class="btn btn-primary btn-sm" onclick="app.openPlaceModal()">+ Nuovo Luogo</button>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = filtered.map(place => {
+      const gradient = PLACE_GRADIENTS[place.type] || PLACE_GRADIENTS.altro;
+      const icon = PLACE_ICONS[place.type] || PLACE_ICONS.altro;
+      const directionsUrl = this.getDirectionsUrl(place.address);
+      const escapedAddress = (place.address || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+      return `
+        <div class="place-card" onclick="app.openPlaceDetailModal('${place.id}')" title="Clicca per visualizzare dettagli">
+          <div class="place-card-identity">
+            <div class="place-avatar" style="background:${gradient};">
+              ${icon}
+            </div>
+            <div class="place-info">
+              <div class="place-name" title="${place.name}">${place.name}</div>
+              <div class="place-address" title="${place.address || 'Indirizzo non inserito'}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span>${place.address || 'Indirizzo non specificato'}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="place-card-actions">
+            <a href="${directionsUrl}" target="_blank" rel="noopener" class="place-card-btn-directions" onclick="app.handleDirectionsClick(event, '${escapedAddress}')" title="Apri indicazioni stradali sul navigatore">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+              <span>Indicazioni</span>
+            </a>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // --- MODAL LUOGO (NUOVO / MODIFICA) ---
+  openPlaceModal(id = null) {
+    this.editingPlaceId = id;
+    const title = document.getElementById('modal-place-title');
+    const form = document.getElementById('form-place');
+    if (!form) return;
+
+    if (id) {
+      title.textContent = 'Modifica Luogo';
+      const allPlaces = store.getAllPlaces ? store.getAllPlaces() : [];
+      const p = allPlaces.find(item => item.id === id);
+      if (p) {
+        document.getElementById('place-type').value = p.type || 'discarica';
+        document.getElementById('place-name').value = p.name || '';
+        document.getElementById('place-address').value = p.address || '';
+        document.getElementById('place-phone').value = p.phone || '';
+        document.getElementById('place-hours').value = p.hours || '';
+        document.getElementById('place-notes').value = p.notes || '';
+        document.getElementById('place-active').checked = p.active !== false;
+      }
+    } else {
+      title.textContent = 'Nuovo Luogo';
+      form.reset();
+      const defaultType = (this.placeFilter !== 'all' && this.placeFilter !== 'cantiere') ? this.placeFilter : 'discarica';
+      document.getElementById('place-type').value = defaultType;
+      document.getElementById('place-active').checked = true;
+    }
+
+    this.openModal('modal-place');
+  }
+
+  handlePlaceSubmit(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const type = document.getElementById('place-type').value;
+    const name = document.getElementById('place-name').value.trim();
+    const address = document.getElementById('place-address').value.trim();
+    const phone = document.getElementById('place-phone').value.trim();
+    const hours = document.getElementById('place-hours').value.trim();
+    const notes = document.getElementById('place-notes').value.trim();
+    const active = document.getElementById('place-active').checked;
+
+    if (!name) {
+      this.showToast('Inserisci il nome del luogo', 'error');
+      return;
+    }
+    if (!address) {
+      this.showToast('Inserisci l\'indirizzo per il navigatore GPS', 'error');
+      return;
+    }
+
+    const id = this.editingPlaceId;
+    if (id) {
+      store.updatePlace(id, { name, type, address, phone, hours, notes, active });
+      this.showToast('Luogo aggiornato con successo', 'success');
+    } else {
+      store.addPlace({ name, type, address, phone, hours, notes, active });
+      this.showToast('Nuovo luogo aggiunto con successo', 'success');
+    }
+
+    this.closeModal('modal-place');
+    this.renderPlaces();
+  }
+
+  // --- MODAL DETTAGLIO LUOGO ---
+  openPlaceDetailModal(id) {
+    if (!id) return;
+    const allPlaces = store.getAllPlaces ? store.getAllPlaces() : [];
+    const place = allPlaces.find(p => p.id === id);
+    if (!place) return;
+
+    const titleEl = document.getElementById('place-detail-title');
+    const subEl = document.getElementById('place-detail-sub');
+    const bodyEl = document.getElementById('place-detail-body');
+    const editBtn = document.getElementById('place-detail-edit-btn');
+    const deleteBtn = document.getElementById('place-detail-delete-btn');
+    const quickActionBtn = document.getElementById('place-detail-quick-action');
+
+    if (titleEl) titleEl.textContent = place.name;
+    if (subEl) subEl.textContent = place.typeLabel;
+
+    // Configura bottoni di modifica ed eliminazione
+    if (editBtn) {
+      editBtn.onclick = () => {
+        this.closeModal('modal-place-detail');
+        if (place.source === 'site') {
+          this.openSiteModal(place.id);
+        } else {
+          this.openPlaceModal(place.id);
+        }
+      };
+    }
+
+    if (quickActionBtn) {
+      quickActionBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        ${place.source === 'site' ? 'Modifica Cantiere' : 'Modifica Luogo'}
+      `;
+      quickActionBtn.onclick = () => {
+        this.closeModal('modal-place-detail');
+        if (place.source === 'site') {
+          this.openSiteModal(place.id);
+        } else {
+          this.openPlaceModal(place.id);
+        }
+      };
+    }
+
+    if (deleteBtn) {
+      if (place.source === 'site') {
+        deleteBtn.style.display = 'none'; // I cantieri si eliminano dalla loro vista
+      } else {
+        deleteBtn.style.display = 'inline-flex';
+        deleteBtn.onclick = () => {
+          this.deletePlaceById(place.id);
+        };
+      }
+    }
+
+    const gradient = PLACE_GRADIENTS[place.type] || PLACE_GRADIENTS.altro;
+    const icon = PLACE_ICONS[place.type] || PLACE_ICONS.altro;
+    const directionsUrl = this.getDirectionsUrl(place.address);
+    const escapedAddress = (place.address || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+    if (bodyEl) {
+      bodyEl.innerHTML = `
+        <div class="person-detail-hero" style="border-radius:var(--radius-md); margin-bottom:14px;">
+          <div class="place-avatar" style="width:52px; height:52px; background:${gradient}; font-size:1.4rem;">
+            ${icon}
+          </div>
+          <div style="flex:1; min-width:0;">
+            <div style="font-size:1.1rem; font-weight:800; color:#fff; line-height:1.25; margin-bottom:4px;">
+              ${place.name}
+            </div>
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+              <span class="item-badge" style="background:rgba(255,255,255,0.08); color:var(--text-main); font-size:0.72rem; padding:2px 8px; border-radius:var(--radius-full); font-weight:700;">
+                ${place.typeLabel}
+              </span>
+              ${place.source === 'site' ? `
+                <span class="item-badge badge-cantiere" style="font-size:0.72rem; padding:2px 8px; border-radius:var(--radius-full); font-weight:700;">
+                  Cantiere (${place.status === 'in_corso' ? 'In Corso' : place.status === 'sospeso' ? 'Sospeso' : 'Completato'})
+                </span>
+              ` : `
+                <span class="item-badge ${place.active ? 'badge-success' : 'badge-warning'}" style="font-size:0.72rem; padding:2px 8px; border-radius:var(--radius-full); font-weight:700;">
+                  ${place.active ? 'Attivo' : 'Inattivo'}
+                </span>
+              `}
+            </div>
+          </div>
+        </div>
+
+        <!-- Sezione Navigazione / Indirizzo -->
+        <div style="background:linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(26, 34, 52, 0.6) 100%); border:1px solid rgba(245, 158, 11, 0.25); border-radius:var(--radius-md); padding:14px; margin-bottom:14px;">
+          <div style="display:flex; align-items:flex-start; gap:10px; margin-bottom:12px;">
+            <div style="width:36px; height:36px; border-radius:var(--radius-sm); background:rgba(245, 158, 11, 0.2); color:#f59e0b; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div style="flex:1; min-width:0;">
+              <div style="font-size:0.72rem; font-weight:700; color:#f59e0b; text-transform:uppercase; letter-spacing:0.04em;">Indirizzo per Navigatore</div>
+              <div style="font-size:0.94rem; font-weight:700; color:#fff; line-height:1.35; margin-top:2px;">
+                ${place.address || 'Indirizzo non specificato'}
+              </div>
+            </div>
+          </div>
+
+          <a href="${directionsUrl}" target="_blank" rel="noopener" class="btn btn-primary" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:800; min-height:40px; box-shadow:0 4px 14px rgba(245, 158, 11, 0.35);" onclick="app.handleDirectionsClick(event, '${escapedAddress}')">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+            Avvia Indicazioni Stradali
+          </a>
+        </div>
+
+        <!-- Altri Recapiti & Orari -->
+        <div class="person-detail-section" style="margin-bottom:12px;">
+          <div class="person-detail-section-title">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            Informazioni & Logistica
+          </div>
+
+          <div class="person-detail-grid">
+            ${place.phone ? `
+              <div class="person-detail-field">
+                <span class="person-detail-label">Telefono / Recapito</span>
+                <span class="person-detail-value" style="display:flex; align-items:center; gap:8px;">
+                  <a href="tel:${place.phone}" style="color:var(--primary); font-weight:700; text-decoration:none;">${place.phone}</a>
+                  <a href="tel:${place.phone}" class="btn btn-secondary btn-sm" style="padding:2px 8px; font-size:0.72rem; min-height:24px;">Chiama</a>
+                </span>
+              </div>
+            ` : ''}
+
+            ${place.hours ? `
+              <div class="person-detail-field">
+                <span class="person-detail-label">Orari Apertura / Scarico</span>
+                <span class="person-detail-value">${place.hours}</span>
+              </div>
+            ` : ''}
+
+            ${place.source === 'site' ? `
+              <div class="person-detail-field">
+                <span class="person-detail-label">Codice Cantiere</span>
+                <span class="person-detail-value">${place.code || '—'}</span>
+              </div>
+              ${place.clientName ? `
+                <div class="person-detail-field">
+                  <span class="person-detail-label">Cliente / Committente</span>
+                  <span class="person-detail-value">${place.clientName}</span>
+                </div>
+              ` : ''}
+            ` : ''}
+          </div>
+        </div>
+
+        ${place.source === 'site' ? `
+          <div style="margin-bottom:12px;">
+            <button type="button" class="btn btn-secondary" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="app.closeModal('modal-place-detail'); app.openSiteDetailModal('${place.id}');">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4v18M13 11l6 3v7M9 9h1M9 13h1M9 17h1"/></svg>
+              Apri Scheda Cantiere Completa
+            </button>
+          </div>
+        ` : ''}
+
+        ${place.notes ? `
+          <div class="person-detail-section">
+            <div class="person-detail-section-title">
+              ${ICONS.note} Note & Istruzioni
+            </div>
+            <div style="font-size:0.84rem; color:var(--text-muted); line-height:1.5; white-space:pre-wrap;">
+              ${place.notes}
+            </div>
+          </div>
+        ` : ''}
+      `;
+    }
+
+    this.openModal('modal-place-detail');
+  }
+
+  deletePlaceById(id) {
+    if (!id) return;
+    const allPlaces = store.getAllPlaces ? store.getAllPlaces() : [];
+    const place = allPlaces.find(p => p.id === id);
+    const name = place ? place.name : 'questo luogo';
+
+    if (confirm(`Sei sicuro di voler eliminare "${name}" dai luoghi salvati?`)) {
+      store.deletePlace(id);
+      this.closeModal('modal-place-detail');
+      this.showToast('Luogo rimosso con successo', 'info');
+      this.renderPlaces();
     }
   }
 

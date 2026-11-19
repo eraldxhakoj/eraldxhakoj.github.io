@@ -143,6 +143,49 @@ export const INITIAL_PEOPLE = [
   }
 ];
 
+export const INITIAL_PLACES = [
+  {
+    id: 'pl_1',
+    name: 'Sede Operativa & Deposito Attrezzature',
+    type: 'deposito',
+    address: 'Via delle Industrie 18, Monza (MB)',
+    phone: '+39 039 123456',
+    hours: 'Lun-Ven 06:30 - 18:30, Sab 07:00 - 12:00',
+    notes: 'Magazzino mezzi pesanti, ponteggi e ricovero attrezzatura ditta',
+    active: true
+  },
+  {
+    id: 'pl_2',
+    name: 'Ecorecuperi Brianza - Discarica Inerti',
+    type: 'discarica',
+    address: 'Via per Desio 84, Nova Milanese (MB)',
+    phone: '+39 0362 98765',
+    hours: 'Lun-Ven 07:00 - 17:00 (scarico solo con formulario FIR)',
+    notes: 'Smaltimento macerie, calcestruzzo, cartongesso e scavi puliti',
+    active: true
+  },
+  {
+    id: 'pl_3',
+    name: 'Edilcommercio S.r.l. - Centro Edile',
+    type: 'fornitore',
+    address: 'Viale Lombardia 140, Brugherio (MB)',
+    phone: '+39 039 887766',
+    hours: 'Lun-Ven 07:00 - 18:00, Sab 07:30 - 12:30',
+    notes: 'Fornitura malte, isolanti, colle, blocchi e noleggio furgoni ribaltabili',
+    active: true
+  },
+  {
+    id: 'pl_4',
+    name: 'Studio Tecnico Associato Sala & Villa',
+    type: 'studio',
+    address: 'Corso Milano 28, Monza (MB)',
+    phone: '+39 039 332211',
+    hours: 'Lun-Ven 09:00 - 13:00 / 14:30 - 18:30 (su appuntamento)',
+    notes: 'Pratiche edilizie, sicurezza cantieri e calcoli strutturali',
+    active: true
+  }
+];
+
 export const INITIAL_SITES = [
   {
     id: 's_1',
@@ -260,7 +303,8 @@ class StateStore {
       sites: JSON.parse(JSON.stringify(INITIAL_SITES)),
       timesheets: JSON.parse(JSON.stringify(INITIAL_TIMESHEETS)),
       expenses: JSON.parse(JSON.stringify(INITIAL_EXPENSES)),
-      people: JSON.parse(JSON.stringify(INITIAL_PEOPLE))
+      people: JSON.parse(JSON.stringify(INITIAL_PEOPLE)),
+      places: JSON.parse(JSON.stringify(INITIAL_PLACES))
     };
 
     this.initFromLocal();
@@ -303,6 +347,9 @@ class StateStore {
 
     if (!Array.isArray(this.data.people)) {
       this.data.people = JSON.parse(JSON.stringify(INITIAL_PEOPLE));
+    }
+    if (!Array.isArray(this.data.places)) {
+      this.data.places = JSON.parse(JSON.stringify(INITIAL_PLACES));
     }
   }
 
@@ -405,7 +452,8 @@ class StateStore {
       sites: JSON.parse(JSON.stringify(INITIAL_SITES)),
       timesheets: JSON.parse(JSON.stringify(INITIAL_TIMESHEETS)),
       expenses: JSON.parse(JSON.stringify(INITIAL_EXPENSES)),
-      people: JSON.parse(JSON.stringify(INITIAL_PEOPLE))
+      people: JSON.parse(JSON.stringify(INITIAL_PEOPLE)),
+      places: JSON.parse(JSON.stringify(INITIAL_PLACES))
     };
     if (this.mode === 'demo' && typeof localStorage !== 'undefined') {
       localStorage.setItem('geem_demo_db', JSON.stringify(this.data));
@@ -430,14 +478,15 @@ class StateStore {
           sites: data.sites || this.data.sites,
           timesheets: data.timesheets || this.data.timesheets,
           expenses: data.expenses || this.data.expenses,
-          people: data.people || this.data.people || []
+          people: data.people || this.data.people || [],
+          places: data.places || this.data.places || []
         };
         await this.githubClient.initDatabase(initialToPush);
         // Rileggi
         const reload = await this.githubClient.fetchAll();
-        this.data = { ...reload.data, people: reload.data.people || [] };
+        this.data = { ...reload.data, people: reload.data.people || [], places: reload.data.places || [] };
       } else {
-        this.data = { ...data, people: data.people || [] };
+        this.data = { ...data, people: data.people || [], places: data.places || [] };
       }
 
       // Salva copia cache in locale per ricaricamenti istantanei
@@ -771,6 +820,118 @@ class StateStore {
         notes: p.notes || '',
         active: p.active !== undefined ? p.active : true,
         source: 'person'
+      });
+    });
+
+    return list;
+  }
+
+  // ===== GESTIONE LUOGHI (DEPOSITI, DISCARICHE & CANTIERI) =====
+  addPlace(place) {
+    const newPlace = {
+      id: 'pl_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+      name: (place.name || '').trim(),
+      type: place.type || 'altro', // 'discarica', 'deposito', 'fornitore', 'studio', 'ufficio', 'altro'
+      address: (place.address || '').trim(),
+      phone: (place.phone || '').trim(),
+      hours: (place.hours || '').trim(),
+      notes: (place.notes || '').trim(),
+      active: place.active !== undefined ? place.active : true,
+      createdAt: new Date().toISOString()
+    };
+
+    if (!Array.isArray(this.data.places)) {
+      this.data.places = [];
+    }
+    this.data.places.push(newPlace);
+    this.notify('places');
+    this.syncKeyToGitHub('places', `Aggiunto luogo: ${newPlace.name} (${newPlace.type})`);
+    return newPlace;
+  }
+
+  updatePlace(id, updated) {
+    if (!Array.isArray(this.data.places)) this.data.places = [];
+    const index = this.data.places.findIndex(p => p.id === id);
+    if (index === -1) return false;
+
+    this.data.places[index] = {
+      ...this.data.places[index],
+      ...updated,
+      name: updated.name !== undefined ? updated.name.trim() : this.data.places[index].name,
+      type: updated.type !== undefined ? updated.type : this.data.places[index].type,
+      address: updated.address !== undefined ? updated.address.trim() : this.data.places[index].address,
+      phone: updated.phone !== undefined ? updated.phone.trim() : this.data.places[index].phone,
+      hours: updated.hours !== undefined ? updated.hours.trim() : this.data.places[index].hours,
+      notes: updated.notes !== undefined ? updated.notes.trim() : this.data.places[index].notes,
+      active: updated.active !== undefined ? updated.active : this.data.places[index].active
+    };
+
+    this.notify('places');
+    this.syncKeyToGitHub('places', `Modifica luogo ${id}`);
+    return true;
+  }
+
+  deletePlace(id) {
+    if (!Array.isArray(this.data.places)) this.data.places = [];
+    this.data.places = this.data.places.filter(p => p.id !== id);
+    this.notify('places');
+    this.syncKeyToGitHub('places', `Eliminazione luogo ${id}`);
+    return true;
+  }
+
+  // Restituisce l'elenco unificato di TUTTI i luoghi (Cantieri Edili + Depositi/Discariche/Studi)
+  getAllPlaces() {
+    const list = [];
+
+    // 1. Cantieri Edili (generati automaticamente dai cantieri salvati)
+    (this.data.sites || []).forEach(site => {
+      const client = (this.data.clients || []).find(c => c.id === site.clientId);
+      list.push({
+        id: site.id,
+        name: site.name,
+        code: site.code || '',
+        type: 'cantiere',
+        typeLabel: 'Cantiere Edile',
+        address: site.address || '',
+        phone: client ? (client.phone || '') : '',
+        clientName: client ? client.name : '',
+        hours: 'Orario Lavori: Lun-Ven 07:30 - 17:30',
+        notes: site.notes || (client ? `Committente: ${client.name}` : ''),
+        status: site.status || 'in_corso',
+        startDate: site.startDate || '',
+        endDate: site.endDate || '',
+        source: 'site',
+        active: site.status !== 'completato'
+      });
+    });
+
+    // 2. Luoghi personalizzati (Discariche, Depositi, Fornitori, Studi, Uffici, Altro)
+    const typeLabels = {
+      discarica: 'Discarica / Smaltimento Inerti',
+      deposito: 'Deposito & Magazzino Mezzi',
+      fornitore: 'Fornitore Materiali / Noleggio',
+      studio: 'Studio Tecnico & Progettazione',
+      ufficio: 'Sede / Ufficio Amministrativo',
+      altro: 'Altro Punto di Interesse'
+    };
+
+    (this.data.places || []).forEach(p => {
+      list.push({
+        id: p.id,
+        name: p.name,
+        code: '',
+        type: p.type || 'altro',
+        typeLabel: typeLabels[p.type] || 'Altro Luogo',
+        address: p.address || '',
+        phone: p.phone || '',
+        clientName: '',
+        hours: p.hours || '',
+        notes: p.notes || '',
+        status: p.active !== false ? 'attivo' : 'inattivo',
+        startDate: '',
+        endDate: '',
+        source: 'place',
+        active: p.active !== false
       });
     });
 
