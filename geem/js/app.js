@@ -4558,6 +4558,19 @@ class GeemApp {
 
   setQuoteSearchFilter(query) {
     this.quoteSearchQuery = (query || '').toLowerCase().trim();
+    const clearBtn = document.getElementById('quotes-search-clear');
+    if (clearBtn) {
+      clearBtn.style.display = this.quoteSearchQuery ? 'block' : 'none';
+    }
+    this.renderQuotes();
+  }
+
+  clearQuoteSearch() {
+    this.quoteSearchQuery = '';
+    const input = document.getElementById('filter-quotes-search');
+    const clearBtn = document.getElementById('quotes-search-clear');
+    if (input) input.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
     this.renderQuotes();
   }
 
