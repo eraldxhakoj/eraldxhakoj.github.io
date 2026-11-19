@@ -101,6 +101,10 @@ class GeemApp {
       timesheetSite: 'all',
       expenseSite: 'all',
       expenseCategory: 'all',
+      expenseSort: 'date_desc',
+      expenseSearch: '',
+      expenseDoc: 'all',
+      expensePeriod: 'all',
       siteStatus: 'all',
       siteSort: 'status_startdate',
       siteSearch: '',
@@ -108,6 +112,26 @@ class GeemApp {
       siteFinancial: 'all',
       siteBudget: 'all'
     };
+
+    // Ripristino filtri e ordinamento spese da localStorage
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const savedExpensesFilters = localStorage.getItem('geem_expenses_filters');
+        if (savedExpensesFilters) {
+          const parsed = JSON.parse(savedExpensesFilters);
+          if (parsed && typeof parsed === 'object') {
+            this.filters.expenseSite = parsed.expenseSite || 'all';
+            this.filters.expenseCategory = parsed.expenseCategory || 'all';
+            this.filters.expenseSort = parsed.expenseSort || 'date_desc';
+            this.filters.expenseSearch = parsed.expenseSearch || '';
+            this.filters.expenseDoc = parsed.expenseDoc || 'all';
+            this.filters.expensePeriod = parsed.expensePeriod || 'all';
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Errore lettura filtri spese da localStorage:', e);
+    }
 
     // Ripristino filtri e ordinamento cantieri da localStorage
     try {
@@ -877,10 +901,10 @@ class GeemApp {
 
     const filterExpSite = document.getElementById('filter-exp-site');
     if (filterExpSite) {
-      const current = filterExpSite.value;
-      filterExpSite.innerHTML = '<option value="all">Tutti i Cantieri e Spese Generali</option><option value="generale">Solo Spese Generali</option>' +
+      const current = this.filters.expenseSite || 'all';
+      filterExpSite.innerHTML = '<option value="all">Tutti i Cantieri e Spese Generali</option><option value="generale">Solo Spese Generali Aziendali</option>' +
         sites.map(s => `<option value="${s.id}">${s.code} - ${s.name}</option>`).join('');
-      if (current) filterExpSite.value = current;
+      filterExpSite.value = current;
     }
 
     const filterSiteClient = document.getElementById('filter-site-client');
@@ -1275,21 +1299,276 @@ class GeemApp {
     }).join('');
   }
 
+  // ==========================================================================
+  // GESTIONE SEZIONE SPESE & FATTURE
+  // ==========================================================================
+  saveExpenseFilters() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const payload = {
+          expenseSite: this.filters.expenseSite,
+          expenseCategory: this.filters.expenseCategory,
+          expenseSort: this.filters.expenseSort,
+          expenseSearch: this.filters.expenseSearch,
+          expenseDoc: this.filters.expenseDoc,
+          expensePeriod: this.filters.expensePeriod
+        };
+        localStorage.setItem('geem_expenses_filters', JSON.stringify(payload));
+      }
+    } catch (e) {
+      console.warn('Errore salvataggio filtri spese in localStorage:', e);
+    }
+  }
+
+  setExpenseCategoryFilter(cat) {
+    this.filters.expenseCategory = cat || 'all';
+    this.saveExpenseFilters();
+    this.renderExpenses();
+  }
+
+  setExpenseSiteFilter(siteId) {
+    this.filters.expenseSite = siteId || 'all';
+    this.saveExpenseFilters();
+    this.renderExpenses();
+  }
+
+  setExpenseSort(sortVal) {
+    this.filters.expenseSort = sortVal || 'date_desc';
+    this.saveExpenseFilters();
+    this.renderExpenses();
+  }
+
+  setExpensePeriodFilter(periodVal) {
+    this.filters.expensePeriod = periodVal || 'all';
+    this.saveExpenseFilters();
+    this.renderExpenses();
+  }
+
+  setExpenseDocFilter(docVal) {
+    this.filters.expenseDoc = docVal || 'all';
+    this.saveExpenseFilters();
+    this.renderExpenses();
+  }
+
+  handleExpenseSearch(query) {
+    this.filters.expenseSearch = (query || '').trim();
+    const clearBtn = document.getElementById('expense-search-clear');
+    if (clearBtn) {
+      clearBtn.style.display = this.filters.expenseSearch ? 'block' : 'none';
+    }
+    this.saveExpenseFilters();
+    this.renderExpenses();
+  }
+
+  clearExpenseSearch() {
+    this.filters.expenseSearch = '';
+    const input = document.getElementById('expense-search-input');
+    const clearBtn = document.getElementById('expense-search-clear');
+    if (input) input.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+    this.saveExpenseFilters();
+    this.renderExpenses();
+  }
+
+  resetExpenseFilters() {
+    this.filters.expenseSite = 'all';
+    this.filters.expenseCategory = 'all';
+    this.filters.expenseSort = 'date_desc';
+    this.filters.expenseSearch = '';
+    this.filters.expenseDoc = 'all';
+    this.filters.expensePeriod = 'all';
+
+    const searchInput = document.getElementById('expense-search-input');
+    const clearBtn = document.getElementById('expense-search-clear');
+    if (searchInput) searchInput.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+
+    this.saveExpenseFilters();
+    this.renderExpenses();
+    this.showToast('Filtri spese ripristinati', 'info');
+  }
+
+  syncExpenseFiltersUI() {
+    // Sincronizza input di ricerca
+    const searchInput = document.getElementById('expense-search-input');
+    if (searchInput && searchInput.value !== this.filters.expenseSearch) {
+      searchInput.value = this.filters.expenseSearch || '';
+    }
+    const clearBtn = document.getElementById('expense-search-clear');
+    if (clearBtn) {
+      clearBtn.style.display = this.filters.expenseSearch ? 'block' : 'none';
+    }
+
+    // Sincronizza chip categoria
+    document.querySelectorAll('[data-exp-category]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.expCategory === this.filters.expenseCategory);
+    });
+
+    // Sincronizza select ordinamento
+    const sortSelect = document.getElementById('filter-exp-sort');
+    if (sortSelect && sortSelect.value !== this.filters.expenseSort) {
+      sortSelect.value = this.filters.expenseSort;
+    }
+
+    // Sincronizza select cantiere
+    const siteSelect = document.getElementById('filter-exp-site');
+    if (siteSelect && siteSelect.value !== this.filters.expenseSite) {
+      siteSelect.value = this.filters.expenseSite;
+    }
+
+    // Sincronizza select periodo
+    const periodSelect = document.getElementById('filter-exp-period');
+    if (periodSelect && periodSelect.value !== this.filters.expensePeriod) {
+      periodSelect.value = this.filters.expensePeriod;
+    }
+
+    // Sincronizza select doc
+    const docSelect = document.getElementById('filter-exp-doc');
+    if (docSelect && docSelect.value !== this.filters.expenseDoc) {
+      docSelect.value = this.filters.expenseDoc;
+    }
+  }
+
+  renderExpenseCategoryChips(allExpenses) {
+    const container = document.getElementById('expense-category-chips');
+    if (!container) return;
+
+    const configCats = (store.data.config && store.data.config.expenseCategories) || [];
+    const usedCats = (allExpenses || []).map(e => e.category).filter(Boolean);
+    const allUniqueCats = [...new Set([...configCats, ...usedCats])];
+
+    const currentCat = this.filters.expenseCategory || 'all';
+
+    let html = `
+      <button type="button" class="filter-chip ${currentCat === 'all' ? 'active' : ''}" data-exp-category="all" onclick="app.setExpenseCategoryFilter('all')">
+        Tutte (${allExpenses.length})
+      </button>
+    `;
+
+    allUniqueCats.forEach(cat => {
+      const count = allExpenses.filter(e => e.category === cat).length;
+      const escapedCat = cat.replace(/'/g, "\\'");
+      html += `
+        <button type="button" class="filter-chip ${currentCat === cat ? 'active' : ''}" data-exp-category="${cat}" onclick="app.setExpenseCategoryFilter('${escapedCat}')">
+          ${cat} (${count})
+        </button>
+      `;
+    });
+
+    container.innerHTML = html;
+  }
+
   // --- RENDERING SPESE (EXPENSES) ---
   renderExpenses() {
     const list = document.getElementById('expenses-list');
     if (!list) return;
 
-    let entries = [...store.data.expenses];
+    this.syncExpenseFiltersUI();
 
+    const allExpenses = store.data.expenses || [];
+    this.renderExpenseCategoryChips(allExpenses);
+
+    let entries = [...allExpenses];
+
+    // 1. Filtro Cantiere
     if (this.filters.expenseSite !== 'all') {
       entries = entries.filter(e => e.siteId === this.filters.expenseSite);
     }
+
+    // 2. Filtro Categoria
     if (this.filters.expenseCategory !== 'all') {
       entries = entries.filter(e => e.category === this.filters.expenseCategory);
     }
 
-    if (entries.length === 0) {
+    // 3. Filtro Stringa di Ricerca
+    if (this.filters.expenseSearch) {
+      const q = this.filters.expenseSearch.toLowerCase();
+      entries = entries.filter(e => {
+        const site = e.siteId === 'generale' 
+          ? { code: 'AZI', name: 'Spesa Generale Aziendale' }
+          : (store.data.sites.find(s => s.id === e.siteId) || { code: '', name: '' });
+        return (e.description && e.description.toLowerCase().includes(q)) ||
+               (e.category && e.category.toLowerCase().includes(q)) ||
+               (e.docNumber && e.docNumber.toLowerCase().includes(q)) ||
+               (e.notes && e.notes.toLowerCase().includes(q)) ||
+               (site.name && site.name.toLowerCase().includes(q)) ||
+               (site.code && site.code.toLowerCase().includes(q));
+      });
+    }
+
+    // 4. Filtro Periodo Temporale
+    if (this.filters.expensePeriod && this.filters.expensePeriod !== 'all') {
+      const now = new Date();
+      const curYear = now.getFullYear();
+      const curMonth = String(now.getMonth() + 1).padStart(2, '0');
+      const curYearMonth = `${curYear}-${curMonth}`;
+      const lastMonthDate = new Date(curYear, now.getMonth() - 1, 1);
+      const lastYearMonth = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth() + 1).padStart(2, '0')}`;
+      const curYearStr = String(curYear);
+      const lastYearStr = String(curYear - 1);
+      const thirtyDaysAgoStr = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+      if (this.filters.expensePeriod === 'this_month') {
+        entries = entries.filter(e => (e.date || '').startsWith(curYearMonth));
+      } else if (this.filters.expensePeriod === 'last_month') {
+        entries = entries.filter(e => (e.date || '').startsWith(lastYearMonth));
+      } else if (this.filters.expensePeriod === 'this_year') {
+        entries = entries.filter(e => (e.date || '').startsWith(curYearStr));
+      } else if (this.filters.expensePeriod === 'last_year') {
+        entries = entries.filter(e => (e.date || '').startsWith(lastYearStr));
+      } else if (this.filters.expensePeriod === 'last_30_days') {
+        entries = entries.filter(e => (e.date || '') >= thirtyDaysAgoStr);
+      }
+    }
+
+    // 5. Filtro Documento Fiscale
+    if (this.filters.expenseDoc === 'has_doc') {
+      entries = entries.filter(e => Boolean(e.docNumber && e.docNumber.trim()));
+    } else if (this.filters.expenseDoc === 'no_doc') {
+      entries = entries.filter(e => !e.docNumber || !e.docNumber.trim());
+    }
+
+    // 6. Ordinamento
+    const sort = this.filters.expenseSort || 'date_desc';
+    entries.sort((a, b) => {
+      if (sort === 'date_asc') {
+        return (a.date || '').localeCompare(b.date || '') || (a.amount || 0) - (b.amount || 0);
+      }
+      if (sort === 'amount_desc') {
+        return (b.amount || 0) - (a.amount || 0) || (b.date || '').localeCompare(a.date || '');
+      }
+      if (sort === 'amount_asc') {
+        return (a.amount || 0) - (b.amount || 0) || (b.date || '').localeCompare(a.date || '');
+      }
+      if (sort === 'desc_asc') {
+        return (a.description || a.category || '').localeCompare(b.description || b.category || '', 'it', { sensitivity: 'base' }) || (b.date || '').localeCompare(a.date || '');
+      }
+      if (sort === 'desc_desc') {
+        return (b.description || b.category || '').localeCompare(a.description || a.category || '', 'it', { sensitivity: 'base' }) || (b.date || '').localeCompare(a.date || '');
+      }
+      if (sort === 'category_asc') {
+        return (a.category || '').localeCompare(b.category || '', 'it', { sensitivity: 'base' }) || (b.date || '').localeCompare(a.date || '');
+      }
+      if (sort === 'site_asc') {
+        const getSiteName = (item) => {
+          if (item.siteId === 'generale') return 'AZI Spesa Generale';
+          const s = store.data.sites.find(st => st.id === item.siteId);
+          return s ? `${s.code} ${s.name}` : 'ZZZ';
+        };
+        return getSiteName(a).localeCompare(getSiteName(b), 'it', { sensitivity: 'base' }) || (b.date || '').localeCompare(a.date || '');
+      }
+      // Predefinito: date_desc
+      return (b.date || '').localeCompare(a.date || '') || (b.amount || 0) - (a.amount || 0);
+    });
+
+    // 7. Aggiornamento indicatori di conteggio e importo totale
+    const totalFilteredAmount = entries.reduce((sum, e) => sum + (parseFloat(e.amount) || 0), 0);
+    const displayedCountEl = document.getElementById('expenses-displayed-count');
+    const displayedTotalEl = document.getElementById('expenses-displayed-total');
+    if (displayedCountEl) displayedCountEl.textContent = entries.length;
+    if (displayedTotalEl) displayedTotalEl.textContent = fmtMoney(totalFilteredAmount);
+
+    if (allExpenses.length === 0) {
       list.innerHTML = `
         <div class="empty-state">
           <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><circle cx="17" cy="15" r="1.5"/></svg>
@@ -1299,6 +1578,23 @@ class GeemApp {
             <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Nuova Spesa
           </button>
+        </div>
+      `;
+      return;
+    }
+
+    if (entries.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state" style="padding:44px 16px;">
+          <svg viewBox="0 0 24 24" style="width:44px; height:44px; stroke:var(--text-dim); fill:none; stroke-width:1.5; margin-bottom:10px;"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><circle cx="17" cy="15" r="1.5"/></svg>
+          <h3 style="font-size:0.98rem; font-weight:700;">Nessuna spesa trovata</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
+            ${this.filters.expenseSearch ? `Nessun risultato trovato per "${this.filters.expenseSearch}"` : 'Nessuna spesa corrisponde ai filtri selezionati.'}
+          </p>
+          <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+            <button class="btn btn-secondary btn-sm" onclick="app.resetExpenseFilters()">Ripristina filtri</button>
+            <button class="btn btn-primary btn-sm" onclick="app.openExpenseModal()">+ Nuova Spesa</button>
+          </div>
         </div>
       `;
       return;
@@ -3499,8 +3795,7 @@ class GeemApp {
     const filterExpSite = document.getElementById('filter-exp-site');
     if (filterExpSite) {
       filterExpSite.addEventListener('change', () => {
-        this.filters.expenseSite = filterExpSite.value;
-        this.renderExpenses();
+        this.setExpenseSiteFilter(filterExpSite.value);
       });
     }
 

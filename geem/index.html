@@ -21,7 +21,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/logo.png?v=7">
   <link rel="icon" type="image/png" href="assets/logo.png?v=7">
 
-  <link rel="stylesheet" href="css/styles.css?v=32">
+  <link rel="stylesheet" href="css/styles.css?v=33">
 </head>
 <body>
 
@@ -268,7 +268,7 @@
          ====================================================================== -->
     <section id="view-expenses" class="view-section">
       <div class="section-toolbar">
-        <div class="toolbar-title" onclick="app.toggleFilterPanel('expenses')" title="Tocca per mostrare/nascondere i filtri cantiere">
+        <div class="toolbar-title" onclick="app.toggleFilterPanel('expenses')" title="Tocca per mostrare/nascondere filtri e ricerca" style="cursor:pointer;">
           <h2>Spese & Fatture</h2>
           <span id="toggle-filter-expenses" class="title-filter-toggle" aria-label="Mostra/Nascondi filtri">
             <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
@@ -282,11 +282,75 @@
         </div>
       </div>
 
-      <!-- Filtro Cantieri Spese (Collassabile, Chiuso di default) -->
-      <div id="filter-panel-expenses" class="page-filter-panel hidden" style="margin-bottom:12px;">
-        <select id="filter-exp-site" class="form-select">
-          <option value="all">Tutti i Cantieri e Spese Generali</option>
-        </select>
+      <!-- Filtri & Ordinamento Spese (Pannello Collassabile) -->
+      <div id="filter-panel-expenses" class="page-filter-panel hidden" style="margin-bottom:14px;">
+        <div class="sites-filter-box">
+          <!-- Barra Ricerca Spesa -->
+          <div class="search-input-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="expense-search-input" class="form-input search-input" placeholder="Cerca spesa per fornitore, descrizione, documento o note..." oninput="app.handleExpenseSearch(this.value)">
+            <button id="expense-search-clear" class="search-clear-btn" style="display:none;" onclick="app.clearExpenseSearch()" title="Cancella ricerca">&times;</button>
+          </div>
+
+          <!-- Chip Categoria Spesa (scrollabili) -->
+          <div id="expense-category-chips" class="filter-chips-scroll"></div>
+
+          <!-- Griglia Selettori: Ordinamento e Filtri Avanzati Spese -->
+          <div class="sites-filter-grid">
+            <div class="sites-filter-col">
+              <label for="filter-exp-sort">Ordina per</label>
+              <select id="filter-exp-sort" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setExpenseSort(this.value)">
+                <option value="date_desc">Predefinito (Data dal più recente)</option>
+                <option value="date_asc">Data (dal meno recente)</option>
+                <option value="amount_desc">Importo (€ più alto)</option>
+                <option value="amount_asc">Importo (€ più basso)</option>
+                <option value="desc_asc">Descrizione / Fornitore (A - Z)</option>
+                <option value="desc_desc">Descrizione / Fornitore (Z - A)</option>
+                <option value="category_asc">Categoria (A - Z)</option>
+                <option value="site_asc">Cantiere (A - Z)</option>
+              </select>
+            </div>
+
+            <div class="sites-filter-col">
+              <label for="filter-exp-site">Cantiere / Ambito</label>
+              <select id="filter-exp-site" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setExpenseSiteFilter(this.value)">
+                <option value="all">Tutti i cantieri e spese generali</option>
+                <option value="generale">Solo Spese Generali Aziendali</option>
+              </select>
+            </div>
+
+            <div class="sites-filter-col">
+              <label for="filter-exp-period">Periodo Temporale</label>
+              <select id="filter-exp-period" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setExpensePeriodFilter(this.value)">
+                <option value="all">Tutto lo storico</option>
+                <option value="this_month">Mese corrente</option>
+                <option value="last_month">Mese precedente</option>
+                <option value="this_year">Anno corrente</option>
+                <option value="last_year">Anno precedente</option>
+                <option value="last_30_days">Ultimi 30 giorni</option>
+              </select>
+            </div>
+
+            <div class="sites-filter-col">
+              <label for="filter-exp-doc">Documento Fiscale</label>
+              <select id="filter-exp-doc" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setExpenseDocFilter(this.value)">
+                <option value="all">Tutti i documenti</option>
+                <option value="has_doc">Solo con N° Fattura/Scontrino</option>
+                <option value="no_doc">Senza N° documento</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Barra di ripristino filtri con conteggio e totale speso -->
+          <div class="sites-filter-reset-wrap">
+            <span id="expenses-filter-active-count" style="font-size:0.75rem; color:var(--text-muted);">
+              Mostrate: <strong id="expenses-displayed-count" style="color:#fff;">0</strong> spese &middot; Totale: <strong id="expenses-displayed-total" style="color:var(--primary); font-size:0.85rem;">€ 0,00</strong>
+            </span>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="app.resetExpenseFilters()" style="min-height:28px; padding:0 8px; font-size:0.75rem;">
+              Ripristina filtri
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Lista Spese -->
@@ -1274,6 +1338,6 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Core App Scripts (ES Modules) -->
-  <script type="module" src="js/app.js?v=32"></script>
+  <script type="module" src="js/app.js?v=33"></script>
 </body>
 </html>
