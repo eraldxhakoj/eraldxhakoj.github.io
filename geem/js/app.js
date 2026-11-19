@@ -2833,7 +2833,8 @@ class GeemApp {
     if (!previewBox) return;
 
     const company = (store && typeof store.getCompany === 'function') ? store.getCompany() : {};
-    const logoSrc = company.logoUrl || 'assets/logo.png?v=7';
+    const logoInput = document.getElementById('company-logo-url');
+    const logoSrc = (logoInput ? logoInput.value.trim() : (company.logoUrl || '')).trim();
     const compName = escapeHTML(company.name || 'Impresa Edile');
     const compAddr = escapeHTML(company.address || 'Sede da definire');
     const vatStr = company.vatNumber ? `P.IVA: ${escapeHTML(company.vatNumber)}` : '';
@@ -2842,12 +2843,16 @@ class GeemApp {
     const emailStr = company.email ? `Email: ${escapeHTML(company.email)}` : '';
     const pecStr = company.pec ? ` &bull; PEC: ${escapeHTML(company.pec)}` : '';
     const webStr = company.website ? ` &bull; ${escapeHTML(company.website)}` : '';
-    const ibanStr = company.iban ? `<div style="margin-top:6px; font-size:0.75rem; color:#0284c7; font-weight:600;">IBAN: ${escapeHTML(company.iban)}${company.bankName ? ` (${escapeHTML(company.bankName)})` : ''}</div>` : '';
+    const ibanStr = company.iban ? `<div style="margin-top:6px; font-size:0.75rem; color:#0f172a; font-weight:600;">IBAN: ${escapeHTML(company.iban)}${company.bankName ? ` (${escapeHTML(company.bankName)})` : ''}</div>` : '';
+
+    const logoHtml = logoSrc ? `
+      <img src="${escapeHTML(logoSrc)}" alt="${compName}" style="max-height:56px; max-width:130px; object-fit:contain;" onerror="this.style.display='none'">
+    ` : '';
 
     previewBox.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; border-bottom:2px solid #0284c7; padding-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:20px; flex-wrap:wrap; padding-bottom:14px;">
         <div style="display:flex; align-items:center; gap:14px;">
-          <img src="${escapeHTML(logoSrc)}" alt="${compName}" style="max-height:56px; max-width:130px; object-fit:contain;" onerror="this.style.display='none'">
+          ${logoHtml}
           <div>
             <div style="font-size:1.15rem; font-weight:800; color:#0f172a; letter-spacing:-0.02em;">${compName}</div>
             <div style="font-size:0.75rem; color:#475569; margin-top:2px; line-height:1.4;">
@@ -2859,7 +2864,7 @@ class GeemApp {
           </div>
         </div>
         <div style="text-align:right; font-size:0.72rem; color:#64748b; line-height:1.4;">
-          <span style="display:inline-block; padding:3px 8px; background:#e0f2fe; color:#0369a1; border-radius:4px; font-weight:700; text-transform:uppercase; font-size:0.65rem; margin-bottom:4px;">Intestazione Ufficiale</span>
+          <span style="display:inline-block; padding:3px 8px; background:#f1f5f9; color:#0f172a; border-radius:4px; font-weight:700; text-transform:uppercase; font-size:0.65rem; margin-bottom:4px;">Intestazione Ufficiale</span>
           <div>Documentazione di Cantiere & Contabilità</div>
           <div>Conforme D.Lgs 81/08</div>
         </div>
@@ -2901,6 +2906,15 @@ class GeemApp {
       };
       reader.readAsDataURL(file);
     }
+  }
+
+  removeCompanyLogo() {
+    const logoUrlInput = document.getElementById('company-logo-url');
+    const logoPreview = document.getElementById('company-logo-preview');
+    if (logoUrlInput) logoUrlInput.value = '';
+    if (logoPreview) logoPreview.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="%2394a3b8" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>';
+    this.updateLetterheadLivePreview();
+    this.showToast('Logo aziendale rimosso (Nessun logo)', 'info');
   }
 
   resetCompanyLogo() {
@@ -4831,6 +4845,7 @@ class GeemApp {
     const fNumber = document.getElementById('qe-number');
     const fDate = document.getElementById('qe-date');
     const fValid = document.getElementById('qe-valid-until');
+    const fShowLogo = document.getElementById('qe-show-logo');
     const fTitle = document.getElementById('qe-title');
     const fClientName = document.getElementById('qe-client-name');
     const fClientFiscal = document.getElementById('qe-client-fiscal');
@@ -4847,6 +4862,7 @@ class GeemApp {
     if (fNumber) fNumber.value = q.number || '';
     if (fDate) fDate.value = q.date || '';
     if (fValid) fValid.value = q.validUntil || '';
+    if (fShowLogo) fShowLogo.value = q.showLogo === false ? 'no' : 'auto';
     if (fTitle) fTitle.value = q.title || '';
     if (fClientName) fClientName.value = q.clientName || '';
     if (fClientFiscal) fClientFiscal.value = q.clientFiscal || '';
@@ -5138,6 +5154,7 @@ class GeemApp {
     const fNumber = document.getElementById('qe-number');
     const fDate = document.getElementById('qe-date');
     const fValid = document.getElementById('qe-valid-until');
+    const fShowLogo = document.getElementById('qe-show-logo');
     const fTitle = document.getElementById('qe-title');
     const fClientName = document.getElementById('qe-client-name');
     const fClientFiscal = document.getElementById('qe-client-fiscal');
@@ -5155,6 +5172,7 @@ class GeemApp {
     this.currentQuoteEditorData.number = fNumber ? fNumber.value.trim() : store.getNextQuoteNumber();
     this.currentQuoteEditorData.date = fDate ? fDate.value : new Date().toISOString().split('T')[0];
     this.currentQuoteEditorData.validUntil = fValid ? fValid.value : '';
+    this.currentQuoteEditorData.showLogo = fShowLogo ? (fShowLogo.value !== 'no') : true;
     this.currentQuoteEditorData.title = fTitle ? fTitle.value.trim() : 'Preventivo Opere Edili';
     this.currentQuoteEditorData.clientName = fClientName ? fClientName.value.trim() : '';
     this.currentQuoteEditorData.clientFiscal = fClientFiscal ? fClientFiscal.value.trim() : '';
@@ -5363,7 +5381,8 @@ class GeemApp {
       `;
     });
 
-    const logoSrc = company.logoUrl || 'assets/logo.png?v=7';
+    const showLogo = quote.showLogo !== false && Boolean((company.logoUrl || '').trim());
+    const logoSrc = (company.logoUrl || '').trim();
     const compName = escapeHTML(company.name || 'Impresa Edile');
     const compAddr = escapeHTML(company.address || '');
     const compVat = company.vatNumber ? `P.IVA: ${escapeHTML(company.vatNumber)}` : '';
@@ -5375,10 +5394,14 @@ class GeemApp {
     const compRea = company.rea ? ` &bull; REA: ${escapeHTML(company.rea)}` : '';
     const compIban = company.iban ? `<div>&bull; <strong>Coordinate Bancarie (IBAN):</strong> ${escapeHTML(company.iban)}${company.bankName ? ` (${escapeHTML(company.bankName)})` : ''} - <em>Idoneo per bonifico parlante detrazioni fiscali</em></div>` : '';
 
+    const brandLogoHtml = (showLogo && logoSrc) 
+      ? `<img src="${escapeHTML(logoSrc)}" alt="${compName}" class="print-brand-logo" onerror="this.style.display='none'">` 
+      : '';
+
     return `
       <div class="print-doc-header">
         <div class="print-brand-left">
-          <img src="${escapeHTML(logoSrc)}" alt="${compName}" class="print-brand-logo" onerror="this.style.display='none'">
+          ${brandLogoHtml}
           <div>
             <div class="print-company-name">${compName}</div>
             <div class="print-company-sub">
