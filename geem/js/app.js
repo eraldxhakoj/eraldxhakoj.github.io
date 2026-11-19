@@ -99,6 +99,10 @@ class GeemApp {
 
     this.filters = {
       timesheetSite: 'all',
+      timesheetWorker: 'all',
+      timesheetSort: 'date_desc',
+      timesheetSearch: '',
+      timesheetPeriod: 'selected_day',
       expenseSite: 'all',
       expenseCategory: 'all',
       expenseSort: 'date_desc',
@@ -112,6 +116,25 @@ class GeemApp {
       siteFinancial: 'all',
       siteBudget: 'all'
     };
+
+    // Ripristino filtri e ordinamento ore da localStorage
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const savedHoursFilters = localStorage.getItem('geem_hours_filters');
+        if (savedHoursFilters) {
+          const parsed = JSON.parse(savedHoursFilters);
+          if (parsed && typeof parsed === 'object') {
+            this.filters.timesheetSite = parsed.timesheetSite || 'all';
+            this.filters.timesheetWorker = parsed.timesheetWorker || 'all';
+            this.filters.timesheetSort = parsed.timesheetSort || 'date_desc';
+            this.filters.timesheetSearch = parsed.timesheetSearch || '';
+            this.filters.timesheetPeriod = parsed.timesheetPeriod || 'selected_day';
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Errore lettura filtri ore da localStorage:', e);
+    }
 
     // Ripristino filtri e ordinamento spese da localStorage
     try {
@@ -893,10 +916,18 @@ class GeemApp {
 
     const filterTsSite = document.getElementById('filter-ts-site');
     if (filterTsSite) {
-      const current = filterTsSite.value;
+      const current = this.filters.timesheetSite || 'all';
       filterTsSite.innerHTML = '<option value="all">Tutti i Cantieri</option>' +
         sites.map(s => `<option value="${s.id}">${s.code} - ${s.name}</option>`).join('');
-      if (current) filterTsSite.value = current;
+      filterTsSite.value = current;
+    }
+
+    const filterTsWorker = document.getElementById('filter-ts-worker');
+    if (filterTsWorker) {
+      const current = this.filters.timesheetWorker || 'all';
+      filterTsWorker.innerHTML = '<option value="all">Tutti i lavoratori</option>' +
+        (store.data.workers || []).map(w => `<option value="${w.id}">${w.name} (${w.role || 'Operaio'})</option>`).join('');
+      filterTsWorker.value = current;
     }
 
     const filterExpSite = document.getElementById('filter-exp-site');
@@ -958,11 +989,15 @@ class GeemApp {
     this.calendarWeekOffset = 0;
     this.calendarMonthOffset = 0;
     this.selectedCalendarDate = new Date().toISOString().split('T')[0];
+    this.filters.timesheetPeriod = 'selected_day';
+    this.saveTimesheetFilters();
     this.renderTimesheets();
   }
 
   selectCalendarDate(isoStr, switchModeToDay = false) {
     this.selectedCalendarDate = isoStr;
+    this.filters.timesheetPeriod = 'selected_day';
+    this.saveTimesheetFilters();
     if (switchModeToDay) {
       this.setCalendarMode('day');
       return;
@@ -1025,6 +1060,123 @@ class GeemApp {
     };
   }
 
+  // ==========================================================================
+  // GESTIONE SEZIONE ORE (TIMESHEETS)
+  // ==========================================================================
+  saveTimesheetFilters() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const payload = {
+          timesheetSite: this.filters.timesheetSite,
+          timesheetWorker: this.filters.timesheetWorker,
+          timesheetSort: this.filters.timesheetSort,
+          timesheetSearch: this.filters.timesheetSearch,
+          timesheetPeriod: this.filters.timesheetPeriod
+        };
+        localStorage.setItem('geem_hours_filters', JSON.stringify(payload));
+      }
+    } catch (e) {
+      console.warn('Errore salvataggio filtri ore in localStorage:', e);
+    }
+  }
+
+  setTimesheetSiteFilter(siteId) {
+    this.filters.timesheetSite = siteId || 'all';
+    this.saveTimesheetFilters();
+    this.renderTimesheets();
+  }
+
+  setTimesheetWorkerFilter(workerId) {
+    this.filters.timesheetWorker = workerId || 'all';
+    this.saveTimesheetFilters();
+    this.renderTimesheets();
+  }
+
+  setTimesheetSort(sortVal) {
+    this.filters.timesheetSort = sortVal || 'date_desc';
+    this.saveTimesheetFilters();
+    this.renderTimesheets();
+  }
+
+  setTimesheetPeriodFilter(periodVal) {
+    this.filters.timesheetPeriod = periodVal || 'selected_day';
+    this.saveTimesheetFilters();
+    this.renderTimesheets();
+  }
+
+  handleTimesheetSearch(query) {
+    this.filters.timesheetSearch = (query || '').trim();
+    const clearBtn = document.getElementById('hours-search-clear');
+    if (clearBtn) {
+      clearBtn.style.display = this.filters.timesheetSearch ? 'block' : 'none';
+    }
+    this.saveTimesheetFilters();
+    this.renderTimesheets();
+  }
+
+  clearTimesheetSearch() {
+    this.filters.timesheetSearch = '';
+    const input = document.getElementById('hours-search-input');
+    const clearBtn = document.getElementById('hours-search-clear');
+    if (input) input.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+    this.saveTimesheetFilters();
+    this.renderTimesheets();
+  }
+
+  resetTimesheetFilters() {
+    this.filters.timesheetSite = 'all';
+    this.filters.timesheetWorker = 'all';
+    this.filters.timesheetSort = 'date_desc';
+    this.filters.timesheetSearch = '';
+    this.filters.timesheetPeriod = 'selected_day';
+
+    const searchInput = document.getElementById('hours-search-input');
+    const clearBtn = document.getElementById('hours-search-clear');
+    if (searchInput) searchInput.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+
+    this.saveTimesheetFilters();
+    this.renderTimesheets();
+    this.showToast('Filtri ore ripristinati', 'info');
+  }
+
+  syncTimesheetFiltersUI() {
+    // Sincronizza input di ricerca
+    const searchInput = document.getElementById('hours-search-input');
+    if (searchInput && searchInput.value !== this.filters.timesheetSearch) {
+      searchInput.value = this.filters.timesheetSearch || '';
+    }
+    const clearBtn = document.getElementById('hours-search-clear');
+    if (clearBtn) {
+      clearBtn.style.display = this.filters.timesheetSearch ? 'block' : 'none';
+    }
+
+    // Sincronizza select cantiere
+    const siteSelect = document.getElementById('filter-ts-site');
+    if (siteSelect && siteSelect.value !== this.filters.timesheetSite) {
+      siteSelect.value = this.filters.timesheetSite;
+    }
+
+    // Sincronizza select lavoratore
+    const workerSelect = document.getElementById('filter-ts-worker');
+    if (workerSelect && workerSelect.value !== this.filters.timesheetWorker) {
+      workerSelect.value = this.filters.timesheetWorker;
+    }
+
+    // Sincronizza select ordinamento
+    const sortSelect = document.getElementById('filter-ts-sort');
+    if (sortSelect && sortSelect.value !== this.filters.timesheetSort) {
+      sortSelect.value = this.filters.timesheetSort;
+    }
+
+    // Sincronizza select periodo
+    const periodSelect = document.getElementById('filter-ts-period');
+    if (periodSelect && periodSelect.value !== this.filters.timesheetPeriod) {
+      periodSelect.value = this.filters.timesheetPeriod;
+    }
+  }
+
   // --- RENDERING ORE (TIMESHEETS CON CALENDARIO) ---
   renderTimesheets() {
     const list = document.getElementById('timesheets-list');
@@ -1035,13 +1187,33 @@ class GeemApp {
     const monthSection = document.getElementById('month-view-section');
     if (!list) return;
 
+    this.syncTimesheetFiltersUI();
+
     const todayIso = new Date().toISOString().split('T')[0];
     const months = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
 
-    // Filtra i timesheets complessivi in base all'eventuale cantiere selezionato
-    let filteredTimesheets = store.data.timesheets;
+    // Filtra i timesheets complessivi in base ai filtri generali (cantiere, lavoratore, ricerca)
+    let filteredTimesheets = store.data.timesheets || [];
+
     if (this.filters.timesheetSite !== 'all') {
       filteredTimesheets = filteredTimesheets.filter(e => e.siteId === this.filters.timesheetSite);
+    }
+
+    if (this.filters.timesheetWorker !== 'all') {
+      filteredTimesheets = filteredTimesheets.filter(e => e.workerId === this.filters.timesheetWorker);
+    }
+
+    if (this.filters.timesheetSearch) {
+      const q = this.filters.timesheetSearch.toLowerCase();
+      filteredTimesheets = filteredTimesheets.filter(t => {
+        const w = store.data.workers.find(worker => worker.id === t.workerId) || { name: '', role: '' };
+        const s = store.data.sites.find(site => site.id === t.siteId) || { code: '', name: '' };
+        return (w.name && w.name.toLowerCase().includes(q)) ||
+               (w.role && w.role.toLowerCase().includes(q)) ||
+               (s.name && s.name.toLowerCase().includes(q)) ||
+               (s.code && s.code.toLowerCase().includes(q)) ||
+               (t.notes && t.notes.toLowerCase().includes(q));
+      });
     }
 
     // Gestione intestazione titolo in base alla modalità
@@ -1126,6 +1298,15 @@ class GeemApp {
           </div>
         `;
       }
+
+      // Aggiorna indicatore filtri compatto
+      const displayedCountEl = document.getElementById('hours-displayed-count');
+      const displayedTotalHoursEl = document.getElementById('hours-displayed-total-hours');
+      const displayedTotalCostEl = document.getElementById('hours-displayed-total-cost');
+      if (displayedCountEl) displayedCountEl.textContent = filteredTimesheets.length;
+      if (displayedTotalHoursEl) displayedTotalHoursEl.textContent = `${weekTotalHours}h`;
+      if (displayedTotalCostEl) displayedTotalCostEl.textContent = fmtMoney(weekTotalCost);
+
       return;
     }
 
@@ -1199,6 +1380,15 @@ class GeemApp {
           </div>
         `;
       }
+
+      // Aggiorna indicatore filtri compatto
+      const displayedCountEl = document.getElementById('hours-displayed-count');
+      const displayedTotalHoursEl = document.getElementById('hours-displayed-total-hours');
+      const displayedTotalCostEl = document.getElementById('hours-displayed-total-cost');
+      if (displayedCountEl) displayedCountEl.textContent = filteredTimesheets.length;
+      if (displayedTotalHoursEl) displayedTotalHoursEl.textContent = `${monthTotalHours}h`;
+      if (displayedTotalCostEl) displayedTotalCostEl.textContent = fmtMoney(monthTotalCost);
+
       return;
     }
 
@@ -1225,31 +1415,102 @@ class GeemApp {
       }).join('');
     }
 
-    // Filtra le registrazioni per il giorno selezionato
-    let entries = filteredTimesheets.filter(e => e.date === this.selectedCalendarDate);
+    // In vista Giorno, applichiamo l'ambito periodo e l'ordinamento
+    let entries = [...filteredTimesheets];
+    const now = new Date();
+    const curYear = now.getFullYear();
+    const curMonth = String(now.getMonth() + 1).padStart(2, '0');
+    const curYearMonth = `${curYear}-${curMonth}`;
+    const lastMonthDate = new Date(curYear, now.getMonth() - 1, 1);
+    const lastYearMonth = `${lastMonthDate.getFullYear()}-${String(lastMonthDate.getMonth() + 1).padStart(2, '0')}`;
+    const curYearStr = String(curYear);
+    const weekIsoDates = new Set(weekDates.map(w => w.isoString));
 
-    // Aggiorna riepilogo del giorno selezionato
+    let periodLabel = fmtDate(this.selectedCalendarDate);
+
+    if (this.filters.timesheetPeriod === 'selected_day') {
+      entries = entries.filter(e => e.date === this.selectedCalendarDate);
+      periodLabel = fmtDate(this.selectedCalendarDate);
+    } else if (this.filters.timesheetPeriod === 'this_week') {
+      entries = entries.filter(e => weekIsoDates.has(e.date));
+      periodLabel = `Settimana (${fmtDate(weekDates[0].isoString)} - ${fmtDate(weekDates[6].isoString)})`;
+    } else if (this.filters.timesheetPeriod === 'this_month') {
+      entries = entries.filter(e => (e.date || '').startsWith(curYearMonth));
+      periodLabel = `Mese corrente (${months[now.getMonth()]} ${curYear})`;
+    } else if (this.filters.timesheetPeriod === 'last_month') {
+      entries = entries.filter(e => (e.date || '').startsWith(lastYearMonth));
+      periodLabel = `Mese precedente (${months[lastMonthDate.getMonth()]} ${lastMonthDate.getFullYear()})`;
+    } else if (this.filters.timesheetPeriod === 'this_year') {
+      entries = entries.filter(e => (e.date || '').startsWith(curYearStr));
+      periodLabel = `Anno corrente (${curYear})`;
+    } else if (this.filters.timesheetPeriod === 'all') {
+      periodLabel = 'Tutto lo storico';
+    }
+
+    // Ordinamento
+    const sort = this.filters.timesheetSort || 'date_desc';
+    entries.sort((a, b) => {
+      if (sort === 'date_asc') {
+        return (a.date || '').localeCompare(b.date || '') || (b.hours || 0) - (a.hours || 0);
+      }
+      if (sort === 'hours_desc') {
+        return (b.hours || 0) - (a.hours || 0) || (b.date || '').localeCompare(a.date || '');
+      }
+      if (sort === 'hours_asc') {
+        return (a.hours || 0) - (b.hours || 0) || (b.date || '').localeCompare(a.date || '');
+      }
+      if (sort === 'cost_desc') {
+        return (b.total || 0) - (a.total || 0) || (b.date || '').localeCompare(a.date || '');
+      }
+      if (sort === 'worker_asc') {
+        const wA = store.data.workers.find(w => w.id === a.workerId)?.name || '';
+        const wB = store.data.workers.find(w => w.id === b.workerId)?.name || '';
+        return wA.localeCompare(wB, 'it', { sensitivity: 'base' }) || (b.date || '').localeCompare(a.date || '');
+      }
+      if (sort === 'site_asc') {
+        const sA = store.data.sites.find(s => s.id === a.siteId)?.name || '';
+        const sB = store.data.sites.find(s => s.id === b.siteId)?.name || '';
+        return sA.localeCompare(sB, 'it', { sensitivity: 'base' }) || (b.date || '').localeCompare(a.date || '');
+      }
+      // Predefinito: date_desc
+      return (b.date || '').localeCompare(a.date || '') || (b.hours || 0) - (a.hours || 0);
+    });
+
+    // Aggiornamento riepilogo del periodo / giorno selezionato
+    const dayTotalHours = entries.reduce((acc, t) => acc + (parseFloat(t.hours) || 0), 0);
+    const dayTotalCost = entries.reduce((acc, t) => acc + (parseFloat(t.total) || 0), 0);
+
     if (summary) {
-      const dayTotalHours = entries.reduce((acc, t) => acc + (t.hours || 0), 0);
-      const dayTotalCost = entries.reduce((acc, t) => acc + (t.total || 0), 0);
-      const isSelToday = this.selectedCalendarDate === todayIso;
-
+      const isSelToday = (this.filters.timesheetPeriod === 'selected_day' && this.selectedCalendarDate === todayIso);
       summary.innerHTML = `
-        <span><strong>${fmtDate(this.selectedCalendarDate)}</strong> ${isSelToday ? '<span class="day-badge">(Oggi)</span>' : ''}</span>
+        <span><strong>${periodLabel}</strong> ${isSelToday ? '<span class="day-badge">(Oggi)</span>' : ''}</span>
         <span>Totale: <strong style="color:var(--primary);">${dayTotalHours}h</strong> (${fmtMoney(dayTotalCost)})</span>
       `;
     }
 
+    // Aggiorna indicatore filtri compatto
+    const displayedCountEl = document.getElementById('hours-displayed-count');
+    const displayedTotalHoursEl = document.getElementById('hours-displayed-total-hours');
+    const displayedTotalCostEl = document.getElementById('hours-displayed-total-cost');
+    if (displayedCountEl) displayedCountEl.textContent = entries.length;
+    if (displayedTotalHoursEl) displayedTotalHoursEl.textContent = `${dayTotalHours}h`;
+    if (displayedTotalCostEl) displayedTotalCostEl.textContent = fmtMoney(dayTotalCost);
+
     if (entries.length === 0) {
       list.innerHTML = `
-        <div class="empty-state">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
-          <h3>Nessuna ora registrata</h3>
-          <p>Nessun lavoratore registrato per il giorno <strong>${fmtDate(this.selectedCalendarDate)}</strong>.</p>
-          <button class="btn btn-primary" onclick="app.openTimesheetModalForDate('${this.selectedCalendarDate}')">
-            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Registra Ore su questo giorno
-          </button>
+        <div class="empty-state" style="padding:44px 16px;">
+          <svg viewBox="0 0 24 24" style="width:44px; height:44px; stroke:var(--text-dim); fill:none; stroke-width:1.5; margin-bottom:10px;"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+          <h3 style="font-size:0.98rem; font-weight:700;">Nessuna ora trovata</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
+            ${this.filters.timesheetSearch ? `Nessun risultato trovato per "${this.filters.timesheetSearch}"` : `Nessuna ora registrata per il periodo selezionato.`}
+          </p>
+          <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+            <button class="btn btn-secondary btn-sm" onclick="app.resetTimesheetFilters()">Ripristina filtri</button>
+            <button class="btn btn-primary btn-sm" onclick="app.openTimesheetModalForDate('${this.selectedCalendarDate}')">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Registra Ore
+            </button>
+          </div>
         </div>
       `;
       return;
@@ -3787,8 +4048,14 @@ class GeemApp {
     const filterTsSite = document.getElementById('filter-ts-site');
     if (filterTsSite) {
       filterTsSite.addEventListener('change', () => {
-        this.filters.timesheetSite = filterTsSite.value;
-        this.renderTimesheets();
+        this.setTimesheetSiteFilter(filterTsSite.value);
+      });
+    }
+
+    const filterTsWorker = document.getElementById('filter-ts-worker');
+    if (filterTsWorker) {
+      filterTsWorker.addEventListener('change', () => {
+        this.setTimesheetWorkerFilter(filterTsWorker.value);
       });
     }
 

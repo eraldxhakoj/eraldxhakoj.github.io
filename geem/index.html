@@ -21,7 +21,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/logo.png?v=7">
   <link rel="icon" type="image/png" href="assets/logo.png?v=7">
 
-  <link rel="stylesheet" href="css/styles.css?v=33">
+  <link rel="stylesheet" href="css/styles.css?v=34">
 </head>
 <body>
 
@@ -233,16 +233,69 @@
             <button id="cal-mode-week" class="cal-mode-btn" onclick="app.setCalendarMode('week')">Settimana</button>
             <button id="cal-mode-month" class="cal-mode-btn" onclick="app.setCalendarMode('month')">Mese</button>
           </div>
+        </div>
 
-          <div style="flex-shrink:0;">
-            <select id="filter-ts-site" class="form-select" style="min-height:32px; padding:4px 8px; font-size:0.78rem;">
+        <!-- Striscia giorni della settimana (solo per visuale Giorno) -->
+        <div id="calendar-week-strip" class="calendar-week-strip" style="margin-bottom:12px;"></div>
+
+        <!-- Barra Ricerca Ore (Pulita e Minimale) -->
+        <div class="search-input-wrap" style="margin-bottom:10px;">
+          <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="hours-search-input" class="form-input search-input" placeholder="Cerca per operaio, cantiere o note..." oninput="app.handleTimesheetSearch(this.value)">
+          <button id="hours-search-clear" class="search-clear-btn" style="display:none;" onclick="app.clearTimesheetSearch()" title="Cancella ricerca">&times;</button>
+        </div>
+
+        <!-- Griglia Selettori: Ordinamento e Filtri Avanzati Ore -->
+        <div class="sites-filter-grid">
+          <div class="sites-filter-col">
+            <label for="filter-ts-sort">Ordina per</label>
+            <select id="filter-ts-sort" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setTimesheetSort(this.value)">
+              <option value="date_desc">Predefinito (Data dal più recente)</option>
+              <option value="date_asc">Data (dal meno recente)</option>
+              <option value="worker_asc">Lavoratore (A - Z)</option>
+              <option value="hours_desc">Più ore lavorate</option>
+              <option value="hours_asc">Meno ore lavorate</option>
+              <option value="cost_desc">Costo manodopera (€ maggiore)</option>
+              <option value="site_asc">Cantiere (A - Z)</option>
+            </select>
+          </div>
+
+          <div class="sites-filter-col">
+            <label for="filter-ts-site">Cantiere</label>
+            <select id="filter-ts-site" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setTimesheetSiteFilter(this.value)">
               <option value="all">Tutti i Cantieri</option>
+            </select>
+          </div>
+
+          <div class="sites-filter-col">
+            <label for="filter-ts-worker">Lavoratore</label>
+            <select id="filter-ts-worker" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setTimesheetWorkerFilter(this.value)">
+              <option value="all">Tutti i lavoratori</option>
+            </select>
+          </div>
+
+          <div class="sites-filter-col">
+            <label for="filter-ts-period">Periodo</label>
+            <select id="filter-ts-period" class="form-select" style="min-height:36px; padding:4px 8px; font-size:0.8rem;" onchange="app.setTimesheetPeriodFilter(this.value)">
+              <option value="selected_day">Giorno dal calendario</option>
+              <option value="this_week">Settimana corrente</option>
+              <option value="this_month">Mese corrente</option>
+              <option value="last_month">Mese precedente</option>
+              <option value="this_year">Anno corrente</option>
+              <option value="all">Tutto lo storico</option>
             </select>
           </div>
         </div>
 
-        <!-- Striscia giorni della settimana (solo per visuale Giorno) -->
-        <div id="calendar-week-strip" class="calendar-week-strip"></div>
+        <!-- Barra di ripristino filtri con conteggio e totale ore/costo -->
+        <div class="sites-filter-reset-wrap">
+          <span id="hours-filter-active-count" style="font-size:0.75rem; color:var(--text-muted);">
+            Mostrate: <strong id="hours-displayed-count" style="color:#fff;">0</strong> &middot; Totale: <strong id="hours-displayed-total-hours" style="color:var(--primary);">0h</strong> (<strong id="hours-displayed-total-cost" style="color:var(--success);">€ 0,00</strong>)
+          </span>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="app.resetTimesheetFilters()" style="min-height:28px; padding:0 8px; font-size:0.75rem;">
+            Ripristina filtri
+          </button>
+        </div>
       </div>
 
       <!-- Container Viste Calendario: Giorno (riepilogo + lista ore) / Settimana Compatta / Mese Compatto -->
@@ -1338,6 +1391,6 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Core App Scripts (ES Modules) -->
-  <script type="module" src="js/app.js?v=33"></script>
+  <script type="module" src="js/app.js?v=34"></script>
 </body>
 </html>
