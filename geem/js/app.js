@@ -3,7 +3,7 @@
  * UI logic, rendering, event listeners, and interactive mobile-first UX
  */
 
-import { store } from './state.js';
+import { store, calcQuoteTotals } from './state.js';
 
 // SVG Icons Helpers per render rapido senza emoji
 const ICONS = {
@@ -26,7 +26,206 @@ const ICONS = {
   eye: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`,
   eyeOff: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`,
   whatsapp: `<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="fill:currentColor; stroke:none; flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>`,
-  navigation: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>`
+  navigation: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>`,
+  print: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>`,
+  copy: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`,
+  rocket: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>`
+};
+
+export const QUOTE_PRESETS = {
+  bagno: {
+    title: 'Ristrutturazione Completa Bagno Chiavi in Mano',
+    vatRate: 10,
+    paymentTerms: '30% acconto firma contratto, 40% a metà opere (impianti e massetto), 30% a collaudo e consegna chiavi',
+    estimatedDays: '15 giorni lavorativi',
+    notes: 'Prezzi comprensivi di mano d\'opera specializzata, attrezzature, trasporto e smaltimento a rifiuto autorizzato con formulario FIR. Sanitari, rubinetterie e piastrelle forniti dal committente salvo accordi.',
+    sections: [
+      {
+        id: 'sec_b1',
+        title: '1. Demolizioni, Rimozioni & Smaltimento',
+        items: [
+          { id: 'it_b1', desc: 'Demolizione pavimento e sottofondo compreso calo calcinacci e carico su automezzo', um: 'mq', qty: 6, price: 35.00, total: 210.00 },
+          { id: 'it_b2', desc: 'Demolizione rivestimento pareti e spicconatura intonaco ammalorato', um: 'mq', qty: 22, price: 26.00, total: 572.00 },
+          { id: 'it_b3', desc: 'Smontaggio vecchi sanitari (wc, bidet, lavabo, piatto/vasca) e tubazioni fino alle colonne principali', um: 'a corpo', qty: 1, price: 220.00, total: 220.00 },
+          { id: 'it_b4', desc: 'Oneri di conferimento e smaltimento macerie a discarica autorizzata', um: 'a corpo', qty: 1, price: 250.00, total: 250.00 }
+        ]
+      },
+      {
+        id: 'sec_b2',
+        title: '2. Nuovi Impianti Idrico-Sanitari & Scarichi',
+        items: [
+          { id: 'it_b5', desc: 'Realizzazione nuovo impianto idrico in multistrato coibentato (4 punti acqua: lavabo, bidet, wc, doccia)', um: 'punto', qty: 4, price: 240.00, total: 960.00 },
+          { id: 'it_b6', desc: 'Fornitura e posa cassetta di scarico incasso Geberit Kombifix con placca Sigma cromata', um: 'cad', qty: 1, price: 290.00, total: 290.00 },
+          { id: 'it_b7', desc: 'Adeguamento impianto elettrico bagno (punti presa, specchio, interruttori e collegamento equipotenziale)', um: 'a corpo', qty: 1, price: 420.00, total: 420.00 }
+        ]
+      },
+      {
+        id: 'sec_b3',
+        title: '3. Sottofondi, Impermeabilizzazione & Massetto',
+        items: [
+          { id: 'it_b8', desc: 'Chiusura tracce impiantistiche con malta cementizia e rasatura pareti a gesso/cemento', um: 'mq', qty: 26, price: 24.00, total: 624.00 },
+          { id: 'it_b9', desc: 'Formazione nuovo massetto alleggerito per quota e pendenze scarico', um: 'mq', qty: 6, price: 38.00, total: 228.00 },
+          { id: 'it_b10', desc: 'Impermeabilizzazione zona doccia con bicomponente elastico Mapelastic e bandelle sigillanti agli angoli', um: 'mq', qty: 8, price: 34.00, total: 272.00 }
+        ]
+      },
+      {
+        id: 'sec_b4',
+        title: '4. Posa Pavimenti, Rivestimenti & Sanitari',
+        items: [
+          { id: 'it_b11', desc: 'Posa in opera piastrelle/gres a pavimento compresa colla C2TE e stuccatura fughe', um: 'mq', qty: 6, price: 36.00, total: 216.00 },
+          { id: 'it_b12', desc: 'Posa in opera rivestimento pareti fino ad h 2.20m compresa stuccatura', um: 'mq', qty: 22, price: 38.00, total: 836.00 },
+          { id: 'it_b13', desc: 'Montaggio rubinetterie, sanitari filo parete, piatto doccia e box doccia con sigillatura siliconica antimuffa', um: 'a corpo', qty: 1, price: 450.00, total: 450.00 },
+          { id: 'it_b14', desc: 'Tinteggiatura soffitto con idropittura traspirante antimuffa (2 mani)', um: 'mq', qty: 6, price: 18.00, total: 108.00 }
+        ]
+      }
+    ]
+  },
+  appartamento: {
+    title: 'Ristrutturazione Globale Appartamento Residenziale',
+    vatRate: 10,
+    paymentTerms: '25% acconto inizio lavori, 25% a fine demolizioni e tracce, 25% a posa pavimenti, 25% a saldo fine lavori',
+    estimatedDays: '60 giorni lavorativi',
+    notes: 'Opere eseguite a perfetta regola d\'arte con rilascio dichiarazione di conformità impianti ex DM 37/08. Pulizia di cantiere giornaliera inclusa.',
+    sections: [
+      {
+        id: 'sec_a1',
+        title: '1. Demolizioni, Rimozioni & Nuove Tramezzature',
+        items: [
+          { id: 'it_a1', desc: 'Demolizione tramezze interne spessore 8-10 cm compreso carico e trasporto a rifiuto autorizzato', um: 'mq', qty: 45, price: 28.00, total: 1260.00 },
+          { id: 'it_a2', desc: 'Demolizione pavimentazioni e battiscopa esistenti compreso calo calcinacci', um: 'mq', qty: 85, price: 22.00, total: 1870.00 },
+          { id: 'it_a3', desc: 'Costruzione nuove tramezzature in cartongesso doppia lastra con isolante acustico in lana di roccia', um: 'mq', qty: 38, price: 54.00, total: 2052.00 }
+        ]
+      },
+      {
+        id: 'sec_a2',
+        title: '2. Nuovi Impianti Tecnologici (Elettrico & Idraulico)',
+        items: [
+          { id: 'it_a4', desc: 'Nuovo impianto elettrico sfilabile a norma CEI 64-8 livello 1 (quadro generale, linee forza motrice, 60 punti luce/presa)', um: 'a corpo', qty: 1, price: 4200.00, total: 4200.00 },
+          { id: 'it_a5', desc: 'Nuovo impianto idrico sanitario cucina e bagno in multistrato coibentato compresi scarichi Geberit', um: 'a corpo', qty: 1, price: 2600.00, total: 2600.00 },
+          { id: 'it_a6', desc: 'Predisposizione impianto climatizzazione dual split con linee frigorifere e scarico condensa', um: 'a corpo', qty: 1, price: 850.00, total: 850.00 }
+        ]
+      },
+      {
+        id: 'sec_a3',
+        title: '3. Massetti, Pavimentazioni & Porte Interne',
+        items: [
+          { id: 'it_a7', desc: 'Formazione massetto sabbia e cemento tirato a staggia per incollaggio pavimenti', um: 'mq', qty: 85, price: 32.00, total: 2720.00 },
+          { id: 'it_a8', desc: 'Posa in opera gres porcellanato / parquet prefinito incollato compresa colla professionale e tagli', um: 'mq', qty: 85, price: 35.00, total: 2975.00 },
+          { id: 'it_a9', desc: 'Posa in opera battiscopa coordinato in legno o ceramica compresa siliconatura', um: 'ml', qty: 70, price: 9.00, total: 630.00 },
+          { id: 'it_a10', desc: 'Posa in opera porte interne a battente / scrigno compresi controtelai e maniglieria', um: 'cad', qty: 5, price: 130.00, total: 650.00 }
+        ]
+      },
+      {
+        id: 'sec_a4',
+        title: '4. Rasatura, Tinteggiature & Rifiniture',
+        items: [
+          { id: 'it_a11', desc: 'Rasatura completa pareti e soffitti a base gesso con rete di rinforzo sulle giunzioni', um: 'mq', qty: 260, price: 16.00, total: 4160.00 },
+          { id: 'it_a12', desc: 'Carteggiatura meccanica, applicazione fissativo acrilico e tinteggiatura lavabile supercoprente a due mani', um: 'mq', qty: 260, price: 14.00, total: 3640.00 }
+        ]
+      }
+    ]
+  },
+  tinteggiatura: {
+    title: 'Opere di Rasatura Armata & Tinteggiatura Completa Interni',
+    vatRate: 10,
+    paymentTerms: '40% acconto avvio lavori, 60% a saldo a lavoro ultimato e verificato',
+    estimatedDays: '8 giorni lavorativi',
+    notes: 'Inclusa accurata mascheratura e protezione con teli in nylon e cartone di pavimenti, porte, finestre e battiscopa. Pulizia finale compresa.',
+    sections: [
+      {
+        id: 'sec_t1',
+        title: '1. Protezioni & Preparazione Superfici',
+        items: [
+          { id: 'it_t1', desc: 'Fornitura e posa protezioni antipolvere per arredi, pavimenti e serramenti con feltro assorbente', um: 'a corpo', qty: 1, price: 280.00, total: 280.00 },
+          { id: 'it_t2', desc: 'Spazzolatura e raschiatura vecchie pitture non aderenti, stuccatura buchi e fessurazioni con stucco rapido', um: 'mq', qty: 180, price: 6.50, total: 1170.00 }
+        ]
+      },
+      {
+        id: 'sec_t2',
+        title: '2. Rasatura e Fondo Uniformante',
+        items: [
+          { id: 'it_t3', desc: 'Rasatura armata con interposta rete in fibra di vetro antifessurazione e rasante minerale', um: 'mq', qty: 60, price: 22.00, total: 1320.00 },
+          { id: 'it_t4', desc: 'Carteggiatura meccanica con aspirazione e applicazione primer isolante consolidante', um: 'mq', qty: 180, price: 5.50, total: 990.00 }
+        ]
+      },
+      {
+        id: 'sec_t3',
+        title: '3. Tinteggiatura e Trattamenti Specifici',
+        items: [
+          { id: 'it_t5', desc: 'Tinteggiatura pareti con idropittura traspirante superlavabile alta copertura (2 mani)', um: 'mq', qty: 180, price: 12.00, total: 2160.00 },
+          { id: 'it_t6', desc: 'Trattamento igienizzante antimuffa e pittura anticondensa per locali umidi (bagno e cucina)', um: 'mq', qty: 45, price: 16.00, total: 720.00 }
+        ]
+      }
+    ]
+  },
+  pavimenti: {
+    title: 'Fornitura Massetto e Posa Pavimentazioni Nuove',
+    vatRate: 10,
+    paymentTerms: '35% avvio opere, 35% a massetto completato, 30% a posa e stuccatura ultimata',
+    estimatedDays: '12 giorni lavorativi',
+    notes: 'Esclusa la fornitura delle piastrelle (a scelta committente). Inclusi collanti professionali e materiali di sigillatura.',
+    sections: [
+      {
+        id: 'sec_p1',
+        title: '1. Preparazione Piano di Posa & Isolamento',
+        items: [
+          { id: 'it_p1', desc: 'Pulizia e aspirazione piano di posa solaio da polveri e residui', um: 'mq', qty: 70, price: 4.50, total: 315.00 },
+          { id: 'it_p2', desc: 'Posa barriera al vapore in polietilene e materassino anticalpestio acustico spessore 6mm', um: 'mq', qty: 70, price: 9.50, total: 665.00 }
+        ]
+      },
+      {
+        id: 'sec_p2',
+        title: '2. Massetto di Sottofondo Calpestabile',
+        items: [
+          { id: 'it_p3', desc: 'Formazione massetto tradizionale sabbia-cemento spessore medio 6 cm rinforzato con fibre polimeriche', um: 'mq', qty: 70, price: 34.00, total: 2380.00 }
+        ]
+      },
+      {
+        id: 'sec_p3',
+        title: '3. Posa Pavimento & Battiscopa',
+        items: [
+          { id: 'it_p4', desc: 'Posa in opera pavimenti in gres porcellanato di grande formato con distanziatori autolivellanti', um: 'mq', qty: 70, price: 38.00, total: 2660.00 },
+          { id: 'it_p5', desc: 'Stuccatura fughe con sigillante cementizio e pulizia con detergente neutro', um: 'mq', qty: 70, price: 7.00, total: 490.00 },
+          { id: 'it_p6', desc: 'Posa battiscopa coordinato compresi tagli a 45 gradi e sigillatura elastica', um: 'ml', qty: 55, price: 9.00, total: 495.00 }
+        ]
+      }
+    ]
+  },
+  tetto: {
+    title: 'Rifacimento Manto di Copertura, Impermeabilizzazione & Lattoneria',
+    vatRate: 10,
+    paymentTerms: '30% inizio cantiere e ponteggi, 40% a guaina ultimata, 30% a saldo smontaggio opere provvisionali',
+    estimatedDays: '20 giorni lavorativi',
+    notes: 'Oneri di sicurezza e redazione POS compresi. Garanzia decennale sulle membrane impermeabilizzanti.',
+    sections: [
+      {
+        id: 'sec_k1',
+        title: '1. Allestimento Cantiere & Rimozione Manto',
+        items: [
+          { id: 'it_k1', desc: 'Allestimento ponteggio metallico fisso o parapetti anticaduta certificati con linea vita temporanea', um: 'a corpo', qty: 1, price: 1800.00, total: 1800.00 },
+          { id: 'it_k2', desc: 'Smontaggio tegole/coppi esistenti con calo a terra e accatastamento per eventuale recupero', um: 'mq', qty: 120, price: 16.00, total: 1920.00 },
+          { id: 'it_k3', desc: 'Rimozione vecchia guaina ammalorata e smaltimento a discarica autorizzata', um: 'mq', qty: 120, price: 11.00, total: 1320.00 }
+        ]
+      },
+      {
+        id: 'sec_k2',
+        title: '2. Impermeabilizzazione Bituminosa ad Alta Resistenza',
+        items: [
+          { id: 'it_k4', desc: 'Applicazione primer bituminoso di ancoraggio a rapida essiccazione', um: 'mq', qty: 120, price: 4.50, total: 540.00 },
+          { id: 'it_k5', desc: 'Fornitura e posa prima membrana bitume-polimero elastoplastica 4 mm armata TNT poliestere', um: 'mq', qty: 120, price: 18.00, total: 2160.00 },
+          { id: 'it_k6', desc: 'Fornitura e posa seconda membrana con finitura ardesiata minerale autoprotetta contro raggi UV (4.5 kg/mq)', um: 'mq', qty: 120, price: 21.00, total: 2520.00 }
+        ]
+      },
+      {
+        id: 'sec_k3',
+        title: '3. Riposizionamento Coppi, Colmi & Lattonerie',
+        items: [
+          { id: 'it_k7', desc: 'Riposizionamento manto in coppi con listellatura di ventilazione e ganci fermacoppo antisfilamento', um: 'mq', qty: 120, price: 26.00, total: 3120.00 },
+          { id: 'it_k8', desc: 'Fissaggio colmi di ventilazione a secco e scossaline perimetrali in alluminio preverniciato spessore 8/10', um: 'ml', qty: 35, price: 32.00, total: 1120.00 }
+        ]
+      }
+    ]
+  }
 };
 
 export const PLACE_GRADIENTS = {
@@ -56,6 +255,18 @@ const fmtMoney = (val) => {
   }
   return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(val || 0);
 };
+const fmtDocMoney = (val) => new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(val || 0);
+
+const escapeHTML = (str) => {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
 const fmtDate = (dStr) => {
   if (!dStr) return '';
   const [y, m, d] = dStr.split('-');
@@ -238,6 +449,13 @@ class GeemApp {
     } catch (e) {
       this.hideEconomicData = false;
     }
+
+    // Modulo Preventivi & Computi Edili Apple-Style
+    this.quoteSubView = 'list'; // 'list' | 'editor'
+    this.quoteFilterStatus = 'all'; // 'all' | 'draft' | 'sent' | 'accepted' | 'rejected'
+    this.quoteSearchQuery = '';
+    this.editingQuoteId = null;
+    this.currentQuoteEditorData = null;
   }
 
   init() {
@@ -265,7 +483,7 @@ class GeemApp {
   }
 
   initRouting() {
-    const validTabs = ['home', 'hours', 'expenses', 'sites', 'people', 'places', 'admin'];
+    const validTabs = ['home', 'hours', 'expenses', 'sites', 'people', 'places', 'quotes', 'admin'];
     const getHashTab = () => {
       if (typeof window === 'undefined' || !window.location || !window.location.hash) return '';
       return window.location.hash.replace(/^#/, '').trim();
@@ -378,7 +596,7 @@ class GeemApp {
   }
 
   switchTab(tabId, updateHash = true) {
-    const validTabs = ['home', 'hours', 'expenses', 'sites', 'people', 'places', 'admin'];
+    const validTabs = ['home', 'hours', 'expenses', 'sites', 'people', 'places', 'quotes', 'admin'];
     if (!validTabs.includes(tabId)) {
       tabId = 'home';
     }
@@ -412,6 +630,10 @@ class GeemApp {
     document.querySelectorAll('.view-section').forEach(sec => {
       sec.classList.toggle('active', sec.id === `view-${tabId}`);
     });
+
+    if (tabId === 'quotes') {
+      this.renderQuotes();
+    }
 
     if (typeof window !== 'undefined' && window.scrollTo) {
       window.scrollTo(0, 0);
@@ -595,6 +817,7 @@ class GeemApp {
     this.populateSelectDropdowns();
     this.renderPeople();
     this.renderPlaces();
+    this.renderQuotes();
   }
 
   renderSyncStatus() {
@@ -4141,6 +4364,996 @@ class GeemApp {
       this.showToast('Luogo rimosso con successo', 'info');
       this.renderPlaces();
     }
+  }
+
+  // ==========================================================================
+  // MODULO PREVENTIVI & COMPUTI EDILI (APPLE STYLE)
+  // ==========================================================================
+
+  switchQuoteSubView(subView) {
+    this.quoteSubView = subView || 'list';
+    const listEl = document.getElementById('quote-subview-list');
+    const editorEl = document.getElementById('quote-subview-editor');
+    const btnList = document.getElementById('quote-tab-btn-list');
+    const btnEditor = document.getElementById('quote-tab-btn-editor');
+
+    if (listEl) listEl.style.display = this.quoteSubView === 'list' ? 'block' : 'none';
+    if (editorEl) editorEl.style.display = this.quoteSubView === 'editor' ? 'block' : 'none';
+    if (btnList) btnList.classList.toggle('active', this.quoteSubView === 'list');
+    if (btnEditor) btnEditor.classList.toggle('active', this.quoteSubView === 'editor');
+
+    if (this.quoteSubView === 'list') {
+      this.renderQuotes();
+    }
+  }
+
+  setQuoteStatusFilter(status) {
+    this.quoteFilterStatus = status || 'all';
+    document.querySelectorAll('[data-quote-status]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.quoteStatus === this.quoteFilterStatus);
+    });
+    this.renderQuotes();
+  }
+
+  setQuoteSearchFilter(query) {
+    this.quoteSearchQuery = (query || '').toLowerCase().trim();
+    this.renderQuotes();
+  }
+
+  renderQuotes() {
+    const listEl = document.getElementById('quotes-cards-list');
+    if (!listEl) return;
+
+    const allQuotes = store.getQuotes ? store.getQuotes() : (store.data.quotes || []);
+
+    // Aggiorna contatori filtri
+    const countAll = allQuotes.length;
+    const countDraft = allQuotes.filter(q => q.status === 'draft').length;
+    const countSent = allQuotes.filter(q => q.status === 'sent').length;
+    const countAccepted = allQuotes.filter(q => q.status === 'accepted').length;
+    const countRejected = allQuotes.filter(q => q.status === 'rejected').length;
+
+    const badgeTotal = document.getElementById('quotes-badge-total-count');
+    const elCountAll = document.getElementById('quotes-count-all');
+    const elCountDraft = document.getElementById('quotes-count-draft');
+    const elCountSent = document.getElementById('quotes-count-sent');
+    const elCountAccepted = document.getElementById('quotes-count-accepted');
+    const elCountRejected = document.getElementById('quotes-count-rejected');
+
+    if (badgeTotal) badgeTotal.textContent = countAll;
+    if (elCountAll) elCountAll.textContent = countAll;
+    if (elCountDraft) elCountDraft.textContent = countDraft;
+    if (elCountSent) elCountSent.textContent = countSent;
+    if (elCountAccepted) elCountAccepted.textContent = countAccepted;
+    if (elCountRejected) elCountRejected.textContent = countRejected;
+
+    // Filtra
+    let filtered = allQuotes.filter(q => {
+      if (this.quoteFilterStatus !== 'all' && q.status !== this.quoteFilterStatus) {
+        return false;
+      }
+      if (this.quoteSearchQuery) {
+        const qNum = (q.number || '').toLowerCase();
+        const qTitle = (q.title || '').toLowerCase();
+        const qClient = (q.clientName || '').toLowerCase();
+        const qAddress = (q.siteAddress || q.clientAddress || '').toLowerCase();
+        if (!qNum.includes(this.quoteSearchQuery) &&
+            !qTitle.includes(this.quoteSearchQuery) &&
+            !qClient.includes(this.quoteSearchQuery) &&
+            !qAddress.includes(this.quoteSearchQuery)) {
+          return false;
+        }
+      }
+      return true;
+    });
+
+    if (filtered.length === 0) {
+      listEl.innerHTML = `
+        <div class="empty-state" style="grid-column: 1 / -1; padding: 48px 20px; text-align: center;">
+          <div style="font-size: 2.2rem; margin-bottom: 12px;">📑</div>
+          <h3 style="font-size: 1.1rem; font-weight: 800; color: #fff; margin-bottom: 6px;">
+            ${allQuotes.length === 0 ? 'Nessun preventivo creato' : 'Nessun preventivo corrisponde ai filtri'}
+          </h3>
+          <p style="font-size: 0.84rem; color: var(--text-muted); max-width: 440px; margin: 0 auto 18px auto;">
+            ${allQuotes.length === 0 
+              ? 'Crea il tuo primo computo metrico estimativo per cantieri edili. Include calcoli IVA automatici ed esportazione PDF vettoriale.' 
+              : 'Prova a modificare i termini di ricerca o a selezionare "Tutti" per visualizzare tutti i preventivi.'}
+          </p>
+          <button type="button" class="btn btn-primary" onclick="app.openNewQuote()">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            + Crea Nuovo Preventivo
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    const statusLabels = {
+      draft: 'Bozza',
+      sent: 'Inviato',
+      accepted: 'Accettato',
+      rejected: 'Rifiutato'
+    };
+
+    listEl.innerHTML = filtered.map(q => {
+      const totals = calcQuoteTotals(q);
+      const statusClass = `quote-status-${q.status || 'draft'}`;
+      const statusText = statusLabels[q.status] || 'Bozza';
+      const sectionsCount = Array.isArray(q.sections) ? q.sections.length : 0;
+      const itemsCount = totals.itemsCount;
+
+      const clientInfo = q.clientName ? escapeHTML(q.clientName) : 'Cliente non specificato';
+      const addressInfo = q.siteAddress || q.clientAddress;
+
+      return `
+        <div class="quote-card">
+          <div class="quote-card-header">
+            <div>
+              <div class="quote-number-tag">${escapeHTML(q.number || 'PREV')}</div>
+              <div class="quote-date-tag">Emesso il ${fmtDate(q.date)}</div>
+            </div>
+            <span class="quote-status-pill ${statusClass}">
+              ${statusText}
+            </span>
+          </div>
+
+          <div class="quote-title">${escapeHTML(q.title || 'Preventivo Lavori Edili')}</div>
+
+          <div class="quote-client-row">
+            ${ICONS.user}
+            <span><strong>${clientInfo}</strong>${q.clientPhone ? ` &bull; ${escapeHTML(q.clientPhone)}` : ''}</span>
+          </div>
+
+          ${addressInfo ? `
+            <div class="quote-client-row">
+              ${ICONS.site}
+              <span style="font-size:0.78rem;">${escapeHTML(addressInfo)}</span>
+            </div>
+          ` : ''}
+
+          <div style="font-size:0.75rem; color:var(--text-dim); display:flex; gap:12px; margin-top:2px;">
+            <span>${sectionsCount} ${sectionsCount === 1 ? 'capitolo' : 'capitoli'}</span>
+            <span>&bull;</span>
+            <span>${itemsCount} ${itemsCount === 1 ? 'voce di computo' : 'voci di computo'}</span>
+          </div>
+
+          <div class="quote-amounts-strip">
+            <div class="quote-amount-detail">
+              <div>Imponibile: <strong>${fmtMoney(totals.taxableAmount)}</strong></div>
+              <div>IVA ${totals.vatRate}%: <strong>${fmtMoney(totals.vatAmount)}</strong></div>
+            </div>
+            <div class="quote-amount-grand">
+              <small>Totale Offerta</small>
+              <span>${fmtMoney(totals.grandTotal)}</span>
+            </div>
+          </div>
+
+          <div class="quote-card-actions">
+            <button type="button" class="btn btn-primary btn-sm" onclick="app.printQuote('${q.id}')" title="Stampa o salva in PDF vettoriale" style="background:linear-gradient(135deg, #0284c7, #38bdf8);">
+              ${ICONS.print}
+              PDF / Stampa
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="app.previewQuote('${q.id}')" title="Anteprima formattata A4">
+              ${ICONS.eye}
+              Anteprima
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="app.editQuote('${q.id}')" title="Modifica computo e prezzi">
+              ${ICONS.edit}
+              Modifica
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="app.duplicateQuote('${q.id}')" title="Duplica come nuovo preventivo">
+              ${ICONS.copy}
+              Duplica
+            </button>
+            ${q.status === 'accepted' ? `
+              <button type="button" class="btn btn-secondary btn-sm" onclick="app.convertQuoteToSite('${q.id}')" title="Converti in cantiere attivo" style="color:#f59e0b; border-color:rgba(245,158,11,0.4);">
+                ${ICONS.site}
+                Crea Cantiere
+              </button>
+            ` : ''}
+            <button type="button" class="btn-icon" onclick="app.deleteQuote('${q.id}')" title="Elimina preventivo" style="margin-left:auto; color:var(--text-dim);">
+              ${ICONS.delete}
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  openNewQuote() {
+    this.switchTab('quotes');
+    this.editingQuoteId = null;
+    const nextNum = store.getNextQuoteNumber();
+    const today = new Date().toISOString().split('T')[0];
+    const expiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+    this.currentQuoteEditorData = {
+      id: null,
+      number: nextNum,
+      date: today,
+      validUntil: expiry,
+      status: 'draft',
+      title: '',
+      clientId: '',
+      clientName: '',
+      clientAddress: '',
+      clientPhone: '',
+      clientFiscal: '',
+      siteId: '',
+      siteAddress: '',
+      discountPercent: 0,
+      vatRate: 10,
+      paymentTerms: '30% acconto firma contratto, 40% a SAL intermedio, 30% a saldo fine lavori',
+      estimatedDays: '30 giorni lavorativi',
+      notes: 'Prezzi comprensivi di mano d\'opera specializzata, attrezzature e oneri per la sicurezza.',
+      sections: [
+        {
+          id: `sec_${Date.now()}_1`,
+          title: '1. Opere Generali & Demolizioni',
+          items: [
+            { id: `it_${Date.now()}_1`, desc: '', um: 'mq', qty: 1, price: 0, total: 0 }
+          ]
+        }
+      ]
+    };
+
+    const labelEl = document.getElementById('quote-tab-editor-label');
+    if (labelEl) labelEl.textContent = 'Nuovo Preventivo';
+
+    this.populateQuoteEditorUI();
+    this.switchQuoteSubView('editor');
+  }
+
+  editQuote(id) {
+    const quote = store.getQuote(id);
+    if (!quote) return;
+    this.switchTab('quotes');
+    this.editingQuoteId = id;
+    this.currentQuoteEditorData = JSON.parse(JSON.stringify(quote));
+
+    const labelEl = document.getElementById('quote-tab-editor-label');
+    if (labelEl) labelEl.textContent = `Modifica ${quote.number}`;
+
+    this.populateQuoteEditorUI();
+    this.switchQuoteSubView('editor');
+  }
+
+  populateQuoteEditorUI() {
+    const q = this.currentQuoteEditorData;
+    if (!q) return;
+
+    // Selettore Clienti (da store.getAllPeople e store.data.clients)
+    const clientSelect = document.getElementById('qe-client-select');
+    if (clientSelect) {
+      const clientsList = store.data.clients || [];
+      const peopleList = store.getAllPeople ? store.getAllPeople() : (store.data.people || []);
+      
+      let html = `<option value="">-- Seleziona cliente o scrivi sotto --</option>`;
+      clientsList.forEach(c => {
+        html += `<option value="client_${c.id}">${escapeHTML(c.name)} (Cliente Committente)</option>`;
+      });
+      peopleList.filter(p => p.type === 'cliente' || p.role === 'Cliente').forEach(p => {
+        if (!clientsList.some(c => c.name.toLowerCase() === p.name.toLowerCase())) {
+          html += `<option value="person_${p.id}">${escapeHTML(p.name)} (${p.role || 'Contatto'})</option>`;
+        }
+      });
+      clientSelect.innerHTML = html;
+      clientSelect.value = q.clientId ? `client_${q.clientId}` : '';
+    }
+
+    // Selettore Cantieri
+    const siteSelect = document.getElementById('qe-site-select');
+    if (siteSelect) {
+      const sites = store.data.sites || [];
+      let sHtml = `<option value="">-- Nessun cantiere collegato --</option>`;
+      sites.forEach(s => {
+        sHtml += `<option value="${s.id}" ${q.siteId === s.id ? 'selected' : ''}>${escapeHTML(s.code)} - ${escapeHTML(s.name)}</option>`;
+      });
+      siteSelect.innerHTML = sHtml;
+    }
+
+    // Campi base form
+    const fStatus = document.getElementById('qe-status');
+    const fNumber = document.getElementById('qe-number');
+    const fDate = document.getElementById('qe-date');
+    const fValid = document.getElementById('qe-valid-until');
+    const fTitle = document.getElementById('qe-title');
+    const fClientName = document.getElementById('qe-client-name');
+    const fClientFiscal = document.getElementById('qe-client-fiscal');
+    const fClientAddress = document.getElementById('qe-client-address');
+    const fClientPhone = document.getElementById('qe-client-phone');
+    const fSiteAddress = document.getElementById('qe-site-address');
+    const fDiscount = document.getElementById('qe-discount-percent');
+    const fVat = document.getElementById('qe-vat-rate');
+    const fPayment = document.getElementById('qe-payment-terms');
+    const fEstimated = document.getElementById('qe-estimated-days');
+    const fNotes = document.getElementById('qe-notes');
+
+    if (fStatus) fStatus.value = q.status || 'draft';
+    if (fNumber) fNumber.value = q.number || '';
+    if (fDate) fDate.value = q.date || '';
+    if (fValid) fValid.value = q.validUntil || '';
+    if (fTitle) fTitle.value = q.title || '';
+    if (fClientName) fClientName.value = q.clientName || '';
+    if (fClientFiscal) fClientFiscal.value = q.clientFiscal || '';
+    if (fClientAddress) fClientAddress.value = q.clientAddress || '';
+    if (fClientPhone) fClientPhone.value = q.clientPhone || '';
+    if (fSiteAddress) fSiteAddress.value = q.siteAddress || '';
+    if (fDiscount) fDiscount.value = q.discountPercent || 0;
+    if (fVat) fVat.value = q.vatRate !== undefined ? q.vatRate : 10;
+    if (fPayment) fPayment.value = q.paymentTerms || '';
+    if (fEstimated) fEstimated.value = q.estimatedDays || '';
+    if (fNotes) fNotes.value = q.notes || '';
+
+    this.renderQuoteSectionsInEditor();
+    this.recalcQuoteTotals();
+  }
+
+  onQuoteClientSelectChange(val) {
+    if (!val) return;
+    let found = null;
+    if (val.startsWith('client_')) {
+      const id = val.replace('client_', '');
+      found = (store.data.clients || []).find(c => c.id === id);
+    } else if (val.startsWith('person_')) {
+      const id = val.replace('person_', '');
+      const allPeople = store.getAllPeople ? store.getAllPeople() : (store.data.people || []);
+      found = allPeople.find(p => p.id === id);
+    }
+
+    if (found) {
+      const fClientName = document.getElementById('qe-client-name');
+      const fClientPhone = document.getElementById('qe-client-phone');
+      const fClientAddress = document.getElementById('qe-client-address');
+      const fClientFiscal = document.getElementById('qe-client-fiscal');
+
+      if (fClientName) fClientName.value = found.name || '';
+      if (fClientPhone) fClientPhone.value = found.phone || '';
+      if (fClientAddress) fClientAddress.value = found.address || found.notes || '';
+      if (fClientFiscal && found.vatNumber) fClientFiscal.value = found.vatNumber;
+
+      if (this.currentQuoteEditorData) {
+        this.currentQuoteEditorData.clientName = found.name || '';
+        this.currentQuoteEditorData.clientPhone = found.phone || '';
+        this.currentQuoteEditorData.clientAddress = found.address || '';
+        this.currentQuoteEditorData.clientId = found.id || '';
+      }
+      this.showToast(`Dati di ${found.name} inseriti`, 'info');
+    }
+  }
+
+  renderQuoteSectionsInEditor() {
+    const wrap = document.getElementById('quote-sections-wrapper');
+    if (!wrap) return;
+
+    if (!this.currentQuoteEditorData) return;
+    const sections = this.currentQuoteEditorData.sections || [];
+
+    const umOptions = ['mq', 'ml', 'mc', 'a corpo', 'cad', 'punto', 'ore', 'kg', 'pz'];
+
+    wrap.innerHTML = sections.map((sec, sIndex) => {
+      let secSubtotal = 0;
+      (sec.items || []).forEach(it => {
+        const lineTot = Number(it.total) !== undefined && !isNaN(Number(it.total)) 
+          ? Number(it.total) 
+          : ((Number(it.qty) || 0) * (Number(it.price) || 0));
+        secSubtotal += lineTot;
+      });
+
+      const itemsHtml = (sec.items || []).map((it, iIndex) => {
+        const lineTot = Number(it.total) !== undefined && !isNaN(Number(it.total)) 
+          ? Number(it.total) 
+          : ((Number(it.qty) || 0) * (Number(it.price) || 0));
+
+        return `
+          <div class="quote-item-row" data-sec-index="${sIndex}" data-item-index="${iIndex}">
+            <div>
+              <input type="text" class="quote-item-desc" placeholder="Descrizione lavorazione, fornitura o materiale..." value="${escapeHTML(it.desc || '')}" oninput="app.updateQuoteItemDesc(${sIndex}, ${iIndex}, this.value)" required>
+            </div>
+            <div>
+              <select class="quote-item-um form-select" onchange="app.updateQuoteItemUM(${sIndex}, ${iIndex}, this.value)">
+                ${umOptions.map(opt => `<option value="${opt}" ${it.um === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <input type="number" class="quote-item-qty" placeholder="Q.tà" min="0" step="any" value="${it.qty !== undefined ? it.qty : 1}" oninput="app.updateQuoteItemQty(${sIndex}, ${iIndex}, this.value)" required>
+            </div>
+            <div>
+              <input type="number" class="quote-item-price" placeholder="Prezzo €" min="0" step="any" value="${it.price !== undefined ? it.price : 0}" oninput="app.updateQuoteItemPrice(${sIndex}, ${iIndex}, this.value)" required>
+            </div>
+            <div class="quote-item-total-val" id="qe-item-total-${sIndex}-${iIndex}">
+              ${fmtDocMoney(lineTot)}
+            </div>
+            <div>
+              <button type="button" class="quote-item-del-btn" onclick="app.removeQuoteItem(${sIndex}, ${iIndex})" title="Elimina questa riga">
+                ${ICONS.delete}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="quote-section-box" data-section-index="${sIndex}">
+          <div class="quote-section-topbar">
+            <input type="text" class="quote-section-input-title" value="${escapeHTML(sec.title || '')}" placeholder="es. 1. Demolizioni e Rimozioni" oninput="app.updateSectionTitle(${sIndex}, this.value)" required>
+            <div class="quote-section-subtotal-badge" id="qe-sec-subtotal-${sIndex}">
+              Capitolo: ${fmtDocMoney(secSubtotal)}
+            </div>
+            <button type="button" class="btn-icon" onclick="app.removeQuoteSection(${sIndex})" title="Elimina intero capitolo" style="color:var(--text-dim);">
+              ${ICONS.delete}
+            </button>
+          </div>
+
+          <div class="quote-items-list" id="quote-items-container-${sIndex}">
+            ${itemsHtml}
+          </div>
+
+          <div style="margin-top:10px; display:flex; justify-content:flex-start;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="app.addQuoteItem(${sIndex})">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              + Aggiungi Voce a questo Capitolo
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  updateSectionTitle(sIndex, val) {
+    if (!this.currentQuoteEditorData || !this.currentQuoteEditorData.sections[sIndex]) return;
+    this.currentQuoteEditorData.sections[sIndex].title = val;
+  }
+
+  addQuoteSection(title = '') {
+    if (!this.currentQuoteEditorData) return;
+    if (!Array.isArray(this.currentQuoteEditorData.sections)) {
+      this.currentQuoteEditorData.sections = [];
+    }
+    const nextIdx = this.currentQuoteEditorData.sections.length + 1;
+    this.currentQuoteEditorData.sections.push({
+      id: `sec_${Date.now()}_${nextIdx}`,
+      title: title || `${nextIdx}. Nuova Categoria di Lavorazione`,
+      items: [
+        { id: `it_${Date.now()}_1`, desc: '', um: 'mq', qty: 1, price: 0, total: 0 }
+      ]
+    });
+    this.renderQuoteSectionsInEditor();
+    this.recalcQuoteTotals();
+  }
+
+  removeQuoteSection(sIndex) {
+    if (!this.currentQuoteEditorData || !this.currentQuoteEditorData.sections[sIndex]) return;
+    const secTitle = this.currentQuoteEditorData.sections[sIndex].title;
+    if (this.currentQuoteEditorData.sections.length > 1) {
+      if (confirm(`Eliminare il capitolo "${secTitle}" e tutte le sue voci?`)) {
+        this.currentQuoteEditorData.sections.splice(sIndex, 1);
+        this.renderQuoteSectionsInEditor();
+        this.recalcQuoteTotals();
+      }
+    } else {
+      this.showToast('Un preventivo deve avere almeno un capitolo di lavorazione', 'warning');
+    }
+  }
+
+  addQuoteItem(sIndex) {
+    if (!this.currentQuoteEditorData || !this.currentQuoteEditorData.sections[sIndex]) return;
+    const sec = this.currentQuoteEditorData.sections[sIndex];
+    if (!Array.isArray(sec.items)) sec.items = [];
+    sec.items.push({
+      id: `it_${Date.now()}_${sec.items.length + 1}`,
+      desc: '',
+      um: 'mq',
+      qty: 1,
+      price: 0,
+      total: 0
+    });
+    this.renderQuoteSectionsInEditor();
+    this.recalcQuoteTotals();
+  }
+
+  removeQuoteItem(sIndex, iIndex) {
+    if (!this.currentQuoteEditorData || !this.currentQuoteEditorData.sections[sIndex]) return;
+    const sec = this.currentQuoteEditorData.sections[sIndex];
+    if (sec.items && sec.items.length > 1) {
+      sec.items.splice(iIndex, 1);
+      this.renderQuoteSectionsInEditor();
+      this.recalcQuoteTotals();
+    } else {
+      this.showToast('Ogni capitolo deve contenere almeno una voce', 'warning');
+    }
+  }
+
+  updateQuoteItemDesc(sIndex, iIndex, val) {
+    if (!this.currentQuoteEditorData?.sections[sIndex]?.items[iIndex]) return;
+    this.currentQuoteEditorData.sections[sIndex].items[iIndex].desc = val;
+  }
+
+  updateQuoteItemUM(sIndex, iIndex, val) {
+    if (!this.currentQuoteEditorData?.sections[sIndex]?.items[iIndex]) return;
+    this.currentQuoteEditorData.sections[sIndex].items[iIndex].um = val;
+  }
+
+  updateQuoteItemQty(sIndex, iIndex, val) {
+    if (!this.currentQuoteEditorData?.sections[sIndex]?.items[iIndex]) return;
+    const it = this.currentQuoteEditorData.sections[sIndex].items[iIndex];
+    it.qty = parseFloat(val) || 0;
+    it.total = Math.round(it.qty * (parseFloat(it.price) || 0) * 100) / 100;
+    
+    const totEl = document.getElementById(`qe-item-total-${sIndex}-${iIndex}`);
+    if (totEl) totEl.textContent = fmtDocMoney(it.total);
+
+    this.updateSecSubtotalUI(sIndex);
+    this.recalcQuoteTotals();
+  }
+
+  updateQuoteItemPrice(sIndex, iIndex, val) {
+    if (!this.currentQuoteEditorData?.sections[sIndex]?.items[iIndex]) return;
+    const it = this.currentQuoteEditorData.sections[sIndex].items[iIndex];
+    it.price = parseFloat(val) || 0;
+    it.total = Math.round((parseFloat(it.qty) || 0) * it.price * 100) / 100;
+    
+    const totEl = document.getElementById(`qe-item-total-${sIndex}-${iIndex}`);
+    if (totEl) totEl.textContent = fmtDocMoney(it.total);
+
+    this.updateSecSubtotalUI(sIndex);
+    this.recalcQuoteTotals();
+  }
+
+  updateSecSubtotalUI(sIndex) {
+    const sec = this.currentQuoteEditorData?.sections[sIndex];
+    if (!sec) return;
+    let secSub = 0;
+    (sec.items || []).forEach(it => {
+      secSub += (Number(it.total) !== undefined && !isNaN(Number(it.total))) ? Number(it.total) : ((Number(it.qty) || 0) * (Number(it.price) || 0));
+    });
+    const subBadge = document.getElementById(`qe-sec-subtotal-${sIndex}`);
+    if (subBadge) subBadge.textContent = `Capitolo: ${fmtDocMoney(secSub)}`;
+  }
+
+  applyQuotePreset(presetKey) {
+    const preset = QUOTE_PRESETS[presetKey];
+    if (!preset) return;
+
+    if (this.currentQuoteEditorData && this.currentQuoteEditorData.sections && this.currentQuoteEditorData.sections.length > 0) {
+      const hasContent = this.currentQuoteEditorData.sections.some(s => s.items && s.items.some(i => i.desc || i.price > 0));
+      if (hasContent) {
+        if (!confirm(`Attenzione: applicare il template "${preset.title}" sostituirà le voci attuali del preventivo. Continuare?`)) {
+          return;
+        }
+      }
+    }
+
+    if (!this.currentQuoteEditorData) {
+      this.openNewQuote();
+    }
+
+    const titleInput = document.getElementById('qe-title');
+    if (titleInput && (!titleInput.value || titleInput.value === 'Nuovo Preventivo Lavori Edili')) {
+      titleInput.value = preset.title;
+      this.currentQuoteEditorData.title = preset.title;
+    }
+
+    const paymentInput = document.getElementById('qe-payment-terms');
+    if (paymentInput) paymentInput.value = preset.paymentTerms;
+
+    const estimatedInput = document.getElementById('qe-estimated-days');
+    if (estimatedInput) estimatedInput.value = preset.estimatedDays;
+
+    const notesInput = document.getElementById('qe-notes');
+    if (notesInput) notesInput.value = preset.notes;
+
+    const vatSelect = document.getElementById('qe-vat-rate');
+    if (vatSelect) vatSelect.value = preset.vatRate;
+
+    this.currentQuoteEditorData.sections = JSON.parse(JSON.stringify(preset.sections));
+    this.currentQuoteEditorData.vatRate = preset.vatRate;
+    this.currentQuoteEditorData.paymentTerms = preset.paymentTerms;
+    this.currentQuoteEditorData.estimatedDays = preset.estimatedDays;
+    this.currentQuoteEditorData.notes = preset.notes;
+
+    this.renderQuoteSectionsInEditor();
+    this.recalcQuoteTotals();
+    this.showToast(`Template "${preset.title}" caricato con successo!`, 'success');
+  }
+
+  readQuoteEditorDataFromDOM() {
+    if (!this.currentQuoteEditorData) return null;
+
+    const fStatus = document.getElementById('qe-status');
+    const fNumber = document.getElementById('qe-number');
+    const fDate = document.getElementById('qe-date');
+    const fValid = document.getElementById('qe-valid-until');
+    const fTitle = document.getElementById('qe-title');
+    const fClientName = document.getElementById('qe-client-name');
+    const fClientFiscal = document.getElementById('qe-client-fiscal');
+    const fClientAddress = document.getElementById('qe-client-address');
+    const fClientPhone = document.getElementById('qe-client-phone');
+    const fSiteAddress = document.getElementById('qe-site-address');
+    const fSiteSelect = document.getElementById('qe-site-select');
+    const fDiscount = document.getElementById('qe-discount-percent');
+    const fVat = document.getElementById('qe-vat-rate');
+    const fPayment = document.getElementById('qe-payment-terms');
+    const fEstimated = document.getElementById('qe-estimated-days');
+    const fNotes = document.getElementById('qe-notes');
+
+    this.currentQuoteEditorData.status = fStatus ? fStatus.value : 'draft';
+    this.currentQuoteEditorData.number = fNumber ? fNumber.value.trim() : store.getNextQuoteNumber();
+    this.currentQuoteEditorData.date = fDate ? fDate.value : new Date().toISOString().split('T')[0];
+    this.currentQuoteEditorData.validUntil = fValid ? fValid.value : '';
+    this.currentQuoteEditorData.title = fTitle ? fTitle.value.trim() : 'Preventivo Opere Edili';
+    this.currentQuoteEditorData.clientName = fClientName ? fClientName.value.trim() : '';
+    this.currentQuoteEditorData.clientFiscal = fClientFiscal ? fClientFiscal.value.trim() : '';
+    this.currentQuoteEditorData.clientAddress = fClientAddress ? fClientAddress.value.trim() : '';
+    this.currentQuoteEditorData.clientPhone = fClientPhone ? fClientPhone.value.trim() : '';
+    this.currentQuoteEditorData.siteAddress = fSiteAddress ? fSiteAddress.value.trim() : '';
+    this.currentQuoteEditorData.siteId = fSiteSelect ? fSiteSelect.value : '';
+    this.currentQuoteEditorData.discountPercent = fDiscount ? parseFloat(fDiscount.value) || 0 : 0;
+    this.currentQuoteEditorData.vatRate = fVat ? parseFloat(fVat.value) || 10 : 10;
+    this.currentQuoteEditorData.paymentTerms = fPayment ? fPayment.value.trim() : '';
+    this.currentQuoteEditorData.estimatedDays = fEstimated ? fEstimated.value.trim() : '';
+    this.currentQuoteEditorData.notes = fNotes ? fNotes.value.trim() : '';
+
+    return this.currentQuoteEditorData;
+  }
+
+  recalcQuoteTotals() {
+    this.readQuoteEditorDataFromDOM();
+    const totals = calcQuoteTotals(this.currentQuoteEditorData);
+
+    const subEl = document.getElementById('qe-live-subtotal');
+    const discEl = document.getElementById('qe-live-discount-amount');
+    const vatEl = document.getElementById('qe-live-vat-amount');
+    const grandEl = document.getElementById('qe-live-grand-total');
+
+    if (subEl) subEl.textContent = fmtDocMoney(totals.subtotal);
+    if (discEl) discEl.textContent = `- ${fmtDocMoney(totals.discountAmount)} (${totals.discountPercent}%)`;
+    if (vatEl) vatEl.textContent = fmtDocMoney(totals.vatAmount);
+    if (grandEl) grandEl.textContent = fmtDocMoney(totals.grandTotal);
+  }
+
+  saveCurrentQuote() {
+    const q = this.readQuoteEditorDataFromDOM();
+    if (!q) return;
+
+    if (!q.number) {
+      this.showToast('Inserisci il numero del preventivo', 'warning');
+      return;
+    }
+    if (!q.title) {
+      this.showToast('Inserisci un titolo / oggetto dei lavori', 'warning');
+      return;
+    }
+    if (!q.clientName) {
+      this.showToast('Inserisci il nome del committente', 'warning');
+      return;
+    }
+
+    if (this.editingQuoteId) {
+      store.updateQuote(this.editingQuoteId, q);
+      this.showToast(`Preventivo ${q.number} aggiornato con successo`, 'success');
+    } else {
+      store.addQuote(q);
+      this.showToast(`Preventivo ${q.number} salvato con successo`, 'success');
+    }
+
+    this.switchQuoteSubView('list');
+    this.renderQuotes();
+  }
+
+  duplicateQuote(id) {
+    const orig = store.getQuote(id);
+    if (!orig) return;
+
+    const copy = JSON.parse(JSON.stringify(orig));
+    copy.id = null;
+    copy.number = store.getNextQuoteNumber();
+    copy.date = new Date().toISOString().split('T')[0];
+    copy.status = 'draft';
+    copy.title = `${copy.title} (Copia)`;
+
+    store.addQuote(copy);
+    this.showToast(`Preventivo duplicato: ${copy.number}`, 'success');
+    this.renderQuotes();
+  }
+
+  deleteQuote(id) {
+    const q = store.getQuote(id);
+    if (!q) return;
+
+    if (confirm(`Sei sicuro di voler eliminare definitivamente il preventivo ${q.number} (${q.title})?`)) {
+      store.deleteQuote(id);
+      this.showToast(`Preventivo ${q.number} eliminato`, 'info');
+      this.renderQuotes();
+    }
+  }
+
+  convertQuoteToSite(id) {
+    const q = store.getQuote(id);
+    if (!q) return;
+
+    const totals = calcQuoteTotals(q);
+
+    let clientId = q.clientId;
+    if (!clientId) {
+      const matchClient = (store.data.clients || []).find(c => c.name.toLowerCase() === q.clientName.toLowerCase());
+      if (matchClient) clientId = matchClient.id;
+    }
+
+    const currentYear = new Date().getFullYear();
+    const existingSites = store.data.sites || [];
+    const nextSiteNum = existingSites.length + 1;
+    const siteCode = `CANT-${currentYear}-${String(nextSiteNum).padStart(2, '0')}`;
+
+    const newSite = {
+      code: siteCode,
+      name: q.title || 'Nuovo Cantiere da Preventivo',
+      clientId: clientId || '',
+      address: q.siteAddress || q.clientAddress || '',
+      status: 'in_corso',
+      startDate: new Date().toISOString().split('T')[0],
+      endDate: '',
+      quoteAmount: totals.grandTotal,
+      payments: [],
+      notes: `Generato automaticamente dal Preventivo ${q.number}. Condizioni: ${q.paymentTerms || 'Standard'}`
+    };
+
+    if (confirm(`Convertire il preventivo ${q.number} in un Cantiere Edile attivo?\n\nCodice: ${siteCode}\nImporto: ${fmtDocMoney(totals.grandTotal)}\nCommittente: ${q.clientName}`)) {
+      store.addSite(newSite);
+      // Aggiorna lo stato del preventivo in accettato se non lo è
+      if (q.status !== 'accepted') {
+        store.updateQuote(id, { status: 'accepted' });
+      }
+      this.showToast(`Cantiere ${siteCode} creato con successo!`, 'success');
+      this.renderQuotes();
+      this.switchTab('sites');
+    }
+  }
+
+  generateQuotePrintHTML(quote) {
+    const totals = calcQuoteTotals(quote);
+    const sections = quote.sections || [];
+
+    const vatDescription = quote.vatRate === 10 
+      ? 'IVA al 10% (Ristrutturazione Edilizia agevolata ex L. 449/97)'
+      : (quote.vatRate === 22 
+          ? 'IVA al 22% (Aliquota Ordinaria di Legge)' 
+          : (quote.vatRate === 4 
+              ? 'IVA al 4% (Agevolata Prima Casa / Eliminazione Barriere)' 
+              : 'IVA 0% (Esente / Reverse Charge ex art. 17 c. 6 lett. a DPR 633/72)'));
+
+    let computoRowsHtml = '';
+
+    sections.forEach((sec, sIdx) => {
+      let secSub = 0;
+      (sec.items || []).forEach(it => {
+        const lineTot = Number(it.total) !== undefined && !isNaN(Number(it.total)) 
+          ? Number(it.total) 
+          : ((Number(it.qty) || 0) * (Number(it.price) || 0));
+        secSub += lineTot;
+      });
+
+      computoRowsHtml += `
+        <tr class="print-chapter-row">
+          <td colspan="6">
+            <strong>${escapeHTML(sec.title || `Capitolo ${sIdx + 1}`)}</strong>
+          </td>
+        </tr>
+      `;
+
+      (sec.items || []).forEach((it, iIdx) => {
+        const qty = Number(it.qty) || 0;
+        const price = Number(it.price) || 0;
+        const lineTot = Number(it.total) !== undefined && !isNaN(Number(it.total)) 
+          ? Number(it.total) 
+          : (qty * price);
+
+        computoRowsHtml += `
+          <tr class="print-item-row">
+            <td style="text-align:center; font-weight:700; color:#64748b; width:45px;">${sIdx + 1}.${iIdx + 1}</td>
+            <td style="font-size:0.82rem; line-height:1.4;">${escapeHTML(it.desc || 'Lavorazione edile')}</td>
+            <td style="text-align:center; width:55px;">${escapeHTML(it.um || 'mq')}</td>
+            <td style="text-align:right; width:65px; font-weight:700;">${qty}</td>
+            <td style="text-align:right; width:85px;">${fmtDocMoney(price)}</td>
+            <td style="text-align:right; width:95px; font-weight:800;">${fmtDocMoney(lineTot)}</td>
+          </tr>
+        `;
+      });
+
+      computoRowsHtml += `
+        <tr class="print-chapter-subtotal-row">
+          <td colspan="5" style="text-align:right; font-weight:700; color:#475569;">
+            Subtotale ${escapeHTML(sec.title || `Capitolo ${sIdx + 1}`)}:
+          </td>
+          <td style="text-align:right; font-weight:800; color:#0f172a;">
+            ${fmtDocMoney(secSub)}
+          </td>
+        </tr>
+      `;
+    });
+
+    return `
+      <div class="print-doc-header">
+        <div class="print-brand-left">
+          <img src="assets/logo.png?v=7" alt="GEEM Edilizia" class="print-brand-logo">
+          <div>
+            <div class="print-company-name">GEEM Costruzioni & Restauri</div>
+            <div class="print-company-sub">
+              Sede Operativa: Via delle Industrie 18, Monza (MB)<br>
+              P.IVA & C.F.: 09876543210 &bull; Tel: +39 039 123456<br>
+              Email: info@geemedilizia.it &bull; PEC: geemcostruzioni@pec.it
+            </div>
+          </div>
+        </div>
+
+        <div class="print-doc-meta-box">
+          <div class="print-doc-type-title">Preventivo di Spesa</div>
+          <div class="print-doc-number">${escapeHTML(quote.number || 'PREV-2026')}</div>
+          <div class="print-doc-date">Data Emissione: <strong>${fmtDate(quote.date)}</strong></div>
+          ${quote.validUntil ? `<div class="print-doc-date">Validità Offerta: <strong>${fmtDate(quote.validUntil)}</strong></div>` : ''}
+        </div>
+      </div>
+
+      <div class="print-grid-parties">
+        <div class="print-party-card">
+          <div class="print-party-label">Impresa Esecutrice</div>
+          <div class="print-party-name">GEEM Costruzioni & Restauri S.r.l.</div>
+          <div class="print-party-detail">Iscr. C.C.I.A.A. Monza Brianza - REA MB-1234567</div>
+          <div class="print-party-detail">Polizza R.C. Cantieri e Oneri per la Sicurezza a norma D.Lgs 81/08</div>
+        </div>
+
+        <div class="print-party-card">
+          <div class="print-party-label">Spettabile Committente</div>
+          <div class="print-party-name">${escapeHTML(quote.clientName || 'Gentile Committente')}</div>
+          ${quote.clientFiscal ? `<div class="print-party-detail">C.F. / P.IVA: <strong>${escapeHTML(quote.clientFiscal)}</strong></div>` : ''}
+          ${quote.clientAddress ? `<div class="print-party-detail">Indirizzo: ${escapeHTML(quote.clientAddress)}</div>` : ''}
+          ${quote.clientPhone ? `<div class="print-party-detail">Recapito: ${escapeHTML(quote.clientPhone)}</div>` : ''}
+        </div>
+      </div>
+
+      <div class="print-quote-subject">
+        <div class="print-quote-subject-label">Oggetto dell'Intervento / Cantiere</div>
+        <div class="print-quote-subject-title">${escapeHTML(quote.title || 'Lavori di Ristrutturazione')}</div>
+        ${quote.siteAddress ? `<div style="font-size:0.78rem; color:#475569; margin-top:2px;">Ubicazione Cantiere: <strong>${escapeHTML(quote.siteAddress)}</strong></div>` : ''}
+      </div>
+
+      <table class="print-computo-table">
+        <thead>
+          <tr>
+            <th style="width:45px;">N.</th>
+            <th>Descrizione Lavorazioni, Opere & Materiali</th>
+            <th style="width:55px;">U.M.</th>
+            <th style="width:65px;">Q.tà</th>
+            <th style="width:85px;">Prezzo Unit.</th>
+            <th style="width:95px;">Importo</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${computoRowsHtml}
+        </tbody>
+      </table>
+
+      <div class="print-summary-container">
+        <div class="print-summary-card">
+          <div class="print-summary-row">
+            <span>Subtotale Lavorazioni Imponibile</span>
+            <strong>${fmtDocMoney(totals.subtotal)}</strong>
+          </div>
+          ${totals.discountAmount > 0 ? `
+            <div class="print-summary-row" style="color:#0284c7;">
+              <span>Sconto Commerciale (${totals.discountPercent}%)</span>
+              <strong>- ${fmtDocMoney(totals.discountAmount)}</strong>
+            </div>
+            <div class="print-summary-row">
+              <span>Imponibile Netto Lavori</span>
+              <strong>${fmtDocMoney(totals.taxableAmount)}</strong>
+            </div>
+          ` : ''}
+          <div class="print-summary-row">
+            <span>${vatDescription}</span>
+            <strong>${fmtDocMoney(totals.vatAmount)}</strong>
+          </div>
+          <div class="print-summary-grand-total">
+            <span class="print-summary-grand-label">Totale Preventivo</span>
+            <span class="print-summary-grand-val">${fmtDocMoney(totals.grandTotal)}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="print-terms-box">
+        <div style="font-weight:800; margin-bottom:4px; text-transform:uppercase; font-size:0.72rem; letter-spacing:0.04em; color:#0284c7;">
+          Condizioni Economiche & Note Tecnico-Contrattuali
+        </div>
+        ${quote.paymentTerms ? `<div>&bull; <strong>Condizioni di Pagamento:</strong> ${escapeHTML(quote.paymentTerms)}</div>` : ''}
+        ${quote.estimatedDays ? `<div>&bull; <strong>Tempi di Esecuzione Previsti:</strong> ${escapeHTML(quote.estimatedDays)} dall'inizio effettivo lavori</div>` : ''}
+        ${quote.notes ? `<div>&bull; <strong>Note & Esclusioni:</strong> ${escapeHTML(quote.notes)}</div>` : ''}
+        <div style="margin-top:4px; font-size:0.7rem; color:#64748b;">
+          I prezzi sopra indicati restano validi per 30 giorni dalla data di emissione. Le opere saranno realizzate secondo le regole dell'arte e le vigenti normative di sicurezza.
+        </div>
+      </div>
+
+      <div class="print-signatures-grid">
+        <div class="print-sig-col">
+          <div class="print-sig-label">Per GEEM Costruzioni & Restauri</div>
+          <div class="print-sig-sub">Firma e Timbro Impresa Esecutrice</div>
+          <div style="height:35px;"></div>
+        </div>
+        <div class="print-sig-col">
+          <div class="print-sig-label">Per Accettazione e Conferma d'Ordine</div>
+          <div class="print-sig-sub">Data, Luogo e Firma del Committente</div>
+          <div style="height:35px;"></div>
+        </div>
+      </div>
+
+      <div class="print-footer-legal">
+        <span>GEEM Gestionale Cantieri Edili &bull; Documento Informatico Vettoriale</span>
+        <span>${escapeHTML(quote.number || 'PREV')} - Pagina 1 di 1</span>
+      </div>
+    `;
+  }
+
+  previewQuote(id) {
+    const q = store.getQuote(id);
+    if (!q) return;
+
+    const paper = document.getElementById('quote-preview-paper');
+    const title = document.getElementById('modal-quote-preview-title');
+    const printBtn = document.getElementById('btn-quote-preview-print');
+
+    if (paper) paper.innerHTML = this.generateQuotePrintHTML(q);
+    if (title) title.textContent = `Anteprima: ${q.number} - ${q.title}`;
+    if (printBtn) printBtn.onclick = () => {
+      this.closeModal('modal-quote-preview');
+      this.printQuote(id);
+    };
+
+    this.openModal('modal-quote-preview');
+  }
+
+  previewCurrentEditorQuote() {
+    this.readQuoteEditorDataFromDOM();
+    if (!this.currentQuoteEditorData) return;
+
+    const paper = document.getElementById('quote-preview-paper');
+    const title = document.getElementById('modal-quote-preview-title');
+    const printBtn = document.getElementById('btn-quote-preview-print');
+
+    if (paper) paper.innerHTML = this.generateQuotePrintHTML(this.currentQuoteEditorData);
+    if (title) title.textContent = `Anteprima: ${this.currentQuoteEditorData.number} - ${this.currentQuoteEditorData.title || 'Nuovo'}`;
+    if (printBtn) printBtn.onclick = () => {
+      this.closeModal('modal-quote-preview');
+      this.printCurrentEditorQuote();
+    };
+
+    this.openModal('modal-quote-preview');
+  }
+
+  printQuote(id) {
+    const q = store.getQuote(id);
+    if (!q) return;
+
+    const printDoc = document.getElementById('quote-print-document');
+    if (!printDoc) return;
+
+    printDoc.innerHTML = this.generateQuotePrintHTML(q);
+    
+    setTimeout(() => {
+      window.print();
+    }, 120);
+  }
+
+  printCurrentEditorQuote() {
+    this.readQuoteEditorDataFromDOM();
+    if (!this.currentQuoteEditorData) return;
+
+    const printDoc = document.getElementById('quote-print-document');
+    if (!printDoc) return;
+
+    printDoc.innerHTML = this.generateQuotePrintHTML(this.currentQuoteEditorData);
+
+    setTimeout(() => {
+      window.print();
+    }, 120);
   }
 
   // --- MODAL CANTIERI ---

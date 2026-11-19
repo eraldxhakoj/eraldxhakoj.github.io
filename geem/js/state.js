@@ -286,6 +286,268 @@ export const INITIAL_EXPENSES = [
   }
 ];
 
+export const INITIAL_QUOTES = [
+  {
+    id: 'q_1',
+    number: 'PREV-2026-001',
+    date: '2026-03-01',
+    validUntil: '2026-04-15',
+    status: 'accepted',
+    title: 'Ristrutturazione Completa Bagno Padronale',
+    clientId: 'c_2',
+    clientName: 'Ing. Elena Conti',
+    clientAddress: 'Via Volturno 15, Milano (MI)',
+    clientPhone: '+39 347 8899001',
+    clientFiscal: 'CNTLNE75C50F205K',
+    siteId: 's_2',
+    siteAddress: 'Via Volturno 15, Milano',
+    sections: [
+      {
+        id: 'sec_1',
+        title: '1. Demolizioni e Smaltimento Inerti',
+        items: [
+          {
+            id: 'it_1',
+            desc: 'Demolizione completa rivestimento pareti e pavimento compreso sottofondo fino al solaio, calo calcinacci e trasporto a rifiuto autorizzato',
+            um: 'mq',
+            qty: 28,
+            price: 28.00,
+            total: 784.00
+          },
+          {
+            id: 'it_2',
+            desc: 'Smontaggio vecchi sanitari (vasca, lavabo, bidet, wc) e vecchie tubazioni',
+            um: 'a corpo',
+            qty: 1,
+            price: 220.00,
+            total: 220.00
+          }
+        ]
+      },
+      {
+        id: 'sec_2',
+        title: '2. Nuovi Impianti Idrico-Sanitari & Scarichi',
+        items: [
+          {
+            id: 'it_3',
+            desc: 'Fornitura e posa nuovo impianto idraulico in multistrato coibentato (lavabo, bidet, wc, doccia) compresi scarichi insonorizzati Geberit',
+            um: 'punto',
+            qty: 4,
+            price: 260.00,
+            total: 1040.00
+          },
+          {
+            id: 'it_4',
+            desc: 'Fornitura e installazione cassetta di scarico incasso Geberit Kombifix con placca Sigma cromata',
+            um: 'cad',
+            qty: 1,
+            price: 310.00,
+            total: 310.00
+          }
+        ]
+      },
+      {
+        id: 'sec_3',
+        title: '3. Opere Murarie, Impermeabilizzazione & Massetto',
+        items: [
+          {
+            id: 'it_5',
+            desc: 'Chiusura tracce a parete, intonaco di sottofondo e rasatura a gesso tirata a staggia',
+            um: 'mq',
+            qty: 32,
+            price: 24.00,
+            total: 768.00
+          },
+          {
+            id: 'it_6',
+            desc: 'Formazione nuovo massetto alleggerito per quota pavimenti e predisposizione scarico doccia a filo',
+            um: 'mq',
+            qty: 6.5,
+            price: 38.00,
+            total: 247.00
+          },
+          {
+            id: 'it_7',
+            desc: 'Impermeabilizzazione zona doccia con bicomponente elastico Mapelastic e bandella sigillante agli angoli',
+            um: 'mq',
+            qty: 10,
+            price: 32.00,
+            total: 320.00
+          }
+        ]
+      },
+      {
+        id: 'sec_4',
+        title: '4. Posa Rivestimenti, Sanitari & Finiture',
+        items: [
+          {
+            id: 'it_8',
+            desc: 'Posa in opera gres porcellanato a pavimento e rivestimento altezza 2.20m, compresa fuga e pulizia acida finale',
+            um: 'mq',
+            qty: 32,
+            price: 36.00,
+            total: 1152.00
+          },
+          {
+            id: 'it_9',
+            desc: 'Montaggio e collaudo rubinetteria, montaggio sanitari filo muro con accessori e piatto doccia',
+            um: 'a corpo',
+            qty: 1,
+            price: 450.00,
+            total: 450.00
+          },
+          {
+            id: 'it_10',
+            desc: 'Tinteggiatura soffitto con pittura traspirante idrorepellente antimuffa (2 mani)',
+            um: 'mq',
+            qty: 6.5,
+            price: 18.00,
+            total: 117.00
+          }
+        ]
+      }
+    ],
+    discountPercent: 0,
+    vatRate: 10,
+    paymentTerms: '30% acconto firma contratto, 40% a completamento impianti e massetto, 30% a collaudo e consegna chiavi',
+    estimatedDays: '15 giorni lavorativi',
+    notes: 'Prezzi comprensivi di materiali di posa, collanti classe C2TE S1, oneri di trasporto e smaltimento a norma. Piastrelle, rubinetteria e sanitari forniti dalla committenza.',
+    createdAt: '2026-03-01T10:00:00.000Z'
+  },
+  {
+    id: 'q_2',
+    number: 'PREV-2026-002',
+    date: '2026-03-10',
+    validUntil: '2026-04-30',
+    status: 'sent',
+    title: 'Opere Esterne e Rifacimento Intonaci di Facciata Villa',
+    clientId: 'c_1',
+    clientName: 'Marco Bellini (Immobiliare Brianza)',
+    clientAddress: 'Via Manzoni 14, Monza (MB)',
+    clientPhone: '+39 335 6789012',
+    clientFiscal: 'IT01234567890',
+    siteId: 's_1',
+    siteAddress: 'Via Cavallotti 42, Monza',
+    sections: [
+      {
+        id: 'sec_21',
+        title: '1. Allestimento e Sicurezza di Cantiere',
+        items: [
+          {
+            id: 'it_21',
+            desc: 'Noleggio, montaggio e smontaggio ponteggio metallico a telaio prefisso comprensivo di teli antipolvere, parapetti e redazione Pi.M.U.S.',
+            um: 'mq',
+            qty: 180,
+            price: 16.50,
+            total: 2970.00
+          }
+        ]
+      },
+      {
+        id: 'sec_22',
+        title: '2. Ripristino Intonaci e Trattamento Antispallinamento',
+        items: [
+          {
+            id: 'it_22',
+            desc: 'Idrolavaggio facciate a pressione, spicconatura parti ammalorate o in distacco fino al vivo della muratura',
+            um: 'mq',
+            qty: 180,
+            price: 12.00,
+            total: 2160.00
+          },
+          {
+            id: 'it_23',
+            desc: 'Passivazione ferri d\'armatura con boiacca cementizia anticorrosiva Mapefer e ricostruzione volumetrica con malta tissotropica Mapegrout',
+            um: 'a corpo',
+            qty: 1,
+            price: 1450.00,
+            total: 1450.00
+          },
+          {
+            id: 'it_24',
+            desc: 'Rasatura armata con rete in fibra di vetro antifessurazione e doppio strato di rasante minerale fibrato',
+            um: 'mq',
+            qty: 180,
+            price: 26.00,
+            total: 4680.00
+          }
+        ]
+      },
+      {
+        id: 'sec_23',
+        title: '3. Finitura ai Silicati / Silossanica',
+        items: [
+          {
+            id: 'it_25',
+            desc: 'Applicazione fondo primer uniformante ai silossani e rivestimento a spessore tonachino 1.2mm antialga idrorepellente',
+            um: 'mq',
+            qty: 180,
+            price: 22.00,
+            total: 3960.00
+          }
+        ]
+      }
+    ],
+    discountPercent: 5,
+    vatRate: 10,
+    paymentTerms: '20% alla conferma ordine, 40% a montaggio ponteggio e rasatura ultimata, 40% a saldo smontaggio ponteggi',
+    estimatedDays: '25 giorni lavorativi',
+    notes: 'Occupazione suolo pubblico a cura e spese della committenza. Garanzia decennale sui prodotti applicati.',
+    createdAt: '2026-03-10T14:30:00.000Z'
+  }
+];
+
+export function calcQuoteTotals(quote) {
+  if (!quote) {
+    return {
+      subtotal: 0,
+      discountPercent: 0,
+      discountAmount: 0,
+      taxableAmount: 0,
+      vatRate: 10,
+      vatAmount: 0,
+      grandTotal: 0,
+      itemsCount: 0
+    };
+  }
+
+  let subtotal = 0;
+  let itemsCount = 0;
+
+  if (Array.isArray(quote.sections)) {
+    quote.sections.forEach(sec => {
+      if (Array.isArray(sec.items)) {
+        sec.items.forEach(it => {
+          const qty = Number(it.qty) || 0;
+          const price = Number(it.price) || 0;
+          const lineTotal = Number(it.total) !== undefined && !isNaN(Number(it.total)) ? Number(it.total) : (qty * price);
+          subtotal += lineTotal;
+          itemsCount++;
+        });
+      }
+    });
+  }
+
+  const discountPercent = Math.max(0, Math.min(100, Number(quote.discountPercent) || 0));
+  const discountAmount = (subtotal * discountPercent) / 100;
+  const taxableAmount = Math.max(0, subtotal - discountAmount);
+
+  const vatRate = quote.vatRate !== undefined ? Number(quote.vatRate) : 10;
+  const vatAmount = (taxableAmount * vatRate) / 100;
+  const grandTotal = taxableAmount + vatAmount;
+
+  return {
+    subtotal: Math.round(subtotal * 100) / 100,
+    discountPercent,
+    discountAmount: Math.round(discountAmount * 100) / 100,
+    taxableAmount: Math.round(taxableAmount * 100) / 100,
+    vatRate,
+    vatAmount: Math.round(vatAmount * 100) / 100,
+    grandTotal: Math.round(grandTotal * 100) / 100,
+    itemsCount
+  };
+}
+
 class StateStore {
   constructor() {
     this.mode = 'demo'; // 'demo' o 'github'
@@ -304,7 +566,8 @@ class StateStore {
       timesheets: JSON.parse(JSON.stringify(INITIAL_TIMESHEETS)),
       expenses: JSON.parse(JSON.stringify(INITIAL_EXPENSES)),
       people: JSON.parse(JSON.stringify(INITIAL_PEOPLE)),
-      places: JSON.parse(JSON.stringify(INITIAL_PLACES))
+      places: JSON.parse(JSON.stringify(INITIAL_PLACES)),
+      quotes: JSON.parse(JSON.stringify(INITIAL_QUOTES))
     };
 
     this.initFromLocal();
@@ -350,6 +613,9 @@ class StateStore {
     }
     if (!Array.isArray(this.data.places)) {
       this.data.places = JSON.parse(JSON.stringify(INITIAL_PLACES));
+    }
+    if (!Array.isArray(this.data.quotes)) {
+      this.data.quotes = JSON.parse(JSON.stringify(INITIAL_QUOTES));
     }
   }
 
@@ -453,7 +719,8 @@ class StateStore {
       timesheets: JSON.parse(JSON.stringify(INITIAL_TIMESHEETS)),
       expenses: JSON.parse(JSON.stringify(INITIAL_EXPENSES)),
       people: JSON.parse(JSON.stringify(INITIAL_PEOPLE)),
-      places: JSON.parse(JSON.stringify(INITIAL_PLACES))
+      places: JSON.parse(JSON.stringify(INITIAL_PLACES)),
+      quotes: JSON.parse(JSON.stringify(INITIAL_QUOTES))
     };
     if (this.mode === 'demo' && typeof localStorage !== 'undefined') {
       localStorage.setItem('geem_demo_db', JSON.stringify(this.data));
@@ -479,14 +746,25 @@ class StateStore {
           timesheets: data.timesheets || this.data.timesheets,
           expenses: data.expenses || this.data.expenses,
           people: data.people || this.data.people || [],
-          places: data.places || this.data.places || []
+          places: data.places || this.data.places || [],
+          quotes: data.quotes || this.data.quotes || []
         };
         await this.githubClient.initDatabase(initialToPush);
         // Rileggi
         const reload = await this.githubClient.fetchAll();
-        this.data = { ...reload.data, people: reload.data.people || [], places: reload.data.places || [] };
+        this.data = {
+          ...reload.data,
+          people: reload.data.people || [],
+          places: reload.data.places || [],
+          quotes: reload.data.quotes || []
+        };
       } else {
-        this.data = { ...data, people: data.people || [], places: data.places || [] };
+        this.data = {
+          ...data,
+          people: data.people || [],
+          places: data.places || [],
+          quotes: data.quotes || []
+        };
       }
 
       // Salva copia cache in locale per ricaricamenti istantanei
@@ -876,6 +1154,89 @@ class StateStore {
     this.data.places = this.data.places.filter(p => p.id !== id);
     this.notify('places');
     this.syncKeyToGitHub('places', `Eliminazione luogo ${id}`);
+    return true;
+  }
+
+  // ===== GESTIONE PREVENTIVI & COMPUTI EDILI =====
+  getQuotes() {
+    if (!Array.isArray(this.data.quotes)) {
+      this.data.quotes = JSON.parse(JSON.stringify(INITIAL_QUOTES));
+    }
+    return this.data.quotes;
+  }
+
+  getQuote(id) {
+    return this.getQuotes().find(q => q.id === id) || null;
+  }
+
+  getNextQuoteNumber() {
+    const quotes = this.getQuotes();
+    const currentYear = new Date().getFullYear();
+    const prefix = `PREV-${currentYear}-`;
+    let maxNum = 0;
+    quotes.forEach(q => {
+      if (q.number && q.number.startsWith(prefix)) {
+        const numPart = parseInt(q.number.replace(prefix, ''), 10);
+        if (!isNaN(numPart) && numPart > maxNum) maxNum = numPart;
+      }
+    });
+    return `${prefix}${String(maxNum + 1).padStart(3, '0')}`;
+  }
+
+  addQuote(quote) {
+    if (!Array.isArray(this.data.quotes)) this.data.quotes = [];
+
+    const newQuote = {
+      id: quote.id || `q_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
+      number: quote.number || this.getNextQuoteNumber(),
+      date: quote.date || new Date().toISOString().split('T')[0],
+      validUntil: quote.validUntil || '',
+      status: quote.status || 'draft', // 'draft', 'sent', 'accepted', 'rejected'
+      title: (quote.title || 'Nuovo Preventivo Lavori Edili').trim(),
+      clientId: quote.clientId || '',
+      clientName: (quote.clientName || '').trim(),
+      clientAddress: (quote.clientAddress || '').trim(),
+      clientPhone: (quote.clientPhone || '').trim(),
+      clientFiscal: (quote.clientFiscal || '').trim(),
+      siteId: quote.siteId || '',
+      siteAddress: (quote.siteAddress || '').trim(),
+      sections: Array.isArray(quote.sections) ? quote.sections : [],
+      discountPercent: Number(quote.discountPercent) || 0,
+      vatRate: quote.vatRate !== undefined ? Number(quote.vatRate) : 10,
+      paymentTerms: (quote.paymentTerms || '30% acconto, 40% a SAL intermedio, 30% a saldo fine lavori').trim(),
+      estimatedDays: (quote.estimatedDays || '30 giorni lavorativi').trim(),
+      notes: (quote.notes || '').trim(),
+      createdAt: quote.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    this.data.quotes.unshift(newQuote);
+    this.notify('quotes');
+    this.syncKeyToGitHub('quotes', `Creato preventivo: ${newQuote.number} - ${newQuote.title}`);
+    return newQuote;
+  }
+
+  updateQuote(id, updated) {
+    if (!Array.isArray(this.data.quotes)) this.data.quotes = [];
+    const index = this.data.quotes.findIndex(q => q.id === id);
+    if (index === -1) return false;
+
+    this.data.quotes[index] = {
+      ...this.data.quotes[index],
+      ...updated,
+      updatedAt: new Date().toISOString()
+    };
+
+    this.notify('quotes');
+    this.syncKeyToGitHub('quotes', `Modifica preventivo ${id}`);
+    return true;
+  }
+
+  deleteQuote(id) {
+    if (!Array.isArray(this.data.quotes)) this.data.quotes = [];
+    this.data.quotes = this.data.quotes.filter(q => q.id !== id);
+    this.notify('quotes');
+    this.syncKeyToGitHub('quotes', `Eliminazione preventivo ${id}`);
     return true;
   }
 

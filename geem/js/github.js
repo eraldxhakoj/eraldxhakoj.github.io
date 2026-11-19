@@ -204,7 +204,8 @@ export class GitHubStorage {
       timesheets: 'data/timesheets.json',
       expenses: 'data/expenses.json',
       people: 'data/people.json',
-      places: 'data/places.json'
+      places: 'data/places.json',
+      quotes: 'data/quotes.json'
     };
 
     const results = {};
@@ -230,7 +231,8 @@ export class GitHubStorage {
       timesheets: 'data/timesheets.json',
       expenses: 'data/expenses.json',
       people: 'data/people.json',
-      places: 'data/places.json'
+      places: 'data/places.json',
+      quotes: 'data/quotes.json'
     };
 
     const data = {};
