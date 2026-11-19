@@ -4045,20 +4045,20 @@ class GeemApp {
         </div>
 
         <!-- Sezione Navigazione / Indirizzo -->
-        <div style="background:linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(26, 34, 52, 0.6) 100%); border:1px solid rgba(245, 158, 11, 0.25); border-radius:var(--radius-md); padding:14px; margin-bottom:14px;">
+        <div style="background:linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(26, 34, 52, 0.6) 100%); border:1px solid rgba(56, 189, 248, 0.25); border-radius:var(--radius-md); padding:14px; margin-bottom:14px; max-width:100%; box-sizing:border-box;">
           <div style="display:flex; align-items:flex-start; gap:10px; margin-bottom:12px;">
-            <div style="width:36px; height:36px; border-radius:var(--radius-sm); background:rgba(245, 158, 11, 0.2); color:#f59e0b; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <div style="width:36px; height:36px; border-radius:var(--radius-sm); background:rgba(56, 189, 248, 0.16); color:#38bdf8; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             </div>
             <div style="flex:1; min-width:0;">
-              <div style="font-size:0.72rem; font-weight:700; color:#f59e0b; text-transform:uppercase; letter-spacing:0.04em;">Indirizzo per Navigatore</div>
-              <div style="font-size:0.94rem; font-weight:700; color:#fff; line-height:1.35; margin-top:2px;">
+              <div style="font-size:0.72rem; font-weight:700; color:#38bdf8; text-transform:uppercase; letter-spacing:0.04em;">Indirizzo per Navigatore</div>
+              <div style="font-size:0.94rem; font-weight:700; color:#fff; line-height:1.35; margin-top:2px; word-break:break-word;">
                 ${place.address || 'Indirizzo non specificato'}
               </div>
             </div>
           </div>
 
-          <a href="${directionsUrl}" target="_blank" rel="noopener" class="btn btn-primary" style="width:100%; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:800; min-height:40px; box-shadow:0 4px 14px rgba(245, 158, 11, 0.35);" onclick="app.handleDirectionsClick(event, '${escapedAddress}')">
+          <a href="${directionsUrl}" target="_blank" rel="noopener" class="person-card-btn person-card-btn-call" style="width:100%; padding:10px 14px; font-size:0.86rem; font-weight:700; border-radius:var(--radius-sm); box-shadow:0 4px 14px rgba(56, 189, 248, 0.2);" onclick="app.handleDirectionsClick(event, '${escapedAddress}')">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
             Avvia Indicazioni Stradali
           </a>

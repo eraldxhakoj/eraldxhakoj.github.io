@@ -2791,22 +2791,31 @@ body {
 /* ==========================================================================
    Luoghi Cards Grid & Stylish Card
    ========================================================================== */
+#view-places {
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
 .places-cards-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 10px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 @media (min-width: 640px) {
   .places-cards-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
   }
 }
 
 @media (min-width: 1080px) {
   .places-cards-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px;
   }
 }
@@ -2829,13 +2838,16 @@ body {
   -webkit-backdrop-filter: blur(8px);
   box-sizing: border-box;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .place-card:hover {
   background: linear-gradient(145deg, rgba(32, 43, 66, 0.95) 0%, rgba(22, 30, 48, 0.98) 100%);
-  border-color: rgba(245, 158, 11, 0.35);
+  border-color: rgba(56, 189, 248, 0.35);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(245, 158, 11, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(56, 189, 248, 0.15);
 }
 
 .place-card:active {
@@ -2844,10 +2856,12 @@ body {
 
 .place-card-identity {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   width: 100%;
+  max-width: 100%;
   min-width: 0;
+  overflow: hidden;
 }
 
 .place-avatar {
@@ -2873,9 +2887,11 @@ body {
 .place-info {
   flex: 1;
   min-width: 0;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
+  overflow: hidden;
 }
 
 .place-name {
@@ -2887,6 +2903,9 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   letter-spacing: -0.01em;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .place-address {
@@ -2896,22 +2915,33 @@ body {
   display: flex;
   align-items: center;
   gap: 5px;
-  white-space: nowrap;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .place-address svg {
   width: 12px;
   height: 12px;
   flex-shrink: 0;
-  color: var(--primary);
+  color: #38bdf8;
+}
+
+.place-address span {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .place-card-actions {
   display: flex;
   flex-direction: column;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   margin-top: 2px;
 }
 
@@ -2919,33 +2949,32 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 7px;
   width: 100%;
-  padding: 9px 14px;
-  font-size: 0.84rem;
-  font-weight: 800;
+  max-width: 100%;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
   border-radius: var(--radius-sm);
   text-decoration: none;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(217, 119, 6, 0.28) 100%);
-  color: #f59e0b;
-  border: 1px solid rgba(245, 158, 11, 0.4);
-  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  background: rgba(56, 189, 248, 0.14);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  transition: all 0.18s ease;
   white-space: nowrap;
   line-height: 1;
   box-sizing: border-box;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
 }
 
 .place-card-btn-directions:hover {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  color: #0b0f19;
-  border-color: #f59e0b;
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+  background: rgba(56, 189, 248, 0.25);
+  border-color: #38bdf8;
+  color: #fff;
 }
 
 .place-card-btn-directions svg {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
 }
 
